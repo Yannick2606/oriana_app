@@ -1,0 +1,10 @@
+{
+  "name": "@oriana/backend",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Backend proxy orIAna — initialisation T-00",
+  "engines": {
+    "node": ">=20"
+  }
+}
+
