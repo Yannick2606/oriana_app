@@ -16,7 +16,7 @@
 - **Acceptation** : le dépôt s'installe (`npm install` dans chaque sous-dossier) sans erreur ;
   aucun secret réel n'est présent ; `.env` est bien ignoré.
 
-### [ ] T-01 : Préparer Grist (hors code — instruction humaine)
+### [x] T-01 : Préparer Grist (hors code — instruction humaine)
 - Note dans STATUS.md : l'humain doit ajouter le champ `mot_de_passe_hash` (texte) à la table
   Utilisateurs dans Grist, et renseigner un hash bcrypt pour au moins un compte de test par rôle.
 - **Acceptation** : STATUS.md contient la checklist Grist ; ne pas coder l'auth avant que
@@ -35,7 +35,8 @@
 
 ### [ ] T-03 : Authentification
 - `POST /auth/login` : cherche l'utilisateur par email dans Grist, compare avec bcrypt, refuse si
-  `actif=false`, émet la session (cookie httpOnly, signé avec `SESSION_SECRET`).
+  `actif=false`, permet le choix d'un rôle actif parmi les rôles attribués, puis émet la session
+  (cookie httpOnly, signé avec `SESSION_SECRET`).
 - `POST /auth/logout`, `GET /auth/me`.
 - **Acceptation** : login OK avec bon mot de passe, 401 avec mauvais, 401 si inactif ; aucun mot
   de passe loggé ni renvoyé ; test unitaire sur les trois cas.
@@ -43,7 +44,8 @@
 ### [ ] T-04 : Middlewares droits (le cœur sécurité)
 - `requireAuth` (401 si pas de session).
 - `scopeByRole` : consultant → filtre `gestionnaire = user.id` ; manager/admin → filtre
-  `agence_id = user.agence_id`. Appliqué à toutes les routes métier.
+  `agence_id = user.agence_id`. Le rôle actif validé côté serveur fait foi. Appliqué à toutes
+  les routes métier.
 - **Acceptation** : test explicite — un consultant A ne récupère PAS une offre dont le
   gestionnaire est un consultant B, y compris en appelant `GET /offres/:id` directement (403).
   Ce test est obligatoire et doit passer.

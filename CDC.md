@@ -30,6 +30,10 @@ la décision), management (pilotage, traçabilité), business (réactivité, tra
 - **admin** (interne, phase 1) — agence + gestion utilisateurs et référentiels.
 - **client** (externe, ultérieur) — annonces publiques + ses demandes.
 
+Un utilisateur peut cumuler plusieurs rôles. Lorsqu'il en possède plusieurs, il choisit son
+**rôle actif** à la connexion ; les droits appliqués pendant la session sont exclusivement ceux
+de ce rôle actif.
+
 ### A.3 Domaines fonctionnels
 1. **Auth/session** : login email+mdp, session sécurisée, inactif = pas de connexion, reset par
    admin en phase 1.

@@ -55,9 +55,13 @@ Le `agence_id` de l'utilisateur connecté filtre systématiquement toutes les re
 > **Toutes les tables métier portent `agence_id`.**
 
 ### Utilisateurs
-`id` PK · `nom` · `prenom` · `email` (unique) · `mot_de_passe_hash` (bcrypt) · `role`
-(consultant|manager|admin|client) · `agence_id` FK→Agences · `actif` bool · `derniere_connexion`.
+`id` PK · `nom` · `prenom` · `email` (unique) · `mot_de_passe_hash` (bcrypt) · `roles` enum
+multiple (consultant|manager|admin|client) · `agence_id` FK→Agences · `actif` bool ·
+`derniere_connexion`.
 > **Action Grist requise** : ajouter `mot_de_passe_hash` (absent aujourd'hui). Voir PLAN T-01.
+> Un utilisateur peut cumuler plusieurs rôles. S'il en possède plusieurs, il choisit un
+> `role_actif` autorisé lors de la connexion. La session conserve ce rôle actif et le backend
+> applique uniquement son périmètre jusqu'à la déconnexion ou au changement de session.
 
 ### Agences
 `id` PK · `nom` · `adresse` FK→Adresses · `responsable` FK→Utilisateurs · `actif` bool.
@@ -153,15 +157,19 @@ Codes : 200 OK · 201 créé · 400 requête invalide · 401 non authentifié ·
 404 introuvable · 500 erreur serveur.
 
 ### Authentification
-- `POST /auth/login` — body `{ email, mot_de_passe }` → vérifie bcrypt, refuse si `actif=false`,
-  émet un jeton de session (cookie httpOnly recommandé). Réponse `{ user: {id, nom, prenom, role} }`.
+- `POST /auth/login` — body `{ email, mot_de_passe, role_actif? }` → vérifie bcrypt, refuse si
+  `actif=false`. Si plusieurs rôles sont attribués et que `role_actif` est absent, renvoie la
+  liste des rôles afin que l'utilisateur en choisisse un. Le backend refuse tout rôle actif non
+  attribué à l'utilisateur, puis émet un jeton de session (cookie httpOnly recommandé).
+  Réponse authentifiée `{ user: {id, nom, prenom, roles, role_actif} }`.
 - `POST /auth/logout` — invalide la session.
 - `GET /auth/me` — renvoie l'utilisateur courant (ou 401).
 
 ### Middleware (à appliquer sur toutes les routes protégées)
 - `requireAuth` — rejette 401 si pas de session valide.
-- `scopeByRole` — injecte le filtre : `consultant` → `gestionnaire = user.id` ;
-  `manager`/`admin` → `agence_id = user.agence_id`. Ce filtre est appliqué à CHAQUE lecture/écriture.
+- `scopeByRole` — utilise exclusivement le `role_actif` validé côté serveur et injecte le filtre :
+  `consultant` → `gestionnaire = user.id` ; `manager`/`admin` →
+  `agence_id = user.agence_id`. Ce filtre est appliqué à CHAQUE lecture/écriture.
 
 ### Ressources métier (patron REST identique pour chaque entité)
 Pour chaque ressource ci-dessous : `GET /{ressource}` (liste filtrée par rôle),
