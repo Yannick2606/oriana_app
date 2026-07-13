@@ -14,6 +14,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-09 bloquée avant code : propriété de Sociétés et Contacts**
+  - `SPEC.md` exige le filtre consultant `gestionnaire = user.id` sur chaque ressource métier.
+  - `Demandes` porte ce champ, mais `Societes` et `Contacts` ne portent que `agence_id` ; leur CRUD ne peut donc pas isoler deux consultants de la même agence.
+  - Coder avec le seul périmètre agence contournerait la règle de sécurité serveur ; aucun CRUD T-09 n'a été implémenté.
+  - Décision requise : ajouter `gestionnaire` à Sociétés et Contacts, ou définir explicitement un autre modèle de partage CRM dans `SPEC.md`.
 - **2026-07-13 — T-08 terminée**
   - Validation réelle Grist réussie : création, modification des honoraires et relecture d'un mandat lié à une offre et une société temporaires.
   - Le workflow valide le contrat CRUD avec une clé de service ; les autorisations métier restent contrôlées par le backend et ses tests de cloisonnement.

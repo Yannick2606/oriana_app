@@ -74,7 +74,7 @@
 - CRUD `mandats` avec les champs honoraires. Filtrage par rôle.
 - **Acceptation** : création/lecture OK, périmètre respecté.
 
-### [ ] T-09 : CRM de base (Societes, Contacts, Demandes)
+### [~] T-09 : CRM de base (Societes, Contacts, Demandes)
 - CRUD des trois entités, liens Société↔Contacts, Demande↔Société/Contact.
 - **Acceptation** : on crée une société, un contact rattaché, une demande ; filtrage par rôle OK.
 
