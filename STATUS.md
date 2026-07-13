@@ -14,6 +14,9 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-05 : création de `Ref_Familles` autorisée**
+  - Autorisation reçue pour créer la table et les valeurs de référence nécessaires.
+  - La préparation crée désormais la table si elle manque et complète de façon idempotente les six codes définis dans `SPEC.md`, sans modifier les lignes déjà présentes.
 - **2026-07-13 — T-05 bloquée par l'absence de `Ref_Familles` dans Grist**
   - Le workflow réel a échoué à l'étape de préparation du schéma : la table préalable `Ref_Familles`, requise par `Cellules.type_bien`, n'existe pas.
   - Le contrôle s'est arrêté avant toute mutation : aucune table ni colonne n'a été créée et aucune donnée existante n'a été modifiée.

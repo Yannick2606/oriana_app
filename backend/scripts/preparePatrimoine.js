@@ -58,22 +58,47 @@ const columnsByTable = {
   ],
 };
 
+const familles = [
+  ['logistique', 'Logistique'],
+  ['activite', 'Activité'],
+  ['bureaux', 'Bureaux'],
+  ['commerce', 'Commerce'],
+  ['terrain', 'Terrain'],
+  ['locaux_sociaux', 'Locaux sociaux'],
+];
+
 function columns(entries) {
   return entries.map(([id, type]) => ({ id, fields: { type } }));
 }
 
 const existingTables = await gristClient.listTables();
 const tableIds = new Set(existingTables.map((table) => table.id));
-const dependencies = ['Adresses', 'Agences', 'Utilisateurs', 'Ref_Familles'];
+const dependencies = ['Adresses', 'Agences', 'Utilisateurs', 'Sites', 'Batiments', 'Lots'];
 const missingDependencies = dependencies.filter((table) => !tableIds.has(table));
 
 if (missingDependencies.length > 0) {
   throw new Error(`Tables Grist préalables manquantes : ${missingDependencies.join(', ')}`);
 }
 
-for (const table of ['Sites', 'Batiments', 'Lots']) {
-  if (!tableIds.has(table)) {
-    throw new Error(`Table Grist préalable manquante : ${table}`);
+if (!tableIds.has('Ref_Familles')) {
+  await gristClient.createTables([{
+    id: 'Ref_Familles',
+    columns: columns([['code', 'Text'], ['libelle', 'Text']]),
+  }]);
+  tableIds.add('Ref_Familles');
+  console.log('Table Ref_Familles créée.');
+}
+
+await gristClient.addOrUpdateColumns(
+  'Ref_Familles',
+  columns([['code', 'Text'], ['libelle', 'Text']]),
+);
+const famillesExistantes = await gristClient.list('Ref_Familles');
+const codesExistants = new Set(famillesExistantes.map((record) => record.fields.code));
+for (const [code, libelle] of familles) {
+  if (!codesExistants.has(code)) {
+    await gristClient.create('Ref_Familles', { code, libelle });
+    console.log(`Famille ${code} créée.`);
   }
 }
 
