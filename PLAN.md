@@ -41,7 +41,7 @@
 - **Acceptation** : login OK avec bon mot de passe, 401 avec mauvais, 401 si inactif ; aucun mot
   de passe loggé ni renvoyé ; test unitaire sur les trois cas.
 
-### [ ] T-04 : Middlewares droits (le cœur sécurité)
+### [x] T-04 : Middlewares droits (le cœur sécurité)
 - `requireAuth` (401 si pas de session).
 - `scopeByRole` : consultant → filtre `gestionnaire = user.id` ; manager/admin → filtre
   `agence_id = user.agence_id`. Le rôle actif validé côté serveur fait foi. Appliqué à toutes

@@ -38,3 +38,10 @@ test('la session authentifiée est disponible via /auth/me puis détruite', asyn
   await agent.post('/auth/logout').expect(200);
   await agent.get('/auth/me').expect(401);
 });
+
+test('les routes de session refusent un utilisateur non authentifié', async () => {
+  const app = testApp();
+
+  await request(app).get('/auth/me').expect(401);
+  await request(app).post('/auth/logout').expect(401);
+});

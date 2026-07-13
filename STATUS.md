@@ -9,11 +9,18 @@
 - [ ] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
-- PHASE 1 : en cours — T-00 à T-03 terminées.
+- PHASE 1 : en cours — T-00 à T-04 terminées.
 - PHASE 2 : non planifiée (ne pas coder).
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-04 terminée**
+  - Middleware `requireAuth` ajouté et appliqué aux routes de session protégées.
+  - `scopeByRole` construit côté serveur un périmètre cumulant toujours `agence_id` et, pour un consultant, son identifiant `gestionnaire`.
+  - Contrôle individuel réutilisable ajouté : une ressource absente renvoie 404 et une ressource hors périmètre renvoie 403 avant le contrôleur.
+  - Test de sécurité obligatoire réussi : `GET /offres/:id` refuse explicitement à un consultant A l'offre d'un consultant B, même dans la même agence.
+  - Tests complémentaires réussis : accès à sa propre offre, cloisonnement manager inter-agences et refus sans session.
+  - Vérifications réussies : lint, 17 tests, contrôle des diffs et recherche de secrets en dur.
 - **2026-07-13 — T-03 terminée**
   - Routes `POST /auth/login`, `POST /auth/logout` et `GET /auth/me` ajoutées selon la structure routes → contrôleurs → services.
   - Authentification Grist par email, comparaison bcrypt et refus uniforme des identifiants invalides ou comptes inactifs.
