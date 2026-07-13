@@ -9,11 +9,15 @@
 - [ ] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
-- PHASE 1 : en cours — T-00 à T-10 terminées.
+- PHASE 1 : en cours — T-00 à T-11 terminées.
 - PHASE 2 : non planifiée (ne pas coder).
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-11 terminée**
+  - Validation réelle Grist réussie : compte temporaire multirôle créé avec hash bcrypt vérifié, désactivé, relu sans exposition du hash, puis supprimé.
+  - Le contrôle a confirmé la compatibilité avec les réponses Grist ne contenant qu'un identifiant après création.
+  - Vérifications finales réussies : lint, 56 tests, contrôle des diffs et recherche de secrets en dur.
 - **2026-07-13 — T-11 : relecture après création Grist sans contenu**
   - Le workflow réel a révélé que la création d'un utilisateur peut réussir avec une réponse HTTP 204 sans enregistrement JSON.
   - Le service relit désormais le compte par son email unique avant de construire la réponse publique.
