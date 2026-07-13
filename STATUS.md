@@ -14,6 +14,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-08 en cours, validation Grist requise**
+  - CRUD Mandats implémenté avec contrôle serveur du mandat, de l'offre liée et de la société mandante dans l'agence.
+  - Validation ajoutée pour type, nature compatible avec l'offre, période, honoraires numériques et champs d'agence/gestionnaire gérés par le serveur.
+  - Vérifications locales réussies : lint et 40 tests, dont modification des honoraires, relations hors périmètre et suppression réservée.
+  - T-08 reste en cours jusqu'au succès de la vérification réelle Grist.
 - **2026-07-13 — T-07 terminée**
   - Validation réelle Grist réussie : offre `vente_et_location`, conditions vente et location distinctes, puis renégociation d'un prix de 125 à 118 millions d'euros.
   - Les grands montants sont couverts par un test automatisé à 250 millions d'euros et validés comme nombres finis sûrs.

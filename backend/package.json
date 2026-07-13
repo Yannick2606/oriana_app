@@ -14,9 +14,11 @@
     "check:patrimoine": "node scripts/checkPatrimoine.js",
     "check:qualification": "node scripts/checkQualification.js",
     "check:offres": "node scripts/checkOffres.js",
+    "check:mandats": "node scripts/checkMandats.js",
     "prepare:patrimoine": "node scripts/preparePatrimoine.js",
     "prepare:qualification": "node scripts/prepareQualification.js",
     "prepare:offres": "node scripts/prepareOffres.js",
+    "prepare:mandats": "node scripts/prepareMandats.js",
     "lint": "eslint .",
     "test": "node --test"
   },

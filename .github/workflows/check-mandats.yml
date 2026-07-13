@@ -1,0 +1,33 @@
+name: Vérification mandats Grist
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mandats-grist:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      GRIST_API_URL: ${{ secrets.GRIST_API_URL }}
+      GRIST_API_KEY: ${{ secrets.GRIST_API_KEY }}
+      GRIST_DOC_ID: ${{ secrets.GRIST_DOC_ID }}
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Installer les dépendances
+        run: npm ci
+      - name: Préparer le schéma des mandats
+        run: node scripts/prepareMandats.js
+      - name: Vérifier le mandat réel
+        run: node scripts/checkMandats.js
