@@ -9,11 +9,15 @@
 - [ ] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
-- PHASE 1 : en cours — T-00 à T-09 terminées.
+- PHASE 1 : en cours — T-00 à T-10 terminées.
 - PHASE 2 : non planifiée (ne pas coder).
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-10 terminée**
+  - Validation réelle Grist réussie en lecture seule sur `Matching_demandes_lots` ; aucun score ni aucune donnée métier n'a été modifié.
+  - Les résultats sont triés par `score_global` décroissant sans recalcul et restent filtrés par les droits sur la demande et les lots.
+  - Vérifications finales réussies : lint, 49 tests, contrôle des diffs et recherche de secrets en dur.
 - **2026-07-13 — T-10 en cours, validation Grist requise**
   - `GET /matching?demande_id=` lit la table Grist existante `Matching_demandes_lots` et trie uniquement les valeurs `score_global` déjà calculées.
   - La demande doit être lisible selon son agence et son exclusivité ; les résultats associés à des lots hors périmètre sont retirés côté serveur.

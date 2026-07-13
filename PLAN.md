@@ -78,7 +78,7 @@
 - CRUD des trois entités, liens Société↔Contacts, Demande↔Société/Contact.
 - **Acceptation** : on crée une société, un contact rattaché, une demande ; filtrage par rôle OK.
 
-### [~] T-10 : Lecture du matching
+### [x] T-10 : Lecture du matching
 - `GET /matching?demande_id=` — lit les scores Grist, trie par `score_global` desc.
 - **Acceptation** : renvoie une liste triée ; ne recalcule pas le score.
 
