@@ -9,6 +9,7 @@ import { createMandatsController } from './controllers/mandatsController.js';
 import { createCrmController } from './controllers/crmController.js';
 import { createMatchingController } from './controllers/matchingController.js';
 import { createUtilisateursController } from './controllers/utilisateursController.js';
+import { createAgentsController } from './controllers/agentsController.js';
 import { createAuthRoutes } from './routes/authRoutes.js';
 import healthRoutes from './routes/healthRoutes.js';
 import { createPatrimoineRoutes } from './routes/patrimoineRoutes.js';
@@ -18,6 +19,7 @@ import { createMandatsRoutes } from './routes/mandatsRoutes.js';
 import { createCrmRoutes } from './routes/crmRoutes.js';
 import { createMatchingRoutes } from './routes/matchingRoutes.js';
 import { createUtilisateursRoutes } from './routes/utilisateursRoutes.js';
+import { createAgentsRoutes } from './routes/agentsRoutes.js';
 import { authService as defaultAuthService } from './services/authService.js';
 import { gristClient } from './services/gristClient.js';
 import { patrimoineResources } from './services/patrimoineConfig.js';
@@ -28,6 +30,7 @@ import { createMandatsService } from './services/mandatsService.js';
 import { createCrmService } from './services/crmService.js';
 import { createMatchingService } from './services/matchingService.js';
 import { createUtilisateursService } from './services/utilisateursService.js';
+import { createAgentsService } from './services/agentsService.js';
 
 export function createApp({
   authService = defaultAuthService,
@@ -38,6 +41,8 @@ export function createApp({
   crmClient = patrimoineClient,
   matchingClient = patrimoineClient,
   utilisateursClient = patrimoineClient,
+  agentsClient = patrimoineClient,
+  agentsOptions,
   sessionSecret = process.env.SESSION_SECRET,
 } = {}) {
   if (!sessionSecret) {
@@ -80,6 +85,9 @@ export function createApp({
   app.use(createMatchingRoutes(createMatchingController(createMatchingService(matchingClient))));
   app.use('/utilisateurs', createUtilisateursRoutes(
     createUtilisateursController(createUtilisateursService(utilisateursClient)),
+  ));
+  app.use(createAgentsRoutes(
+    createAgentsController(createAgentsService(agentsClient, agentsOptions)), agentsOptions?.sharedSecret,
   ));
 
   return app;

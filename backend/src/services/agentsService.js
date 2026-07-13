@@ -1,0 +1,85 @@
+import { randomUUID } from 'node:crypto';
+import { peutLire } from './exclusiviteService.js';
+
+const allowedStatuses = new Set(['en_cours', 'termine', 'erreur']);
+export class AgentsError extends Error {
+  constructor(message, status, code) { super(message); this.name = 'AgentsError'; this.status = status; this.code = code; }
+}
+const positiveId = (value) => {
+  const id = Number.parseInt(value, 10);
+  if (!Number.isInteger(id) || id <= 0 || String(id) !== String(value)) throw new AgentsError('Objet invalide', 400, 'INVALID_OBJECT');
+  return id;
+};
+const serializeResult = (value) => (typeof value === 'string' ? value : JSON.stringify(value ?? null));
+
+export function createAgentsService(client, {
+  webhookBaseUrl = process.env.N8N_WEBHOOK_BASE_URL,
+  sharedSecret = process.env.N8N_SHARED_SECRET,
+  backendPublicUrl = process.env.BACKEND_PUBLIC_URL,
+  fetchImplementation = fetch,
+} = {}) {
+  async function readableDemand(id, user) {
+    const demand = await client.getById('Demandes', id);
+    if (!demand) throw new AgentsError('Demande introuvable', 404, 'NOT_FOUND');
+    if (!peutLire(demand, user)) throw new AgentsError('Demande hors périmètre', 403, 'FORBIDDEN');
+    return demand;
+  }
+  async function reread(created, trackingId) {
+    if (created?.fields) return created;
+    const [record] = await client.list('Traitements_Agents', { suivi_id: [trackingId] });
+    if (!record) throw new AgentsError('Suivi non relu', 502, 'GRIST_READBACK_FAILED');
+    return record;
+  }
+  return {
+    async trigger(agent, input, user) {
+      if (agent !== 'demonstration') throw new AgentsError('Agent inconnu', 404, 'UNKNOWN_AGENT');
+      if (!input || input.objet_type !== 'demande') throw new AgentsError('Type objet invalide', 400, 'INVALID_OBJECT');
+      const objectId = positiveId(input.objet_id); await readableDemand(objectId, user);
+      if (!webhookBaseUrl || !sharedSecret || !backendPublicUrl) throw new AgentsError('Configuration n8n incomplète', 503, 'N8N_NOT_CONFIGURED');
+      const trackingId = randomUUID(); const now = Date.now() / 1000;
+      await reread(await client.create('Traitements_Agents', {
+        suivi_id: trackingId, agent, objet_type: 'demande', objet_id: objectId,
+        statut_traitement: 'en_attente', agence_id: user.agence_id, user_id: user.id,
+        date_creation: now, date_mise_a_jour: now,
+      }), trackingId);
+      const url = `${webhookBaseUrl.replace(/\/$/, '')}/webhook/oriana-demonstration`;
+      let response;
+      try {
+        response = await fetchImplementation(url, {
+          method: 'POST', signal: globalThis.AbortSignal.timeout(5_000),
+          headers: { 'Content-Type': 'application/json', 'X-Oriana-Secret': sharedSecret },
+          body: JSON.stringify({ suivi_id: trackingId, objet_type: 'demande', objet_id: objectId,
+            agence_id: user.agence_id, user_id: user.id,
+            callback_url: `${backendPublicUrl.replace(/\/$/, '')}/agents/callback` }),
+        });
+      } catch {
+        await this.callback({ suivi_id: trackingId, statut: 'erreur', message_erreur: 'WEBHOOK_UNAVAILABLE' });
+        throw new AgentsError('Webhook indisponible', 502, 'N8N_UNAVAILABLE');
+      }
+      if (!response.ok) {
+        await this.callback({ suivi_id: trackingId, statut: 'erreur', message_erreur: 'WEBHOOK_REJECTED' });
+        throw new AgentsError('Webhook refusé', 502, 'N8N_REJECTED');
+      }
+      return { suivi_id: trackingId, statut_traitement: 'en_attente' };
+    },
+    async status(input, user) {
+      if (input.objet_type !== 'demande') throw new AgentsError('Type objet invalide', 400, 'INVALID_OBJECT');
+      const objectId = positiveId(input.objet_id); await readableDemand(objectId, user);
+      const rows = await client.list('Traitements_Agents', { objet_type: ['demande'], objet_id: [objectId], agence_id: [user.agence_id] });
+      const visible = rows.filter((row) => user.role_actif === 'manager' || user.role_actif === 'admin'
+        || String(row.fields.user_id) === String(user.id));
+      visible.sort((a, b) => (b.fields.date_creation ?? 0) - (a.fields.date_creation ?? 0));
+      if (!visible[0]) throw new AgentsError('Suivi introuvable', 404, 'NOT_FOUND');
+      return visible[0];
+    },
+    async callback(input) {
+      if (!input || typeof input.suivi_id !== 'string' || !allowedStatuses.has(input.statut)) throw new AgentsError('Callback invalide', 400, 'INVALID_CALLBACK');
+      const [record] = await client.list('Traitements_Agents', { suivi_id: [input.suivi_id] });
+      if (!record) throw new AgentsError('Suivi introuvable', 404, 'NOT_FOUND');
+      const data = { statut_traitement: input.statut, date_mise_a_jour: Date.now() / 1000 };
+      if (input.statut === 'termine') data.resultat = serializeResult(input.resultat);
+      if (input.statut === 'erreur') data.message_erreur = String(input.message_erreur ?? 'ERREUR_AGENT');
+      return client.update('Traitements_Agents', record.id, data);
+    },
+  };
+}

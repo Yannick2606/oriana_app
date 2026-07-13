@@ -207,6 +207,15 @@ Ressources PHASE 1 : `sites`, `batiments`, `cellules`, `lots`, `offres`,
   Le résultat n'est PAS attendu de façon synchrone.
 - `GET /agents/statut?objet_type=&objet_id=` — renvoie l'état du traitement (lu dans Grist :
   en_attente|en_cours|termine|erreur) et le résultat si `termine`.
+- Démonstration PHASE 1 : agent `demonstration`, limité aux objets `demande`, webhook fixe
+  `{N8N_WEBHOOK_BASE_URL}/webhook/oriana-demonstration`.
+- `POST /agents/callback` — appelé par n8n avec le secret partagé ; le backend écrit le résultat
+  dans Grist. La clé Grist reste ainsi exclusivement dans le backend.
+
+### Traitements_Agents
+`id` PK · `suivi_id` · `agent` · `objet_type` · `objet_id` · `statut_traitement`
+(en_attente|en_cours|termine|erreur) · `resultat` · `message_erreur` · `agence_id` FK→Agences ·
+`user_id` FK→Utilisateurs · `date_creation` · `date_mise_a_jour`.
 
 ## 6. Contrat d'intégration n8n (asynchrone, à respecter dès le socle)
 
@@ -215,8 +224,8 @@ Principe : un agent peut mettre plusieurs secondes à minutes. On ne bloque jama
 1. Le frontend déclenche via `POST /agents/:agent/declencher`.
 2. Le backend appelle le webhook n8n (URL + secret depuis l'environnement), en passant
    `objet_type`, `objet_id`, `agence_id`, `user_id`. Il répond immédiatement `202` au frontend.
-3. n8n travaille, puis **écrit son résultat dans Grist** et met un champ `statut_traitement`
-   à `termine` (ou `erreur`).
+3. n8n travaille, puis appelle le callback backend protégé. Le backend écrit son résultat dans
+   Grist et met `statut_traitement` à `termine` (ou `erreur`).
 4. Le frontend interroge `GET /agents/statut` (polling léger) jusqu'à `termine`, puis affiche
    le résultat. Pendant ce temps, l'UI montre « traitement en cours », sans figer.
 

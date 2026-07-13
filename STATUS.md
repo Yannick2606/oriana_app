@@ -14,6 +14,13 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-12 en cours, validation Grist requise**
+  - Contrat validé puis implémenté pour l'agent `demonstration`, limité aux demandes lisibles par l'utilisateur.
+  - Le backend crée `Traitements_Agents`, appelle le webhook fixe avec le secret uniquement en en-tête et répond `202` après l'accusé de réception, sans attendre le résultat.
+  - n8n renvoie le résultat via `/agents/callback` protégé par comparaison du secret en temps constant ; n8n ne détient aucune clé Grist.
+  - La lecture du statut contrôle à nouveau la demande, l'agence et le propriétaire du suivi ; manager et admin voient les suivis de leur agence.
+  - Vérifications locales réussies : lint et 59 tests, dont callback, résultat, faux secret, agent inconnu et demande hors périmètre.
+  - Le workflow GitHub valide la boîte aux lettres Grist avec un webhook simulé ; le branchement du workflow n8n réel restera nécessaire avant clôture de T-12.
 - **2026-07-13 — T-12 bloquée avant code : contrat n8n incomplet**
   - `SPEC.md` impose un agent de démonstration et une boîte aux lettres Grist, mais ne nomme ni l'agent, ni la table de suivi, ni ses colonnes.
   - La convention exacte entre `N8N_WEBHOOK_BASE_URL` et le chemin du webhook n'est pas définie ; aucun workflow n8n orIAna n'est encore confirmé.
