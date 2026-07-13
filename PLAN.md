@@ -33,7 +33,7 @@
 - **Acceptation** : `GET /health` répond ; `gristClient` lit une table de test ; lint + test passent ;
   aucune clé en dur.
 
-### [ ] T-03 : Authentification
+### [x] T-03 : Authentification
 - `POST /auth/login` : cherche l'utilisateur par email dans Grist, compare avec bcrypt, refuse si
   `actif=false`, permet le choix d'un rôle actif parmi les rôles attribués, puis émet la session
   (cookie httpOnly, signé avec `SESSION_SECRET`).
