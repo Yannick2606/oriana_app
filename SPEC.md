@@ -150,7 +150,7 @@ multiple (consultant|manager|admin|client) · `agence_id` FK→Agences · `actif
 > consultants de la même agence, mais reste modifiable uniquement par son gestionnaire ou le
 > manager. Seul le manager peut réactiver l'exclusivité. Aucun partage inter-agences en PHASE 1.
 
-### Matching  (existant, formules Grist)
+### Matching  (table Grist existante `Matching_demandes_lots`, formules Grist)
 `id` PK · `demande_id` FK→Demandes · `lot_id` FK→Lots · `score_global` · `scores_detail`.
 > Le score est calculé par Grist (formules, pondération 35/30/20/15). Le backend le **lit**,
 > ne le recalcule pas.

@@ -16,6 +16,7 @@
     "check:offres": "node scripts/checkOffres.js",
     "check:mandats": "node scripts/checkMandats.js",
     "check:crm": "node scripts/checkCrm.js",
+    "check:matching": "node scripts/checkMatching.js",
     "prepare:patrimoine": "node scripts/preparePatrimoine.js",
     "prepare:qualification": "node scripts/prepareQualification.js",
     "prepare:offres": "node scripts/prepareOffres.js",

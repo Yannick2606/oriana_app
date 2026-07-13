@@ -14,6 +14,12 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-10 en cours, validation Grist requise**
+  - `GET /matching?demande_id=` lit la table Grist existante `Matching_demandes_lots` et trie uniquement les valeurs `score_global` déjà calculées.
+  - La demande doit être lisible selon son agence et son exclusivité ; les résultats associés à des lots hors périmètre sont retirés côté serveur.
+  - Aucun calcul ni aucune écriture de score n'est effectué par le backend.
+  - Vérifications locales réussies : lint et 49 tests, dont ordre décroissant, conservation des détails Grist et refus des demandes ou lots hors périmètre.
+  - T-10 reste en cours jusqu'au succès du workflow réel « Vérification matching Grist ».
 - **2026-07-13 — T-09 terminée**
   - Validation réelle Grist réussie : préparation non destructive du schéma, création d'une société, d'un contact et d'une demande liés, levée d'exclusivité, puis relecture.
   - Les données temporaires du contrôle ont été supprimées ; les colonnes de propriété et d'exclusivité restent disponibles pour l'application.

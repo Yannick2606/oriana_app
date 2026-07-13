@@ -7,6 +7,7 @@ import { createQualificationController } from './controllers/qualificationContro
 import { createOffresController } from './controllers/offresController.js';
 import { createMandatsController } from './controllers/mandatsController.js';
 import { createCrmController } from './controllers/crmController.js';
+import { createMatchingController } from './controllers/matchingController.js';
 import { createAuthRoutes } from './routes/authRoutes.js';
 import healthRoutes from './routes/healthRoutes.js';
 import { createPatrimoineRoutes } from './routes/patrimoineRoutes.js';
@@ -14,6 +15,7 @@ import { createQualificationRoutes } from './routes/qualificationRoutes.js';
 import { createOffresRoutes } from './routes/offresRoutes.js';
 import { createMandatsRoutes } from './routes/mandatsRoutes.js';
 import { createCrmRoutes } from './routes/crmRoutes.js';
+import { createMatchingRoutes } from './routes/matchingRoutes.js';
 import { authService as defaultAuthService } from './services/authService.js';
 import { gristClient } from './services/gristClient.js';
 import { patrimoineResources } from './services/patrimoineConfig.js';
@@ -22,6 +24,7 @@ import { createQualificationService } from './services/qualificationService.js';
 import { createOffresService } from './services/offresService.js';
 import { createMandatsService } from './services/mandatsService.js';
 import { createCrmService } from './services/crmService.js';
+import { createMatchingService } from './services/matchingService.js';
 
 export function createApp({
   authService = defaultAuthService,
@@ -30,6 +33,7 @@ export function createApp({
   offresClient = patrimoineClient,
   mandatsClient = patrimoineClient,
   crmClient = patrimoineClient,
+  matchingClient = patrimoineClient,
   sessionSecret = process.env.SESSION_SECRET,
 } = {}) {
   if (!sessionSecret) {
@@ -69,6 +73,7 @@ export function createApp({
   for (const resource of ['societes', 'contacts', 'demandes']) {
     app.use(`/${resource}`, createCrmRoutes(createCrmController(resource, crmService)));
   }
+  app.use(createMatchingRoutes(createMatchingController(createMatchingService(matchingClient))));
 
   return app;
 }
