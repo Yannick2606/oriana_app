@@ -14,6 +14,10 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-07 : compatibilité des mises à jour et grands montants**
+  - La préparation réelle des tables Offres et Conditions financières a réussi.
+  - La validation a révélé qu'une mise à jour réussie peut renvoyer HTTP 204 sur l'instance Grist ; le client relit désormais la ligne au lieu d'attendre un corps JSON.
+  - Les montants financiers sont validés comme nombres finis sûrs et un test explicite couvre 250 millions d'euros ; le contrôle réel négocie 125 à 118 millions d'euros.
 - **2026-07-13 — T-07 en cours, validation Grist requise**
   - CRUD sécurisé des Offres et Conditions financières implémenté ; les droits des conditions sont dérivés de l'offre liée à chaque requête.
   - Une offre `vente_et_location` accepte exactement une condition vente et une condition location ; les montants courants restent modifiables pour refléter la négociation client.

@@ -71,7 +71,11 @@ function createClient(config, fetchImplementation = fetch) {
         method: 'PATCH',
         body: JSON.stringify({ records: [{ id, fields: data }] }),
       });
-      return result.records[0];
+      if (result?.records?.[0]) {
+        return result.records[0];
+      }
+      const refreshed = await request(tablePath(table));
+      return refreshed.records.find((record) => record.id === Number(id)) ?? null;
     },
 
     async delete(table, id) {

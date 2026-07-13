@@ -123,6 +123,20 @@ test('refuse une deuxième condition du même type', async () => {
   }).expect(400, { error: 'CONDITION_EXISTS' });
 });
 
+test('conserve exactement un prix immobilier d’affaires de 250 millions d’euros', async () => {
+  const client = memoryClient();
+  const agent = await authenticatedAgent(client);
+  const offer = await agent.post('/offres').send({ lot_id: 10, nature: 'vente' }).expect(201);
+
+  const condition = await agent.post('/conditions-financieres').send({
+    offre_id: offer.body.data.id,
+    type: 'vente',
+    prix_vente: 250_000_000,
+  }).expect(201);
+
+  assert.equal(condition.body.data.prix_vente, 250_000_000);
+});
+
 test('refuse une condition incompatible avec la nature de l’offre', async () => {
   const client = memoryClient();
   const agent = await authenticatedAgent(client);

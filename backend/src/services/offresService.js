@@ -11,6 +11,9 @@ const conditionFields = [
 ];
 const natures = new Set(['vente', 'location', 'vente_et_location']);
 const conditionTypes = new Set(['vente', 'location']);
+const numericConditionFields = new Set(conditionFields.filter((field) => ![
+  'offre_id', 'type', 'disponibilite',
+].includes(field)));
 
 export class OffresError extends Error {
   constructor(message, status, code) {
@@ -39,7 +42,16 @@ function sanitize(input, allowed, forbidden = []) {
   if (Object.keys(input).some((field) => !allowed.includes(field))) {
     throw new OffresError('Champ inconnu', 400, 'UNKNOWN_FIELD');
   }
-  return Object.fromEntries(allowed.filter((field) => field in input).map((field) => [field, input[field]]));
+  const data = Object.fromEntries(
+    allowed.filter((field) => field in input).map((field) => [field, input[field]]),
+  );
+  for (const [field, value] of Object.entries(data)) {
+    if (numericConditionFields.has(field)
+      && (typeof value !== 'number' || !Number.isFinite(value) || Math.abs(value) > Number.MAX_SAFE_INTEGER)) {
+      throw new OffresError('Montant ou taux invalide', 400, 'INVALID_NUMBER');
+    }
+  }
+  return data;
 }
 
 function positiveId(value) {

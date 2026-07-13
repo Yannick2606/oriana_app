@@ -44,7 +44,7 @@ try {
   created.push({ table: 'Offres', id: offer.id });
 
   const sale = await service.createCondition({
-    offre_id: offer.id, type: 'vente', prix_vente: 1_250_000,
+    offre_id: offer.id, type: 'vente', prix_vente: 125_000_000,
   }, ownership);
   created.push({ table: 'Conditions_Financieres', id: sale.id });
   const rental = await service.createCondition({
@@ -52,7 +52,7 @@ try {
   }, ownership);
   created.push({ table: 'Conditions_Financieres', id: rental.id });
 
-  await service.updateCondition(sale.id, { prix_vente: 1_180_000 }, ownership);
+  await service.updateCondition(sale.id, { prix_vente: 118_000_000 }, ownership);
   const conditions = await service.listConditions(ownership);
   const types = conditions.filter((record) => record.fields.offre_id === offer.id)
     .map((record) => record.fields.type).sort();
@@ -60,7 +60,7 @@ try {
     throw new Error('Deux conditions distinctes attendues.');
   }
   const negotiated = await gristClient.getById('Conditions_Financieres', sale.id);
-  if (negotiated?.fields.prix_vente !== 1_180_000) {
+  if (negotiated?.fields.prix_vente !== 118_000_000) {
     throw new Error('Montant négocié non relu.');
   }
   console.log('Offre double nature et négociation réelles validées.');

@@ -74,6 +74,24 @@ test('update respecte le format records de Grist', async () => {
   });
 });
 
+test('update relit la ligne quand Grist répond sans contenu', async () => {
+  const updated = { id: 8, fields: { actif: false } };
+  const calls = [];
+  const responses = [createResponse(null, 204), createResponse({ records: [updated] })];
+  const client = testing.createClient({
+    apiUrl: 'https://grist.invalid',
+    apiKey: randomUUID(),
+    docId: 'document-test',
+  }, async (url, options) => {
+    calls.push({ url, options });
+    return responses.shift();
+  });
+
+  assert.deepEqual(await client.update('Utilisateurs', 8, updated.fields), updated);
+  assert.equal(calls.length, 2);
+  assert.equal(calls[1].options.method, undefined);
+});
+
 test('delete utilise le point de terminaison de suppression Grist', async () => {
   const { calls, client } = setupClient(null);
 
