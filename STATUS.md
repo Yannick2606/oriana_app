@@ -9,11 +9,16 @@
 - [ ] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
-- PHASE 1 : en cours — T-00 à T-08 terminées.
+- PHASE 1 : en cours — T-00 à T-09 terminées.
 - PHASE 2 : non planifiée (ne pas coder).
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-09 terminée**
+  - Validation réelle Grist réussie : préparation non destructive du schéma, création d'une société, d'un contact et d'une demande liés, levée d'exclusivité, puis relecture.
+  - Les données temporaires du contrôle ont été supprimées ; les colonnes de propriété et d'exclusivité restent disponibles pour l'application.
+  - Le filtrage serveur couvre l'exclusivité, le partage en lecture dans l'agence, l'écriture réservée et le cloisonnement inter-agences.
+  - Vérifications finales réussies : lint, 45 tests, contrôle des diffs et recherche de secrets en dur.
 - **2026-07-13 — T-09 en cours, validation Grist requise**
   - CRUD Société → Contact → Demande implémenté avec validation des relations et des fourchettes de surface et de budget.
   - Les quatre ressources Société, Contact, Demande et Mandat sont exclusives à la création ; la levée partage la lecture dans l'agence sans transférer l'écriture.
