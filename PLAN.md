@@ -87,7 +87,7 @@
 - **Acceptation** : un non-admin reçoit 403 ; un admin crée un compte (mot de passe haché) et
   peut désactiver un compte.
 
-### [ ] T-12 : Contrat n8n (asynchrone)
+### [~] T-12 : Contrat n8n (asynchrone)
 - `POST /agents/:agent/declencher` (appelle le webhook n8n avec secret d'env, répond 202).
 - `GET /agents/statut` (lit le statut dans Grist).
 - Brancher **un** agent en démonstration (ex. le plus simple disponible).

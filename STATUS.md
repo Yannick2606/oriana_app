@@ -14,6 +14,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-12 bloquée avant code : contrat n8n incomplet**
+  - `SPEC.md` impose un agent de démonstration et une boîte aux lettres Grist, mais ne nomme ni l'agent, ni la table de suivi, ni ses colonnes.
+  - La convention exacte entre `N8N_WEBHOOK_BASE_URL` et le chemin du webhook n'est pas définie ; aucun workflow n8n orIAna n'est encore confirmé.
+  - Le code s'arrête avant toute implémentation pour ne pas inventer un schéma ou une URL d'intégration non validés.
+  - Décision requise : valider la création de `Traitements_Agents` et le webhook de démonstration proposés, puis créer ou importer le workflow correspondant dans n8n.
 - **2026-07-13 — T-11 terminée**
   - Validation réelle Grist réussie : compte temporaire multirôle créé avec hash bcrypt vérifié, désactivé, relu sans exposition du hash, puis supprimé.
   - Le contrôle a confirmé la compatibilité avec les réponses Grist ne contenant qu'un identifiant après création.
