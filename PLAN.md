@@ -70,7 +70,7 @@
 - **Acceptation** : on crée une offre double-nature avec deux jeux de conditions distincts,
   relus correctement.
 
-### [~] T-08 : Mandats
+### [x] T-08 : Mandats
 - CRUD `mandats` avec les champs honoraires. Filtrage par rôle.
 - **Acceptation** : création/lecture OK, périmètre respecté.
 
