@@ -82,7 +82,7 @@
 - `GET /matching?demande_id=` — lit les scores Grist, trie par `score_global` desc.
 - **Acceptation** : renvoie une liste triée ; ne recalcule pas le score.
 
-### [ ] T-11 : Administration utilisateurs (admin)
+### [~] T-11 : Administration utilisateurs (admin)
 - `GET|POST|PUT /utilisateurs` réservé admin. `POST` hache le mot de passe avant écriture.
 - **Acceptation** : un non-admin reçoit 403 ; un admin crée un compte (mot de passe haché) et
   peut désactiver un compte.

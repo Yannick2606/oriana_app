@@ -8,6 +8,7 @@ import { createOffresController } from './controllers/offresController.js';
 import { createMandatsController } from './controllers/mandatsController.js';
 import { createCrmController } from './controllers/crmController.js';
 import { createMatchingController } from './controllers/matchingController.js';
+import { createUtilisateursController } from './controllers/utilisateursController.js';
 import { createAuthRoutes } from './routes/authRoutes.js';
 import healthRoutes from './routes/healthRoutes.js';
 import { createPatrimoineRoutes } from './routes/patrimoineRoutes.js';
@@ -16,6 +17,7 @@ import { createOffresRoutes } from './routes/offresRoutes.js';
 import { createMandatsRoutes } from './routes/mandatsRoutes.js';
 import { createCrmRoutes } from './routes/crmRoutes.js';
 import { createMatchingRoutes } from './routes/matchingRoutes.js';
+import { createUtilisateursRoutes } from './routes/utilisateursRoutes.js';
 import { authService as defaultAuthService } from './services/authService.js';
 import { gristClient } from './services/gristClient.js';
 import { patrimoineResources } from './services/patrimoineConfig.js';
@@ -25,6 +27,7 @@ import { createOffresService } from './services/offresService.js';
 import { createMandatsService } from './services/mandatsService.js';
 import { createCrmService } from './services/crmService.js';
 import { createMatchingService } from './services/matchingService.js';
+import { createUtilisateursService } from './services/utilisateursService.js';
 
 export function createApp({
   authService = defaultAuthService,
@@ -34,6 +37,7 @@ export function createApp({
   mandatsClient = patrimoineClient,
   crmClient = patrimoineClient,
   matchingClient = patrimoineClient,
+  utilisateursClient = patrimoineClient,
   sessionSecret = process.env.SESSION_SECRET,
 } = {}) {
   if (!sessionSecret) {
@@ -74,6 +78,9 @@ export function createApp({
     app.use(`/${resource}`, createCrmRoutes(createCrmController(resource, crmService)));
   }
   app.use(createMatchingRoutes(createMatchingController(createMatchingService(matchingClient))));
+  app.use('/utilisateurs', createUtilisateursRoutes(
+    createUtilisateursController(createUtilisateursService(utilisateursClient)),
+  ));
 
   return app;
 }

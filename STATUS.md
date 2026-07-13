@@ -14,6 +14,14 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-11 en cours**
+  - Administration des utilisateurs limitée au rôle actif `admin` côté serveur pour chaque route.
+  - Création prévue avec rôles multiples validés, agence existante, email normalisé et mot de passe haché bcrypt avant toute écriture Grist.
+  - Les réponses publiques excluent systématiquement `mot_de_passe_hash` ; le mot de passe en clair n'est ni stocké ni journalisé.
+  - Compatibilité conservée avec la colonne Grist existante `role` (ChoiceList), traduite en `roles` dans le contrat JSON.
+  - Validation réelle prévue avec un compte temporaire supprimé en fin de contrôle, y compris en cas d'échec.
+  - Vérifications locales réussies : lint et 54 tests, dont refus non-admin, bcrypt vérifiable, désactivation, email unique et absence du hash dans les réponses.
+  - T-11 reste en cours jusqu'au succès du workflow réel « Vérification utilisateurs Grist ».
 - **2026-07-13 — T-10 terminée**
   - Validation réelle Grist réussie en lecture seule sur `Matching_demandes_lots` ; aucun score ni aucune donnée métier n'a été modifié.
   - Les résultats sont triés par `score_global` décroissant sans recalcul et restent filtrés par les droits sur la demande et les lots.

@@ -58,6 +58,7 @@ Le `agence_id` de l'utilisateur connecté filtre systématiquement toutes les re
 `id` PK · `nom` · `prenom` · `email` (unique) · `mot_de_passe_hash` (bcrypt) · `roles` enum
 multiple (consultant|manager|admin|client) · `agence_id` FK→Agences · `actif` bool ·
 `derniere_connexion`.
+> L'API expose `roles` ; la colonne technique existante dans Grist reste `role` (ChoiceList).
 > **Action Grist requise** : ajouter `mot_de_passe_hash` (absent aujourd'hui). Voir PLAN T-01.
 > Un utilisateur peut cumuler plusieurs rôles. S'il en possède plusieurs, il choisit un
 > `role_actif` autorisé lors de la connexion. La session conserve ce rôle actif et le backend
