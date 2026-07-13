@@ -77,3 +77,15 @@ test('refuse l’injection directe d’un hash ou d’un mot de passe en modific
   await agent.put('/utilisateurs/10').send({ mot_de_passe: randomBytes(18).toString('hex') })
     .expect(400, { error: 'FORBIDDEN_FIELD' });
 });
+
+test('relit par email un utilisateur quand Grist répond 204 à la création', async () => {
+  const dataClient = client(); const originalCreate = dataClient.create;
+  dataClient.create = async (...args) => { await originalCreate(...args); return null; };
+  const agent = await agentFor(dataClient, admin);
+  const response = await agent.post('/utilisateurs').send({
+    nom: 'Relecture', prenom: 'Grist', email: 'readback@example.invalid', roles: ['consultant'],
+    agence_id: 3, mot_de_passe: randomBytes(18).toString('hex'),
+  }).expect(201);
+  assert.equal(response.body.data.email, 'readback@example.invalid');
+  assert.equal('mot_de_passe_hash' in response.body.data, false);
+});

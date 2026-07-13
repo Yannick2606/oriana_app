@@ -4,13 +4,17 @@ import { gristClient } from '../src/services/gristClient.js';
 import { createUtilisateursService } from '../src/services/utilisateursService.js';
 
 let created;
+let temporaryEmail;
 try {
+  const staleTests = await gristClient.list('Utilisateurs', { nom: ['TEST-T11'] });
+  for (const record of staleTests) await gristClient.delete('Utilisateurs', record.id);
   const [agency] = await gristClient.list('Agences');
   if (!agency) throw new Error('Une agence est requise.');
   const suffix = Date.now().toString(36); const password = randomBytes(18).toString('hex');
   const service = createUtilisateursService(gristClient);
+  temporaryEmail = `test-t11-${suffix}@example.invalid`;
   const publicUser = await service.create({
-    nom: 'TEST-T11', prenom: suffix, email: `test-t11-${suffix}@example.invalid`,
+    nom: 'TEST-T11', prenom: suffix, email: temporaryEmail,
     roles: ['consultant', 'manager'], agence_id: agency.id, actif: true, mot_de_passe: password,
   });
   created = publicUser.id;
@@ -23,5 +27,10 @@ try {
   if (disabled.actif !== false || 'mot_de_passe_hash' in disabled) throw new Error('Désactivation ou réponse invalide.');
   console.log('Utilisateur réel créé avec hash bcrypt, désactivé et relu sans exposition du hash.');
 } finally {
-  if (created) await gristClient.delete('Utilisateurs', created);
+  if (created) {
+    await gristClient.delete('Utilisateurs', created);
+  } else if (temporaryEmail) {
+    const leftovers = await gristClient.list('Utilisateurs', { email: [temporaryEmail] });
+    for (const record of leftovers) await gristClient.delete('Utilisateurs', record.id);
+  }
 }

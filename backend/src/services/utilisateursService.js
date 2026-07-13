@@ -91,9 +91,13 @@ export function createUtilisateursService(client, passwordHasher = (password) =>
       data.agence_id = await validateAgency(data.agence_id);
       await ensureUniqueEmail(data.email);
       const passwordHash = await passwordHasher(input.mot_de_passe);
-      const record = await client.create('Utilisateurs', {
+      let record = await client.create('Utilisateurs', {
         ...toGrist(data), actif: data.actif ?? true, mot_de_passe_hash: passwordHash,
       });
+      if (!record) {
+        [record] = await client.list('Utilisateurs', { email: [data.email] });
+      }
+      if (!record) throw new UtilisateursError('Utilisateur créé mais non relu', 502, 'GRIST_READBACK_FAILED');
       return publicRecord(record);
     },
     async update(recordId, input) {

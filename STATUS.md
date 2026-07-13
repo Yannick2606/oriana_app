@@ -14,6 +14,10 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-11 : relecture après création Grist sans contenu**
+  - Le workflow réel a révélé que la création d'un utilisateur peut réussir avec une réponse HTTP 204 sans enregistrement JSON.
+  - Le service relit désormais le compte par son email unique avant de construire la réponse publique.
+  - Le nettoyage supprime d'abord les comptes techniques marqués `TEST-T11`, puis recherche aussi l'email temporaire si aucun identifiant n'a pu être récupéré.
 - **2026-07-13 — T-11 en cours**
   - Administration des utilisateurs limitée au rôle actif `admin` côté serveur pour chaque route.
   - Création prévue avec rôles multiples validés, agence existante, email normalisé et mot de passe haché bcrypt avant toute écriture Grist.
