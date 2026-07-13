@@ -9,11 +9,16 @@
 - [ ] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
-- PHASE 1 : en cours — T-00 à T-06 terminées.
+- PHASE 1 : en cours — T-00 à T-07 terminées.
 - PHASE 2 : non planifiée (ne pas coder).
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-07 terminée**
+  - Validation réelle Grist réussie : offre `vente_et_location`, conditions vente et location distinctes, puis renégociation d'un prix de 125 à 118 millions d'euros.
+  - Les grands montants sont couverts par un test automatisé à 250 millions d'euros et validés comme nombres finis sûrs.
+  - Les conditions restent modifiables dans le périmètre autorisé et leur sécurité est dérivée de l'offre liée.
+  - Vérifications finales réussies : lint, 36 tests, contrôle des diffs et recherche de secrets en dur.
 - **2026-07-13 — T-07 : compatibilité des mises à jour et grands montants**
   - La préparation réelle des tables Offres et Conditions financières a réussi.
   - La validation a révélé qu'une mise à jour réussie peut renvoyer HTTP 204 sur l'instance Grist ; le client relit désormais la ligne au lieu d'attendre un corps JSON.
