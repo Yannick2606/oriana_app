@@ -2,9 +2,24 @@
   "name": "@oriana/backend",
   "version": "0.0.0",
   "private": true,
-  "description": "Backend proxy orIAna — initialisation T-00",
+  "description": "Backend proxy orIAna",
+  "type": "module",
   "engines": {
     "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "check:grist": "node scripts/checkGrist.js",
+    "lint": "eslint .",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.31.0",
+    "supertest": "^7.1.4"
   }
 }
-

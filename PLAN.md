@@ -24,7 +24,7 @@
 
 ## Jalon 1 — Backend : socle et accès Grist
 
-### [ ] T-02 : Squelette backend Express + client Grist
+### [~] T-02 : Squelette backend Express + client Grist
 - Structure en couches : `src/routes`, `src/controllers`, `src/services`, `src/services/gristClient.js`.
 - `gristClient.js` lit `GRIST_API_URL`, `GRIST_API_KEY`, `GRIST_DOC_ID` depuis l'environnement.
   Fonctions génériques : `list(table, filters)`, `getById(table, id)`, `create(table, data)`,
