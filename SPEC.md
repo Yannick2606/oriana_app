@@ -76,21 +76,22 @@ multiple (consultant|manager|admin|client) · `agence_id` FK→Agences · `actif
 ### Sites
 `id` PK · `nom` · `adresse_id` FK→Adresses · `surface_terrain` · `section_cadastrale` ·
 `parcelles` []texte · `divisible` bool · `reserve_fonciere` bool · `servitudes` texte ·
-`en_bloc` bool · `agence_id`.
+`en_bloc` bool · `gestionnaire` FK→Utilisateurs · `agence_id`.
 
 ### Batiments
 `id` PK · `site_id` FK→Sites · `nom` · `numero` · `annee_construction` · `surface_totale` ·
 `etat` enum · `divisible` bool · `copropriete` bool · `erp` bool · `igh` bool ·
 `erp_categorie` · `erp_type` · `destination_plu` · `decret_tertiaire` bool · `photos` []image ·
-`agence_id`.
+`gestionnaire` FK→Utilisateurs · `agence_id`.
 
 ### Cellules
 `id` PK · `batiment_id` FK→Batiments · `nom` · `numero` · `surface` · `etage` enum ·
-`type_bien` FK→Ref_Familles · `photos` []image · `agence_id`.
+`type_bien` FK→Ref_Familles · `photos` []image · `gestionnaire` FK→Utilisateurs · `agence_id`.
 
 ### Lots
 `id` PK · `nom` · `numero` · `cellules` []FK→Cellules · `site_id` FK→Sites (si terrain nu) ·
-`surface` · `divisible` bool · `nombre_parking` · `en_bloc` bool · `agence_id`.
+`surface` · `divisible` bool · `nombre_parking` · `en_bloc` bool ·
+`gestionnaire` FK→Utilisateurs · `agence_id`.
 
 ### Ref_Familles
 `id` PK · `code` (logistique|activite|bureaux|commerce|terrain|locaux_sociaux) · `libelle`.

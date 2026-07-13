@@ -72,6 +72,38 @@ function createClient(config, fetchImplementation = fetch) {
       });
       return result.records[0];
     },
+
+    async delete(table, id) {
+      await request(`${tablePath(table)}/delete`, {
+        method: 'POST',
+        body: JSON.stringify([id]),
+      });
+      return null;
+    },
+
+    async listTables() {
+      const result = await request('/tables');
+      return result.tables;
+    },
+
+    async listColumns(table) {
+      const result = await request(`/tables/${encodeURIComponent(table)}/columns`);
+      return result.columns;
+    },
+
+    async createTables(tables) {
+      return request('/tables', {
+        method: 'POST',
+        body: JSON.stringify({ tables }),
+      });
+    },
+
+    async addOrUpdateColumns(table, columns) {
+      return request(`/tables/${encodeURIComponent(table)}/columns?noupdate=true`, {
+        method: 'PUT',
+        body: JSON.stringify({ columns }),
+      });
+    },
   };
 }
 
@@ -84,6 +116,11 @@ export const gristClient = {
   getById: (...argumentsList) => client().getById(...argumentsList),
   create: (...argumentsList) => client().create(...argumentsList),
   update: (...argumentsList) => client().update(...argumentsList),
+  delete: (...argumentsList) => client().delete(...argumentsList),
+  listTables: (...argumentsList) => client().listTables(...argumentsList),
+  listColumns: (...argumentsList) => client().listColumns(...argumentsList),
+  createTables: (...argumentsList) => client().createTables(...argumentsList),
+  addOrUpdateColumns: (...argumentsList) => client().addOrUpdateColumns(...argumentsList),
 };
 
 export const testing = { createClient };

@@ -2,12 +2,18 @@ import express from 'express';
 import session from 'express-session';
 
 import { createAuthController } from './controllers/authController.js';
+import { createPatrimoineController } from './controllers/patrimoineController.js';
 import { createAuthRoutes } from './routes/authRoutes.js';
 import healthRoutes from './routes/healthRoutes.js';
+import { createPatrimoineRoutes } from './routes/patrimoineRoutes.js';
 import { authService as defaultAuthService } from './services/authService.js';
+import { gristClient } from './services/gristClient.js';
+import { patrimoineResources } from './services/patrimoineConfig.js';
+import { createPatrimoineService } from './services/patrimoineService.js';
 
 export function createApp({
   authService = defaultAuthService,
+  patrimoineClient = gristClient,
   sessionSecret = process.env.SESSION_SECRET,
 } = {}) {
   if (!sessionSecret) {
@@ -32,6 +38,11 @@ export function createApp({
   }));
   app.use(healthRoutes);
   app.use('/auth', createAuthRoutes(createAuthController(authService)));
+  const patrimoineService = createPatrimoineService(patrimoineClient);
+  for (const resource of patrimoineResources) {
+    const controller = createPatrimoineController(resource, patrimoineService);
+    app.use(`/${resource}`, createPatrimoineRoutes(resource, controller, patrimoineClient));
+  }
 
   return app;
 }

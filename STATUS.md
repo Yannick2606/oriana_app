@@ -14,6 +14,20 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-05 en cours, validation Grist requise**
+  - Spécification patrimoine complétée après autorisation : `gestionnaire` est porté par Sites, Bâtiments, Cellules et Lots.
+  - CRUD REST des quatre ressources implémenté avec injection serveur de l'agence et du gestionnaire, listes filtrées, contrôle individuel et validation des liens parents.
+  - Suppression réservée aux managers et admins dans leur agence ; les champs serveur ne peuvent pas être usurpés par le client.
+  - Vérifications locales réussies : lint et 24 tests, dont Site → Bâtiment → Cellule → Lot, rattachement d'une adresse de l'agence et tentatives d'accès hors périmètre.
+  - Workflow manuel prêt pour créer `Cellules`, compléter sans destruction les colonnes Grist manquantes, puis créer/lire/supprimer une hiérarchie de contrôle.
+  - T-05 reste en cours jusqu'au succès de cette vérification réelle Grist.
+- **2026-07-13 — T-05 bloquée avant code**
+  - Contradiction de schéma détectée : T-05 exige qu'un consultant ne voie que ses propres Sites, Bâtiments, Cellules et Lots, alors que ces quatre tables ne portent aucun champ `gestionnaire` dans `SPEC.md`.
+  - Le seul `agence_id` permet le cloisonnement inter-agences, mais pas entre deux consultants de la même agence ; coder le CRUD ainsi violerait la règle de sécurité serveur.
+  - Décision fonctionnelle requise avant reprise : ajouter un `gestionnaire` à chaque table patrimoine, ou définir un propriétaire au niveau Site et faire hériter tout le périmètre descendant.
+  - Existence et conformité de la table Grist `Cellules` également à confirmer avant la vérification réelle de la hiérarchie.
+  - Aucun CRUD T-05 n'a été codé et aucune règle de sécurité n'a été contournée.
+  - **Décision reçue** : ajout autorisé de `gestionnaire` aux quatre tables patrimoine et création autorisée de `Cellules`. `SPEC.md` a été mis à jour avant reprise du code.
 - **2026-07-13 — T-04 terminée**
   - Middleware `requireAuth` ajouté et appliqué aux routes de session protégées.
   - `scopeByRole` construit côté serveur un périmètre cumulant toujours `agence_id` et, pour un consultant, son identifiant `gestionnaire`.

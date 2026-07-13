@@ -52,7 +52,7 @@
 
 ## Jalon 2 — Backend : ressources métier
 
-### [ ] T-05 : CRUD patrimoine (Sites, Batiments, Cellules, Lots)
+### [~] T-05 : CRUD patrimoine (Sites, Batiments, Cellules, Lots)
 - Routes REST complètes pour les 4 entités, filtrées par `scopeByRole`, `agence_id` injecté à la
   création.
 - **Acceptation** : on crée un Site→Bâtiment→Cellule→Lot liés ; un consultant ne voit que les

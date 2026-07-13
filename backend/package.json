@@ -11,6 +11,8 @@
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
     "check:grist": "node scripts/checkGrist.js",
+    "check:patrimoine": "node scripts/checkPatrimoine.js",
+    "prepare:patrimoine": "node scripts/preparePatrimoine.js",
     "lint": "eslint .",
     "test": "node --test"
   },

@@ -66,6 +66,15 @@ test('update respecte le format records de Grist', async () => {
   });
 });
 
+test('delete utilise le point de terminaison de suppression Grist', async () => {
+  const { calls, client } = setupClient(null);
+
+  assert.equal(await client.delete('Sites', 8), null);
+  assert.equal(calls[0].options.method, 'POST');
+  assert.match(calls[0].url, /tables\/Sites\/records\/delete$/);
+  assert.deepEqual(JSON.parse(calls[0].options.body), [8]);
+});
+
 test('une erreur Grist est remontée sans exposer la réponse', async () => {
   const fetchImplementation = async () => createResponse({}, 403);
   const client = testing.createClient({
