@@ -89,3 +89,15 @@ test('relit par email un utilisateur quand Grist répond 204 à la création', a
   assert.equal(response.body.data.email, 'readback@example.invalid');
   assert.equal('mot_de_passe_hash' in response.body.data, false);
 });
+
+test('relit par email quand Grist renvoie uniquement l’identifiant créé', async () => {
+  const dataClient = client(); const originalCreate = dataClient.create;
+  dataClient.create = async (...args) => (await originalCreate(...args)).id;
+  const agent = await agentFor(dataClient, admin);
+  const response = await agent.post('/utilisateurs').send({
+    nom: 'Identifiant', prenom: 'Seul', email: 'id-only@example.invalid', roles: ['manager'],
+    agence_id: 3, mot_de_passe: randomBytes(18).toString('hex'),
+  }).expect(201);
+  assert.equal(response.body.data.email, 'id-only@example.invalid');
+  assert.deepEqual(response.body.data.roles, ['manager']);
+});

@@ -94,7 +94,7 @@ export function createUtilisateursService(client, passwordHasher = (password) =>
       let record = await client.create('Utilisateurs', {
         ...toGrist(data), actif: data.actif ?? true, mot_de_passe_hash: passwordHash,
       });
-      if (!record) {
+      if (!record?.fields) {
         [record] = await client.list('Utilisateurs', { email: [data.email] });
       }
       if (!record) throw new UtilisateursError('Utilisateur créé mais non relu', 502, 'GRIST_READBACK_FAILED');
