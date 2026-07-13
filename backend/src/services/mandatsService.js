@@ -1,8 +1,9 @@
 import { resourceMatchesScope } from '../middlewares/scopeByRole.js';
+import { peutEcrire, peutLire, validerTransitionExclusivite } from './exclusiviteService.js';
 
 const fields = [
   'numero', 'numero_registre', 'offre_id', 'societe_mandante', 'type', 'nature', 'avancement',
-  'date_debut', 'date_fin', 'honoraires_mode', 'honoraires_montant', 'honoraires_charge',
+  'date_debut', 'date_fin', 'honoraires_mode', 'honoraires_montant', 'honoraires_charge', 'donnee_exclusive',
 ];
 const types = new Set(['exclusif', 'simple', 'co-mandat']);
 const natures = new Set(['vente', 'location']);
@@ -45,11 +46,11 @@ function normalizeDate(value) {
   return timestamp / 1000;
 }
 
-function sanitize(input) {
+function sanitize(input, update = false) {
   if (!input || typeof input !== 'object' || Array.isArray(input)) {
     throw new MandatsError('Corps invalide', 400, 'INVALID_REQUEST');
   }
-  if ('agence_id' in input || 'gestionnaire' in input) {
+  if ('agence_id' in input || 'gestionnaire' in input || (!update && 'donnee_exclusive' in input)) {
     throw new MandatsError('Champ géré par le serveur', 400, 'SERVER_MANAGED_FIELD');
   }
   if (Object.keys(input).some((field) => !fields.includes(field))) {
@@ -73,10 +74,10 @@ function compatible(offerNature, mandateNature) {
 }
 
 export function createMandatsService(client) {
-  async function scopedMandate(id, accessScope) {
+  async function scopedMandate(id, user, write = false) {
     const mandate = await client.getById('Mandats', positiveId(id));
     if (!mandate) throw new MandatsError('Mandat introuvable', 404, 'NOT_FOUND');
-    if (!resourceMatchesScope(mandate, accessScope)) {
+    if (!(write ? peutEcrire(mandate, user) : peutLire(mandate, user))) {
       throw new MandatsError('Mandat hors périmètre', 403, 'FORBIDDEN');
     }
     return mandate;
@@ -106,8 +107,9 @@ export function createMandatsService(client) {
   }
 
   return {
-    async list(accessScope) {
-      return client.list('Mandats', filtersForGrist(accessScope));
+    async list(user) {
+      const records = await client.list('Mandats', filtersForGrist({ agence_id: user.agence_id }));
+      return records.filter((record) => peutLire(record, user));
     },
     get: scopedMandate,
     async create(input, user, accessScope) {
@@ -117,17 +119,18 @@ export function createMandatsService(client) {
       }
       await validate(data, accessScope);
       return client.create('Mandats', {
-        ...data, gestionnaire: user.id, agence_id: user.agence_id,
+        ...data, gestionnaire: user.id, donnee_exclusive: true, agence_id: user.agence_id,
       });
     },
-    async update(id, input, accessScope) {
-      const current = await scopedMandate(id, accessScope);
-      const data = sanitize(input);
+    async update(id, input, user, accessScope) {
+      const current = await scopedMandate(id, user, true);
+      const data = sanitize(input, true);
+      validerTransitionExclusivite(current, data.donnee_exclusive, user, MandatsError);
       await validate(data, accessScope, current);
       return client.update('Mandats', current.id, data);
     },
-    async delete(id, accessScope) {
-      const mandate = await scopedMandate(id, accessScope);
+    async delete(id, user) {
+      const mandate = await scopedMandate(id, user, true);
       await client.delete('Mandats', mandate.id);
     },
   };

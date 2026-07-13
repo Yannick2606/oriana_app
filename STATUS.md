@@ -14,6 +14,18 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-09 en cours, validation Grist requise**
+  - CRUD Société → Contact → Demande implémenté avec validation des relations et des fourchettes de surface et de budget.
+  - Les quatre ressources Société, Contact, Demande et Mandat sont exclusives à la création ; la levée partage la lecture dans l'agence sans transférer l'écriture.
+  - Le gestionnaire peut lever l'exclusivité, mais seul un manager ou admin de l'agence peut la réactiver ; le cloisonnement inter-agences reste absolu.
+  - Préparation Grist idempotente prévue, y compris pour la référence circulaire Société ↔ Contact et l'ajout non destructif des colonnes de propriété.
+  - Vérifications locales réussies : lint et 45 tests, dont partage intra-agence, écriture interdite au collègue, réactivation manager et refus inter-agences.
+  - T-09 reste en cours jusqu'au succès du workflow réel « Vérification CRM Grist ».
+- **2026-07-13 — T-09 : modèle d'exclusivité CRM validé**
+  - Sociétés, Contacts, Demandes et Mandats sont exclusifs par défaut et attribués au consultant créateur.
+  - Après levée par le gestionnaire ou le manager, les consultants de la même agence disposent d'une lecture partagée ; l'écriture reste réservée au gestionnaire et au manager.
+  - Seul le manager peut réactiver une exclusivité levée. Le partage inter-agences reste hors PHASE 1 conformément à la CIBLE.
+  - `SPEC.md` est mis à jour avant reprise du code.
 - **2026-07-13 — T-09 bloquée avant code : propriété de Sociétés et Contacts**
   - `SPEC.md` exige le filtre consultant `gestionnaire = user.id` sur chaque ressource métier.
   - `Demandes` porte ce champ, mais `Societes` et `Contacts` ne portent que `agence_id` ; leur CRUD ne peut donc pas isoler deux consultants de la même agence.

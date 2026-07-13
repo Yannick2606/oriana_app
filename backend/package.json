@@ -15,10 +15,12 @@
     "check:qualification": "node scripts/checkQualification.js",
     "check:offres": "node scripts/checkOffres.js",
     "check:mandats": "node scripts/checkMandats.js",
+    "check:crm": "node scripts/checkCrm.js",
     "prepare:patrimoine": "node scripts/preparePatrimoine.js",
     "prepare:qualification": "node scripts/prepareQualification.js",
     "prepare:offres": "node scripts/prepareOffres.js",
     "prepare:mandats": "node scripts/prepareMandats.js",
+    "prepare:crm": "node scripts/prepareCrm.js",
     "lint": "eslint .",
     "test": "node --test"
   },

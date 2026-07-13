@@ -5,7 +5,8 @@ const entries = [
   ['societe_mandante', 'Ref:Societes'], ['type', 'Choice'], ['nature', 'Choice'],
   ['avancement', 'Choice'], ['date_debut', 'Date'], ['date_fin', 'Date'],
   ['honoraires_mode', 'Choice'], ['honoraires_montant', 'Numeric'],
-  ['honoraires_charge', 'Choice'], ['gestionnaire', 'Ref:Utilisateurs'], ['agence_id', 'Ref:Agences'],
+  ['honoraires_charge', 'Choice'], ['gestionnaire', 'Ref:Utilisateurs'], ['donnee_exclusive', 'Bool'],
+  ['agence_id', 'Ref:Agences'],
 ];
 const columns = entries.map(([id, type]) => ({ id, fields: { type } }));
 const tables = await gristClient.listTables();

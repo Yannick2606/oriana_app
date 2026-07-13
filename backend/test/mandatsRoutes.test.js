@@ -70,6 +70,7 @@ test('crée, relit et modifie un mandat dans le périmètre', async () => {
   }).expect(201);
   assert.equal(created.body.data.gestionnaire, 7);
   assert.equal(created.body.data.agence_id, 3);
+  assert.equal(created.body.data.donnee_exclusive, true);
   await agent.get(`/mandats/${created.body.data.id}`).expect(200);
   const updated = await agent.put(`/mandats/${created.body.data.id}`).send({
     honoraires_montant: 2_200_000,
@@ -104,7 +105,8 @@ test('refuse une nature incompatible et une période inversée', async () => {
 test('un consultant ne lit pas le mandat d’un autre et seul un manager supprime', async () => {
   const client = memoryClient();
   const other = await client.create('Mandats', {
-    offre_id: 11, societe_mandante: 20, type: 'simple', nature: 'vente', agence_id: 3, gestionnaire: 8,
+    offre_id: 11, societe_mandante: 20, type: 'simple', nature: 'vente', agence_id: 3,
+    gestionnaire: 8, donnee_exclusive: true,
   });
   const consultantAgent = await agentFor(client);
   await consultantAgent.get(`/mandats/${other.id}`).expect(403, { error: 'FORBIDDEN' });
@@ -113,4 +115,21 @@ test('un consultant ne lit pas le mandat d’un autre et seul un manager supprim
   const manager = { ...consultant, id: 2, roles: ['manager'], role_actif: 'manager' };
   const managerAgent = await agentFor(client, manager);
   await managerAgent.delete(`/mandats/${other.id}`).expect(200, { status: 'ok' });
+});
+
+test('un mandat partagé reste modifiable par son gestionnaire et le manager seulement', async () => {
+  const client = memoryClient();
+  const owner = await client.create('Mandats', {
+    offre_id: 10, societe_mandante: 20, type: 'simple', nature: 'vente', agence_id: 3,
+    gestionnaire: 7, donnee_exclusive: true,
+  });
+  const ownerAgent = await agentFor(client);
+  await ownerAgent.put(`/mandats/${owner.id}`).send({ donnee_exclusive: false }).expect(200);
+  const colleagueAgent = await agentFor(client, { ...consultant, id: 8 });
+  await colleagueAgent.get(`/mandats/${owner.id}`).expect(200);
+  await colleagueAgent.put(`/mandats/${owner.id}`).send({ honoraires_montant: 10 }).expect(403);
+  await ownerAgent.put(`/mandats/${owner.id}`).send({ donnee_exclusive: true })
+    .expect(403, { error: 'EXCLUSIVITY_FORBIDDEN' });
+  const managerAgent = await agentFor(client, { ...consultant, id: 2, roles: ['manager'], role_actif: 'manager' });
+  await managerAgent.put(`/mandats/${owner.id}`).send({ donnee_exclusive: true }).expect(200);
 });

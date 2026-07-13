@@ -127,23 +127,28 @@ multiple (consultant|manager|admin|client) · `agence_id` FK→Agences · `actif
 `id` PK · `numero` · `numero_registre` · `offre_id` FK→Offres · `societe_mandante` FK→Societes ·
 `type` (exclusif|simple|co-mandat) · `nature` (vente|location) · `avancement` enum ·
 `date_debut` · `date_fin` · `honoraires_mode` · `honoraires_montant` · `honoraires_charge` ·
-`gestionnaire` FK→Utilisateurs · `agence_id`.
+`gestionnaire` FK→Utilisateurs · `donnee_exclusive` bool · `agence_id`.
 
 ### Societes
 `id` PK · `raison_sociale` · `enseigne` · `siren` · `siret` · `code_ape` · `libelle_ape` ·
 `forme_juridique` · `capital` · `effectif_salarie` · `adresse_siege` FK→Adresses ·
 `contact_principal` FK→Contacts · `type_relation` (proprietaire|prospect|preneur|partenaire) ·
-`agence_id`.
+`gestionnaire` FK→Utilisateurs · `donnee_exclusive` bool · `agence_id`.
 
 ### Contacts
 `id` PK · `nom` · `prenom` · `fonction` · `email` · `tel` · `mobile` · `societe_id` FK→Societes ·
-`agence_id`.
+`gestionnaire` FK→Utilisateurs · `donnee_exclusive` bool · `agence_id`.
 
 ### Demandes
 `id` PK · `societe_id` FK→Societes · `contact_id` FK→Contacts ·
 `nature_transaction` (vente|location|les_deux) · `familles` []FK→Ref_Familles ·
 `surface_min` · `surface_max` · `budget_min` · `budget_max` · `secteur_geo` ·
-`criteres_specifiques` · `gestionnaire` FK→Utilisateurs · `agence_id`.
+`criteres_specifiques` · `gestionnaire` FK→Utilisateurs · `donnee_exclusive` bool · `agence_id`.
+
+> Sociétés, Contacts, Demandes et Mandats sont exclusifs à la création. Le gestionnaire et le
+> manager de l'agence peuvent lever l'exclusivité. Une donnée non exclusive est lisible par les
+> consultants de la même agence, mais reste modifiable uniquement par son gestionnaire ou le
+> manager. Seul le manager peut réactiver l'exclusivité. Aucun partage inter-agences en PHASE 1.
 
 ### Matching  (existant, formules Grist)
 `id` PK · `demande_id` FK→Demandes · `lot_id` FK→Lots · `score_global` · `scores_detail`.

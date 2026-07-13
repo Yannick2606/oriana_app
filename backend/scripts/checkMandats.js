@@ -30,10 +30,11 @@ try {
     societe_mandante: societe.id, type: 'exclusif', nature: 'vente',
     date_debut: '2026-07-13', date_fin: '2027-07-12', honoraires_mode: 'pourcentage',
     honoraires_montant: 2_500_000, honoraires_charge: 'mandant',
-  }, { id: utilisateur.id, agence_id: agence.id }, ownership);
+  }, { id: utilisateur.id, agence_id: agence.id, role_actif: 'consultant' }, ownership);
   created.push({ table: 'Mandats', id: mandat.id });
-  await service.update(mandat.id, { honoraires_montant: 2_200_000 }, ownership);
-  const reread = await service.get(mandat.id, ownership);
+  const user = { id: utilisateur.id, agence_id: agence.id, role_actif: 'consultant' };
+  await service.update(mandat.id, { honoraires_montant: 2_200_000 }, user, ownership);
+  const reread = await service.get(mandat.id, user);
   if (reread.fields.honoraires_montant !== 2_200_000) throw new Error('Honoraires non relus.');
   console.log('Mandat réel créé, modifié et relu.');
 } finally {

@@ -6,12 +6,14 @@ import { createPatrimoineController } from './controllers/patrimoineController.j
 import { createQualificationController } from './controllers/qualificationController.js';
 import { createOffresController } from './controllers/offresController.js';
 import { createMandatsController } from './controllers/mandatsController.js';
+import { createCrmController } from './controllers/crmController.js';
 import { createAuthRoutes } from './routes/authRoutes.js';
 import healthRoutes from './routes/healthRoutes.js';
 import { createPatrimoineRoutes } from './routes/patrimoineRoutes.js';
 import { createQualificationRoutes } from './routes/qualificationRoutes.js';
 import { createOffresRoutes } from './routes/offresRoutes.js';
 import { createMandatsRoutes } from './routes/mandatsRoutes.js';
+import { createCrmRoutes } from './routes/crmRoutes.js';
 import { authService as defaultAuthService } from './services/authService.js';
 import { gristClient } from './services/gristClient.js';
 import { patrimoineResources } from './services/patrimoineConfig.js';
@@ -19,6 +21,7 @@ import { createPatrimoineService } from './services/patrimoineService.js';
 import { createQualificationService } from './services/qualificationService.js';
 import { createOffresService } from './services/offresService.js';
 import { createMandatsService } from './services/mandatsService.js';
+import { createCrmService } from './services/crmService.js';
 
 export function createApp({
   authService = defaultAuthService,
@@ -26,6 +29,7 @@ export function createApp({
   qualificationClient = patrimoineClient,
   offresClient = patrimoineClient,
   mandatsClient = patrimoineClient,
+  crmClient = patrimoineClient,
   sessionSecret = process.env.SESSION_SECRET,
 } = {}) {
   if (!sessionSecret) {
@@ -61,6 +65,10 @@ export function createApp({
   app.use(createOffresRoutes(createOffresController(offresService)));
   const mandatsService = createMandatsService(mandatsClient);
   app.use('/mandats', createMandatsRoutes(createMandatsController(mandatsService)));
+  const crmService = createCrmService(crmClient);
+  for (const resource of ['societes', 'contacts', 'demandes']) {
+    app.use(`/${resource}`, createCrmRoutes(createCrmController(resource, crmService)));
+  }
 
   return app;
 }
