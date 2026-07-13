@@ -14,6 +14,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-12 : boîte aux lettres Grist validée, branchement n8n restant**
+  - Le workflow GitHub est vert : table `Traitements_Agents` préparée et cycle `en_attente → termine → résultat` validé avec nettoyage de la ligne temporaire.
+  - Le webhook était simulé pendant ce contrôle ; le critère T-12 exige encore un appel réel à n8n et un callback réel vers le backend.
+  - Le backend orIAna n'étant pas encore exposé publiquement, n8n ne peut pas joindre `/agents/callback`.
+  - T-13 ne démarre pas avant la clôture de T-12. Prochaine action proposée : déployer le backend sur `api.boreal.immo`, puis créer et activer le workflow `oriana-demonstration` dans n8n.
 - **2026-07-13 — T-12 en cours, validation Grist requise**
   - Contrat validé puis implémenté pour l'agent `demonstration`, limité aux demandes lisibles par l'utilisateur.
   - Le backend crée `Traitements_Agents`, appelle le webhook fixe avec le secret uniquement en en-tête et répond `202` après l'accusé de réception, sans attendre le résultat.
