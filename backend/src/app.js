@@ -4,20 +4,24 @@ import session from 'express-session';
 import { createAuthController } from './controllers/authController.js';
 import { createPatrimoineController } from './controllers/patrimoineController.js';
 import { createQualificationController } from './controllers/qualificationController.js';
+import { createOffresController } from './controllers/offresController.js';
 import { createAuthRoutes } from './routes/authRoutes.js';
 import healthRoutes from './routes/healthRoutes.js';
 import { createPatrimoineRoutes } from './routes/patrimoineRoutes.js';
 import { createQualificationRoutes } from './routes/qualificationRoutes.js';
+import { createOffresRoutes } from './routes/offresRoutes.js';
 import { authService as defaultAuthService } from './services/authService.js';
 import { gristClient } from './services/gristClient.js';
 import { patrimoineResources } from './services/patrimoineConfig.js';
 import { createPatrimoineService } from './services/patrimoineService.js';
 import { createQualificationService } from './services/qualificationService.js';
+import { createOffresService } from './services/offresService.js';
 
 export function createApp({
   authService = defaultAuthService,
   patrimoineClient = gristClient,
   qualificationClient = patrimoineClient,
+  offresClient = patrimoineClient,
   sessionSecret = process.env.SESSION_SECRET,
 } = {}) {
   if (!sessionSecret) {
@@ -49,6 +53,8 @@ export function createApp({
   }
   const qualificationService = createQualificationService(qualificationClient);
   app.use(createQualificationRoutes(createQualificationController(qualificationService)));
+  const offresService = createOffresService(offresClient);
+  app.use(createOffresRoutes(createOffresController(offresService)));
 
   return app;
 }

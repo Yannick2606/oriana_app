@@ -14,6 +14,12 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-07 en cours, validation Grist requise**
+  - CRUD sécurisé des Offres et Conditions financières implémenté ; les droits des conditions sont dérivés de l'offre liée à chaque requête.
+  - Une offre `vente_et_location` accepte exactement une condition vente et une condition location ; les montants courants restent modifiables pour refléter la négociation client.
+  - Le schéma de phase 1 conserve l'état négocié courant ; l'historique de propositions n'est pas prévu par `SPEC.md` et n'est pas inventé dans T-07.
+  - Vérifications locales réussies : lint et 34 tests, dont double nature, renégociation, incohérences et accès hors périmètre.
+  - T-07 reste en cours jusqu'au succès de la vérification réelle Grist.
 - **2026-07-13 — T-06 terminée**
   - Validation réelle Grist réussie : schéma et dictionnaire EAV préparés, caractéristique numérique enregistrée puis relue sur une Cellule temporaire.
   - Les trois endpoints de qualification filtrent le dictionnaire par famille+niveau et contrôlent le périmètre du bien lié avant chaque lecture ou écriture.

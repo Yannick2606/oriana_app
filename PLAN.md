@@ -64,7 +64,7 @@
 - **Acceptation** : le dictionnaire renvoie bien seulement les caractéristiques de la famille et
   du niveau demandés ; une valeur se saisit et se relit correctement.
 
-### [ ] T-07 : Offres + Conditions financières
+### [~] T-07 : Offres + Conditions financières
 - CRUD `offres` ; CRUD `conditions-financieres`. Gérer le cas `vente_et_location` = deux lignes
   de conditions liées à la même offre.
 - **Acceptation** : on crée une offre double-nature avec deux jeux de conditions distincts,

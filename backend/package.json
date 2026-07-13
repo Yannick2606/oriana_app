@@ -13,8 +13,10 @@
     "check:grist": "node scripts/checkGrist.js",
     "check:patrimoine": "node scripts/checkPatrimoine.js",
     "check:qualification": "node scripts/checkQualification.js",
+    "check:offres": "node scripts/checkOffres.js",
     "prepare:patrimoine": "node scripts/preparePatrimoine.js",
     "prepare:qualification": "node scripts/prepareQualification.js",
+    "prepare:offres": "node scripts/prepareOffres.js",
     "lint": "eslint .",
     "test": "node --test"
   },
