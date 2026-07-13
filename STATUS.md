@@ -14,6 +14,10 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-05 bloquée par l'absence de `Ref_Familles` dans Grist**
+  - Le workflow réel a échoué à l'étape de préparation du schéma : la table préalable `Ref_Familles`, requise par `Cellules.type_bien`, n'existe pas.
+  - Le contrôle s'est arrêté avant toute mutation : aucune table ni colonne n'a été créée et aucune donnée existante n'a été modifiée.
+  - Autorisation requise pour créer `Ref_Familles` selon `SPEC.md` avant de relancer la validation T-05.
 - **2026-07-13 — T-05 en cours, validation Grist requise**
   - Spécification patrimoine complétée après autorisation : `gestionnaire` est porté par Sites, Bâtiments, Cellules et Lots.
   - CRUD REST des quatre ressources implémenté avec injection serveur de l'agence et du gestionnaire, listes filtrées, contrôle individuel et validation des liens parents.
