@@ -9,11 +9,16 @@
 - [ ] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
-- PHASE 1 : en cours — T-00 à T-05 terminées.
+- PHASE 1 : en cours — T-00 à T-06 terminées.
 - PHASE 2 : non planifiée (ne pas coder).
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-06 terminée**
+  - Validation réelle Grist réussie : schéma et dictionnaire EAV préparés, caractéristique numérique enregistrée puis relue sur une Cellule temporaire.
+  - Les trois endpoints de qualification filtrent le dictionnaire par famille+niveau et contrôlent le périmètre du bien lié avant chaque lecture ou écriture.
+  - Les données métier temporaires ont été supprimées ; les tables et référentiels EAV validés restent disponibles.
+  - Vérifications finales réussies : lint, 29 tests, contrôle des diffs et recherche de secrets en dur.
 - **2026-07-13 — T-06 en cours, validation Grist requise**
   - Endpoints de dictionnaire et de valeurs EAV implémentés avec validation stricte du niveau, du type de valeur et du bien lié.
   - Les lectures et écritures contrôlent côté serveur le périmètre du Bâtiment, de la Cellule ou du Lot avant d'accéder aux valeurs polymorphes.
