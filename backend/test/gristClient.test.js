@@ -40,10 +40,18 @@ test('list transmet les filtres et renvoie les enregistrements', async () => {
 
 test('getById lit un enregistrement précis', async () => {
   const record = { id: 7, fields: { nom: 'Test' } };
-  const { calls, client } = setupClient(record);
+  const { calls, client } = setupClient({
+    records: [{ id: 6, fields: { nom: 'Autre' } }, record],
+  });
 
   assert.deepEqual(await client.getById('Utilisateurs', 7), record);
-  assert.match(calls[0].url, /records\/7$/);
+  assert.match(calls[0].url, /tables\/Utilisateurs\/records$/);
+});
+
+test('getById renvoie null pour un identifiant absent', async () => {
+  const { client } = setupClient({ records: [] });
+
+  assert.equal(await client.getById('Utilisateurs', 999), null);
 });
 
 test('create respecte le format records de Grist', async () => {

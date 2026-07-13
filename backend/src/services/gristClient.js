@@ -54,7 +54,8 @@ function createClient(config, fetchImplementation = fetch) {
     },
 
     async getById(table, id) {
-      return request(`${tablePath(table)}/${encodeURIComponent(id)}`);
+      const result = await request(tablePath(table));
+      return result.records.find((record) => record.id === Number(id)) ?? null;
     },
 
     async create(table, data) {

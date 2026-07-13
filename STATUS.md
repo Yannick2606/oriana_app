@@ -14,6 +14,10 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-05 : lecture Grist unitaire corrigée**
+  - La préparation réelle du schéma patrimoine et de `Ref_Familles` a réussi.
+  - La validation a révélé que l'API REST Grist ne fournit pas de route `GET /records/:id` ; le client utilisait donc une route inexistante et recevait 404.
+  - `getById` relit désormais la collection officielle puis sélectionne strictement l'identifiant demandé ; le filtrage d'autorisation reste appliqué ensuite côté serveur.
 - **2026-07-13 — T-05 : création de `Ref_Familles` autorisée**
   - Autorisation reçue pour créer la table et les valeurs de référence nécessaires.
   - La préparation crée désormais la table si elle manque et complète de façon idempotente les six codes définis dans `SPEC.md`, sans modifier les lignes déjà présentes.
