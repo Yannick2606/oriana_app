@@ -3,17 +3,21 @@ import session from 'express-session';
 
 import { createAuthController } from './controllers/authController.js';
 import { createPatrimoineController } from './controllers/patrimoineController.js';
+import { createQualificationController } from './controllers/qualificationController.js';
 import { createAuthRoutes } from './routes/authRoutes.js';
 import healthRoutes from './routes/healthRoutes.js';
 import { createPatrimoineRoutes } from './routes/patrimoineRoutes.js';
+import { createQualificationRoutes } from './routes/qualificationRoutes.js';
 import { authService as defaultAuthService } from './services/authService.js';
 import { gristClient } from './services/gristClient.js';
 import { patrimoineResources } from './services/patrimoineConfig.js';
 import { createPatrimoineService } from './services/patrimoineService.js';
+import { createQualificationService } from './services/qualificationService.js';
 
 export function createApp({
   authService = defaultAuthService,
   patrimoineClient = gristClient,
+  qualificationClient = patrimoineClient,
   sessionSecret = process.env.SESSION_SECRET,
 } = {}) {
   if (!sessionSecret) {
@@ -43,6 +47,8 @@ export function createApp({
     const controller = createPatrimoineController(resource, patrimoineService);
     app.use(`/${resource}`, createPatrimoineRoutes(resource, controller, patrimoineClient));
   }
+  const qualificationService = createQualificationService(qualificationClient);
+  app.use(createQualificationRoutes(createQualificationController(qualificationService)));
 
   return app;
 }

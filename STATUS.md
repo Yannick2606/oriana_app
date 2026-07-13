@@ -14,6 +14,12 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-06 en cours, validation Grist requise**
+  - Endpoints de dictionnaire et de valeurs EAV implémentés avec validation stricte du niveau, du type de valeur et du bien lié.
+  - Les lectures et écritures contrôlent côté serveur le périmètre du Bâtiment, de la Cellule ou du Lot avant d'accéder aux valeurs polymorphes.
+  - Préparation idempotente prête pour les trois tables EAV et un dictionnaire initial différenciant notamment logistique, activité, bureaux et commerce.
+  - Vérifications locales réussies : lint et 29 tests, dont filtrage famille+niveau, saisie/relecture et refus du bien d'un autre consultant.
+  - T-06 reste en cours jusqu'au succès de la vérification réelle Grist.
 - **2026-07-13 — T-05 terminée**
   - Validation réelle Grist réussie : préparation idempotente du schéma, création/lecture de la hiérarchie Site → Bâtiment → Cellule → Lot, puis suppression des données temporaires.
   - La table `Ref_Familles` et ses six valeurs conformes à `SPEC.md` sont disponibles ; la table `Cellules` et les champs `gestionnaire` autorisés sont en place.

@@ -12,7 +12,9 @@
     "start": "node src/server.js",
     "check:grist": "node scripts/checkGrist.js",
     "check:patrimoine": "node scripts/checkPatrimoine.js",
+    "check:qualification": "node scripts/checkQualification.js",
     "prepare:patrimoine": "node scripts/preparePatrimoine.js",
+    "prepare:qualification": "node scripts/prepareQualification.js",
     "lint": "eslint .",
     "test": "node --test"
   },

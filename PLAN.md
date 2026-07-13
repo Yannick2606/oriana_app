@@ -58,7 +58,7 @@
 - **Acceptation** : on crée un Site→Bâtiment→Cellule→Lot liés ; un consultant ne voit que les
   siens ; lint + tests passent.
 
-### [ ] T-06 : Qualification EAV
+### [~] T-06 : Qualification EAV
 - `GET /caracteristiques/dictionnaire?famille=&niveau=` (filtrage famille + niveau).
 - `GET /caracteristiques-bien` et `POST /caracteristiques-bien`.
 - **Acceptation** : le dictionnaire renvoie bien seulement les caractéristiques de la famille et
