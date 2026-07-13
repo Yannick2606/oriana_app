@@ -14,6 +14,13 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-12 : déploiement backend préparé**
+  - Image Docker minimale préparée pour le backend uniquement, exécutée avec l'utilisateur non privilégié `node`, système de fichiers en lecture seule et contrôle de santé.
+  - Composition reliée au réseau Traefik externe `root_default`, sans port hôte exposé, avec routage TLS `api.boreal.immo` via `mytlschallenge`.
+  - Les secrets restent exclusivement dans le `.env` du VPS ignoré par Git ; aucune valeur n'est intégrée à l'image ou au fichier Compose.
+  - Express fait confiance à un seul proxy en production afin que les cookies sécurisés fonctionnent derrière Traefik.
+  - Vérifications locales : lint backend et 59 tests réussis ; aucune valeur de secret détectée dans les fichiers suivis.
+  - Limite locale : Docker n'est pas installé dans l'environnement de travail, donc la construction de l'image et le routage Traefik restent à valider sur le VPS.
 - **2026-07-13 — T-12 : boîte aux lettres Grist validée, branchement n8n restant**
   - Le workflow GitHub est vert : table `Traitements_Agents` préparée et cycle `en_attente → termine → résultat` validé avec nettoyage de la ligne temporaire.
   - Le webhook était simulé pendant ce contrôle ; le critère T-12 exige encore un appel réel à n8n et un callback réel vers le backend.

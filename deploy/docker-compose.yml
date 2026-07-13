@@ -1,0 +1,32 @@
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    container_name: oriana-backend
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=root_default
+      - traefik.http.routers.oriana-api.rule=Host(`api.boreal.immo`)
+      - traefik.http.routers.oriana-api.entrypoints=websecure
+      - traefik.http.routers.oriana-api.tls=true
+      - traefik.http.routers.oriana-api.tls.certresolver=mytlschallenge
+      - traefik.http.services.oriana-api.loadbalancer.server.port=3000
+    networks:
+      - traefik
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  traefik:
+    external: true
+    name: root_default
