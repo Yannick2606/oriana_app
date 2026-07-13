@@ -9,11 +9,16 @@
 - [ ] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
-- PHASE 1 : en cours — T-00 à T-04 terminées.
+- PHASE 1 : en cours — T-00 à T-05 terminées.
 - PHASE 2 : non planifiée (ne pas coder).
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-13 — T-05 terminée**
+  - Validation réelle Grist réussie : préparation idempotente du schéma, création/lecture de la hiérarchie Site → Bâtiment → Cellule → Lot, puis suppression des données temporaires.
+  - La table `Ref_Familles` et ses six valeurs conformes à `SPEC.md` sont disponibles ; la table `Cellules` et les champs `gestionnaire` autorisés sont en place.
+  - CRUD REST des quatre ressources protégé côté serveur par l'agence et, pour un consultant, par son identifiant gestionnaire.
+  - Vérifications finales réussies : lint, 25 tests, contrôle des diffs et recherche de secrets en dur.
 - **2026-07-13 — T-05 : lecture Grist unitaire corrigée**
   - La préparation réelle du schéma patrimoine et de `Ref_Familles` a réussi.
   - La validation a révélé que l'API REST Grist ne fournit pas de route `GET /records/:id` ; le client utilisait donc une route inexistante et recevait 404.
