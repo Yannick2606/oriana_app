@@ -63,7 +63,11 @@ function memoryClient() {
       tables.get(table).push(record);
       return clone(record);
     },
-    async update() {},
+    async update(table, id, fields) {
+      const record = tables.get(table).find((item) => item.id === Number(id));
+      Object.assign(record.fields, clone(fields));
+      return clone(record);
+    },
     async delete() {},
   };
 }
@@ -102,6 +106,12 @@ test('le dictionnaire filtre simultanément par famille et niveau', async () => 
   assert.deepEqual(response.body.data.map((item) => item.libelle), ['Hauteur libre']);
 });
 
+test('le dictionnaire accepte aussi l’identifiant de famille porté par le bien', async () => {
+  const agent = await authenticatedAgent(memoryClient());
+  const response = await agent.get('/caracteristiques/dictionnaire?famille=2&niveau=cellule').expect(200);
+  assert.deepEqual(response.body.data.map((item) => item.libelle), ['Climatisation']);
+});
+
 test('une valeur se saisit puis se relit pour un bien autorisé', async () => {
   const agent = await authenticatedAgent(memoryClient());
 
@@ -118,6 +128,16 @@ test('une valeur se saisit puis se relit pour un bien autorisé', async () => {
   const listed = await agent.get('/caracteristiques-bien?niveau=cellule&id=20').expect(200);
   assert.equal(listed.body.data.length, 1);
   assert.equal(listed.body.data[0].valeur_nombre, 8.5);
+});
+
+test('une nouvelle saisie modifie la valeur existante sans créer de doublon', async () => {
+  const agent = await authenticatedAgent(memoryClient());
+  const body = { caracteristique_id: 10, niveau: 'cellule', cellule_id: 20 };
+  await agent.post('/caracteristiques-bien').send({ ...body, valeur_nombre: 8.5 }).expect(201);
+  await agent.post('/caracteristiques-bien').send({ ...body, valeur_nombre: 9.2 }).expect(201);
+  const listed = await agent.get('/caracteristiques-bien?niveau=cellule&id=20').expect(200);
+  assert.equal(listed.body.data.length, 1);
+  assert.equal(listed.body.data[0].valeur_nombre, 9.2);
 });
 
 test('un consultant ne lit ni ne qualifie le bien d’un autre consultant', async () => {
@@ -143,4 +163,14 @@ test('le type de valeur doit correspondre au dictionnaire', async () => {
     cellule_id: 20,
     valeur_texte: '8,5',
   }).expect(400, { error: 'INVALID_VALUE_TYPE' });
+});
+
+test('refuse une caractéristique appartenant à une autre famille', async () => {
+  const agent = await authenticatedAgent(memoryClient());
+  await agent.post('/caracteristiques-bien').send({
+    caracteristique_id: 11,
+    niveau: 'cellule',
+    cellule_id: 20,
+    valeur_bool: true,
+  }).expect(400, { error: 'INVALID_CHARACTERISTIC' });
 });

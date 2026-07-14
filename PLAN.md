@@ -132,7 +132,7 @@
 - Liste + fiche + création/édition de la hiérarchie.
 - **Acceptation** : on parcourt et édite la hiérarchie complète depuis l'UI.
 
-### [ ] T-17 : Formulaire de qualification dynamique (EAV)
+### [x] T-17 : Formulaire de qualification dynamique (EAV)
 - Le formulaire lit `GET /caracteristiques/dictionnaire` selon la famille du bien et le niveau,
   et n'affiche que les caractéristiques pertinentes. Saisie → `POST /caracteristiques-bien`.
 - **Acceptation** : un entrepôt et un plateau de bureaux affichent des champs différents, sans

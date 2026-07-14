@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Building2, ChevronRight, Factory, LandPlot, Pencil, Plus, RefreshCw, Warehouse } from 'lucide-react';
 import { patrimoineApi } from '../api/patrimoine';
 import { Badge, Breadcrumb, Button, Card, Checkbox, Drawer, EmptyState, Field, Input, Loader, Notification, PageHeader, Select, Textarea } from '../components/ui';
+import { QualificationPanel } from './QualificationPanel';
 
 const emptyData = { sites: [], batiments: [], cellules: [], lots: [] };
 const levels = [
@@ -14,6 +15,15 @@ const levels = [
 function numberOrEmpty(value) { return value === '' ? '' : Number(value); }
 function listIds(value) { return Array.isArray(value) ? value.filter((item) => item !== 'L').map(Number) : []; }
 function formatSurface(value) { return value || value === 0 ? `${Number(value).toLocaleString('fr-FR')} m²` : 'Surface non renseignée'; }
+function qualificationContext(entry, data) {
+  if (!entry) return null;
+  if (entry.resource === 'cellules') return entry.record.type_bien ? { niveau: 'cellule', famille: entry.record.type_bien } : null;
+  const relatedCells = entry.resource === 'lots'
+    ? data.cellules.filter((item) => listIds(entry.record.cellules).includes(Number(item.id)))
+    : entry.resource === 'batiments' ? data.cellules.filter((item) => Number(item.batiment_id) === Number(entry.record.id)) : [];
+  const families = [...new Set(relatedCells.map((item) => item.type_bien).filter(Boolean))];
+  return families.length === 1 ? { niveau: entry.resource === 'lots' ? 'lot' : 'batiment', famille: families[0] } : null;
+}
 
 function initialForm(resource, record, selection) {
   const base = { nom: record?.nom || '', numero: record?.numero || '', surface: record?.surface ?? '', divisible: Boolean(record?.divisible), en_bloc: Boolean(record?.en_bloc) };
@@ -101,6 +111,7 @@ export function PatrimoinePage() {
   }
 
   const selectedEntry = [...levels].reverse().map((level) => ({ resource: level.key, record: data[level.key].find((item) => item.id === selection[`${level.singular === 'bâtiment' ? 'batiment' : level.singular}Id`]) })).find((entry) => entry.record);
+  const qualification = qualificationContext(selectedEntry, data);
   async function save(payload) { setPending(true); setError(''); try { const response = editor.record ? await patrimoineApi.update(editor.resource, editor.record.id, payload) : await patrimoineApi.create(editor.resource, payload); await load(); setEditor(null); select(editor.resource, response.data.id); } catch { setError('L’enregistrement a échoué. Vérifiez les informations et votre périmètre.'); } finally { setPending(false); } }
 
   return <div className="space-y-7 animate-enter">
@@ -110,6 +121,7 @@ export function PatrimoinePage() {
     {!loading && data.sites.length === 0 ? <EmptyState title="Aucun site dans votre périmètre" description="Créez le premier site pour commencer la hiérarchie patrimoniale." action={<Button onClick={() => setEditor({ resource: 'sites', record: null })}><Plus size={16}/>Créer un site</Button>}/> : !loading && <>
       <div className="grid gap-3 xl:grid-cols-4">{levels.map((level, index) => { const selectedId = selection[`${level.singular === 'bâtiment' ? 'batiment' : level.singular}Id`]; return <Card key={level.key} className="min-h-56 p-3"><div className="mb-3 flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-wider text-oriana-lavande">Étape {index + 1}</p><h2 className="mt-1 font-titre text-lg">{level.label}</h2></div><Button variant="ghost" size="sm" aria-label={`Créer un ${level.singular}`} onClick={() => setEditor({ resource: level.key, record: null })}><Plus size={16}/></Button></div><div className="space-y-2">{visible[level.key].map((record) => <RecordButton key={record.id} record={record} icon={level.icon} active={selectedId === record.id} onClick={() => select(level.key, record.id)} subtitle={level.key === 'sites' ? formatSurface(record.surface_terrain) : level.key === 'batiments' ? formatSurface(record.surface_totale) : formatSurface(record.surface)}/>)}{visible[level.key].length === 0 && <p className="rounded-lg border border-dashed border-oriana-bordure p-4 text-center text-xs text-oriana-discret">Aucun élément à ce niveau.</p>}</div></Card>; })}</div>
       {selectedEntry && <Card><div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start"><div><div className="flex items-center gap-2"><Badge variant="accent">{levels.find((level) => level.key === selectedEntry.resource).singular}</Badge>{selectedEntry.record.numero && <Badge>N° {selectedEntry.record.numero}</Badge>}</div><h2 className="mt-3 font-titre text-2xl">{selectedEntry.record.nom}</h2><p className="mt-2 text-sm text-oriana-discret">{formatSurface(selectedEntry.record.surface ?? selectedEntry.record.surface_totale ?? selectedEntry.record.surface_terrain)}</p></div><Button variant="secondary" onClick={() => setEditor(selectedEntry)}><Pencil size={16}/>Modifier la fiche</Button></div><div className="mt-5 flex flex-wrap gap-2 text-xs text-oriana-discret"><span className="rounded-full bg-oriana-surfaceAlt px-3 py-1.5">Gestionnaire #{selectedEntry.record.gestionnaire || '—'}</span><span className="rounded-full bg-oriana-surfaceAlt px-3 py-1.5">Agence #{selectedEntry.record.agence_id || '—'}</span>{selectedEntry.record.divisible && <span className="rounded-full bg-oriana-violet/15 px-3 py-1.5 text-oriana-lavandeClair">Divisible</span>}</div></Card>}
+      {qualification && <QualificationPanel key={`${qualification.niveau}-${selectedEntry.record.id}-${qualification.famille}`} niveau={qualification.niveau} bienId={selectedEntry.record.id} famille={qualification.famille}/>}
       <div className="flex items-center gap-2 text-xs text-oriana-discret"><span>Site</span><ChevronRight size={13}/><span>Bâtiment</span><ChevronRight size={13}/><span>Cellule</span><ChevronRight size={13}/><span>Lot</span></div>
     </>}
     <Drawer open={Boolean(editor)} onClose={() => !pending && setEditor(null)} title={editor?.record ? `Modifier ${editor.record.nom}` : `Créer un ${levels.find((level) => level.key === editor?.resource)?.singular || ''}`}>{editor && <HeritageForm key={`${editor.resource}-${editor.record?.id || 'new'}`} {...editor} selection={selection} data={data} pending={pending} onCancel={() => setEditor(null)} onSave={save}/>}</Drawer>

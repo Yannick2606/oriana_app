@@ -80,6 +80,19 @@ export function createQualificationService(client) {
     return { asset, config };
   }
 
+  async function assetFamilyIds(niveau, asset, accessScope) {
+    if (niveau === 'cellule') {
+      return asset.fields.type_bien ? [String(asset.fields.type_bien)] : [];
+    }
+    if (niveau === 'lot') {
+      const cells = await Promise.all(listValues(asset.fields.cellules).map((id) => client.getById('Cellules', id)));
+      return [...new Set(cells.filter((cell) => cell && resourceMatchesScope(cell, accessScope)).map((cell) => cell.fields.type_bien).filter(Boolean).map(String))];
+    }
+    const filters = Object.fromEntries(Object.entries(accessScope).map(([field, value]) => [field, [value]]));
+    const cells = await client.list('Cellules', { ...filters, batiment_id: [asset.id] });
+    return [...new Set(cells.map((cell) => cell.fields.type_bien).filter(Boolean).map(String))];
+  }
+
   return {
     async dictionary(famille, niveau) {
       levelConfig(niveau);
@@ -87,11 +100,14 @@ export function createQualificationService(client) {
         throw new QualificationError('Famille requise', 400, 'FAMILY_REQUIRED');
       }
 
-      const families = await client.list('Ref_Familles', { code: [famille.trim()] });
-      if (families.length === 0) {
+      const familyReference = famille.trim();
+      const family = /^\d+$/.test(familyReference)
+        ? await client.getById('Ref_Familles', positiveId(familyReference))
+        : (await client.list('Ref_Familles', { code: [familyReference] }))[0];
+      if (!family) {
         return [];
       }
-      const familyId = String(families[0].id);
+      const familyId = String(family.id);
       const characteristics = await client.list('Ref_Caracteristiques');
       return characteristics.filter((record) => (
         listValues(record.fields.familles).includes(familyId)
@@ -122,7 +138,7 @@ export function createQualificationService(client) {
       }
 
       const assetId = positiveId(input[config.field]);
-      await requireScopedAsset(input.niveau, assetId, accessScope);
+      const { asset } = await requireScopedAsset(input.niveau, assetId, accessScope);
       const characteristic = await client.getById(
         'Ref_Caracteristiques',
         positiveId(input.caracteristique_id),
@@ -133,15 +149,29 @@ export function createQualificationService(client) {
       if (!listValues(characteristic.fields.niveaux).includes(input.niveau)) {
         throw new QualificationError('Caractéristique incompatible', 400, 'INVALID_CHARACTERISTIC');
       }
+      const familyIds = await assetFamilyIds(input.niveau, asset, accessScope);
+      if (familyIds.length > 0 && !familyIds.some((id) => listValues(characteristic.fields.familles).includes(id))) {
+        throw new QualificationError('Caractéristique incompatible avec la famille', 400, 'INVALID_CHARACTERISTIC');
+      }
 
       const value = serializeValue(input, characteristic);
-      return client.create('Caracteristiques_Bien', {
+      const recordData = {
         caracteristique_id: characteristic.id,
         niveau: input.niveau,
         [config.field]: assetId,
         ...value,
         agence_id: user.agence_id,
+      };
+      const existing = await client.list('Caracteristiques_Bien', {
+        agence_id: [user.agence_id],
+        niveau: [input.niveau],
+        [config.field]: [assetId],
+        caracteristique_id: [characteristic.id],
       });
+      if (existing.length > 0) {
+        return client.update('Caracteristiques_Bien', existing[0].id, value);
+      }
+      return client.create('Caracteristiques_Bien', recordData);
     },
   };
 }

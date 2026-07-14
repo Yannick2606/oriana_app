@@ -9,11 +9,18 @@
 - [x] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
-- PHASE 1 : en cours — T-00 à T-16 terminées.
+- PHASE 1 : en cours — T-00 à T-17 terminées.
 - PHASE 2 : non planifiée (ne pas coder).
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-17 terminée : qualification EAV dynamique**
+  - Les fiches Bâtiment, Cellule et Lot affichent les caractéristiques renvoyées par le dictionnaire backend selon la famille réelle du bien et son niveau ; aucun champ métier n'est codé en dur dans l'interface.
+  - Les types booléen, nombre, texte et liste pilotent automatiquement le contrôle affiché, avec unité et ordre issus du référentiel.
+  - Les valeurs existantes sont relues à l'ouverture puis enregistrées via le backend ; une nouvelle saisie remplace la valeur EAV existante au lieu de créer un doublon.
+  - Le dictionnaire accepte le code ou l'identifiant de famille porté par Grist, sans exposer de référentiel ni de clé Grist au frontend.
+  - Le backend refuse aussi les caractéristiques d'une autre famille lors d'un appel API direct et conserve les contrôles de niveau, de type, d'agence et de gestionnaire.
+  - Vérifications réussies : lint et 69 tests backend ; lint, build et 14 tests frontend, dont champs distincts logistique/bureaux, relecture et modification typée.
 - **2026-07-14 — T-16 terminée : écran patrimoine hiérarchique**
   - Le module Patrimoine remplace l'écran d'orientation et charge exclusivement les API backend sécurisées `sites`, `batiments`, `cellules` et `lots`.
   - L'explorateur en quatre niveaux permet de parcourir Site → Bâtiment → Cellule → Lot, avec filtrage immédiat des descendants et fiche synthétique de l'élément sélectionné.
