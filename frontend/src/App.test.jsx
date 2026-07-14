@@ -18,7 +18,7 @@ function renderApp(role, roles = [role]) {
 }
 
 test('affiche la vue d’ensemble dans la charte orIAna', async () => {
-  renderApp('manager');
+  renderApp('master_consultant');
   expect(await screen.findByRole('heading', { name: /Bienvenue, Julie/i })).toBeInTheDocument();
   expect(screen.getAllByLabelText(/orIAna/i).length).toBeGreaterThan(0);
 });
@@ -31,24 +31,24 @@ test('un consultant voit les modules métier mais jamais l’administration', as
   expect(screen.queryByRole('button', { name: 'Administration' })).not.toBeInTheDocument();
 });
 
-test('un manager voit le périmètre agence sans écran admin', async () => {
-  renderApp('manager');
-  expect(await screen.findByText(/activité de votre agence/i)).toBeInTheDocument();
+test('un master consultant voit le périmètre équipe sans écran admin', async () => {
+  renderApp('master_consultant');
+  expect(await screen.findByText(/celle de votre équipe/i)).toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Administration' })).not.toBeInTheDocument();
 });
 
-test('un admin accède à l’administration et peut ouvrir sa vue', async () => {
-  renderApp('admin');
+test('un admin d’agence accède à l’administration et peut ouvrir sa vue', async () => {
+  renderApp('admin_agence');
   const administration = await screen.findByRole('button', { name: 'Administration' });
   fireEvent.click(administration);
   expect(screen.getByRole('heading', { name: 'Administration' })).toBeInTheDocument();
 });
 
 test('un utilisateur multirôle change de rôle sans nouvelle connexion', async () => {
-  const client = renderApp('consultant', ['consultant', 'admin']);
+  const client = renderApp('consultant', ['consultant', 'admin_agence']);
   const switchers = await screen.findAllByRole('button', { name: /Consultant/ });
   fireEvent.click(switchers[0]);
-  fireEvent.click(screen.getByRole('menuitemradio', { name: 'Administrateur' }));
+  fireEvent.click(screen.getByRole('menuitemradio', { name: 'Administrateur d’agence' }));
   expect(await screen.findByRole('button', { name: 'Administration' })).toBeInTheDocument();
-  expect(client.changeRole).toHaveBeenCalledWith('admin');
+  expect(client.changeRole).toHaveBeenCalledWith('admin_agence');
 });

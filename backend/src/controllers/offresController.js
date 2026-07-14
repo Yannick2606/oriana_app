@@ -31,10 +31,10 @@ export function createOffresController(service) {
     },
     getOffer: resource((request) => service.getOffer(request.params.id, request.accessScope)),
     createOffer: resource((request) => service.createOffer(
-      request.body, request.session.user, request.accessScope,
+      request.body, request.session.user, request.writeScope,
     ), true),
     updateOffer: resource((request) => service.updateOffer(
-      request.params.id, request.body, request.accessScope,
+      request.params.id, request.body, request.writeScope,
     )),
     deleteOffer: async (request, response, next) => {
       try {
@@ -49,9 +49,9 @@ export function createOffresController(service) {
       } catch (error) { return handle(error, response, next); }
     },
     getCondition: resource((request) => service.getCondition(request.params.id, request.accessScope)),
-    createCondition: resource((request) => service.createCondition(request.body, request.accessScope), true),
+    createCondition: resource((request) => service.createCondition(request.body, request.writeScope), true),
     updateCondition: resource((request) => service.updateCondition(
-      request.params.id, request.body, request.accessScope,
+      request.params.id, request.body, request.writeScope,
     )),
     deleteCondition: async (request, response, next) => {
       try {

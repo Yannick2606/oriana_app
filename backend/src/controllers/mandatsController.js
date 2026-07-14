@@ -24,13 +24,13 @@ export function createMandatsController(service) {
     },
     async create(request, response, next) {
       try {
-        const record = await service.create(request.body, request.session.user, request.accessScope);
+        const record = await service.create(request.body, request.session.user, request.writeScope);
         return response.status(201).json({ data: serialize(record) });
       } catch (error) { return handle(error, response, next); }
     },
     async update(request, response, next) {
       try {
-        const record = await service.update(request.params.id, request.body, request.session.user, request.accessScope);
+        const record = await service.update(request.params.id, request.body, request.session.user, request.writeScope);
         return response.status(200).json({ data: serialize(record) });
       } catch (error) { return handle(error, response, next); }
     },

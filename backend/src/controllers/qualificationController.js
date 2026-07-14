@@ -40,7 +40,7 @@ export function createQualificationController(service) {
         const record = await service.createValue(
           request.body,
           request.session.user,
-          request.accessScope,
+          request.writeScope,
         );
         return response.status(201).json({ data: serialize(record) });
       } catch (error) {

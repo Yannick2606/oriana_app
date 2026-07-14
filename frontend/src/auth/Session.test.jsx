@@ -35,19 +35,19 @@ test('la connexion ouvre l’espace protégé sans stockage navigateur', async (
 
 test('un compte multirôle choisit le rôle actif avant ouverture', async () => {
   const ephemeralPassword = randomUUID();
-  const user = { id: 1, prenom: 'Julie', nom: 'Martin', roles: ['consultant', 'manager'], role_actif: 'manager' };
+  const user = { id: 1, prenom: 'Julie', nom: 'Martin', roles: ['consultant', 'master_consultant'], role_actif: 'master_consultant' };
   const client = {
     me: vi.fn().mockRejectedValue(new ApiError('Non authentifié', 401, {})),
-    login: vi.fn().mockResolvedValueOnce({ selection_role_requise: true, roles: ['consultant', 'manager'] }).mockResolvedValueOnce({ user }),
+    login: vi.fn().mockResolvedValueOnce({ selection_role_requise: true, roles: ['consultant', 'master_consultant'] }).mockResolvedValueOnce({ user }),
     logout: vi.fn(),
   };
   renderSession(client);
   fireEvent.change(await screen.findByLabelText('Adresse email'), { target: { value: 'julie@example.test' } });
   fireEvent.change(screen.getByLabelText('Mot de passe'), { target: { value: ephemeralPassword } });
   fireEvent.click(screen.getByRole('button', { name: /Se connecter/ }));
-  fireEvent.click(await screen.findByRole('button', { name: /Manager/ }));
+  fireEvent.click(await screen.findByRole('button', { name: /Master consultant/ }));
   await waitFor(() => expect(screen.getByText('Espace protégé')).toBeInTheDocument());
-  expect(client.login).toHaveBeenLastCalledWith({ email: 'julie@example.test', motDePasse: ephemeralPassword, roleActif: 'manager' });
+  expect(client.login).toHaveBeenLastCalledWith({ email: 'julie@example.test', motDePasse: ephemeralPassword, roleActif: 'master_consultant' });
 });
 
 test('un mot de passe provisoire impose son remplacement avant l’espace protégé', async () => {

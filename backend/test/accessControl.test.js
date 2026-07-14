@@ -10,8 +10,15 @@ import {
   scopeByRole,
 } from '../src/middlewares/scopeByRole.js';
 
-function securedOfferApp({ user, offer }) {
+function securedOfferApp({ user, offer, users = [] }) {
   const app = express();
+  app.locals.utilisateursClient = {
+    async list(_table, filters) {
+      return users.filter(({ fields }) => Object.entries(filters).every(
+        ([field, values]) => values.map(String).includes(String(fields[field])),
+      ));
+    },
+  };
 
   app.get(
     '/offres/:id',
@@ -58,8 +65,8 @@ test('un consultant accède à sa propre offre dans son agence', async () => {
     .expect(200, { id: 41 });
 });
 
-test('un manager reste limité à son agence', async () => {
-  const manager = { id: 2, role_actif: 'manager', agence_id: 3 };
+test('un directeur d’agence reste limité à son agence', async () => {
+  const manager = { id: 2, role_actif: 'directeur_agence', agence_id: 3 };
   const otherAgencyOffer = {
     id: 51,
     fields: { gestionnaire: 9, agence_id: 4 },
@@ -68,6 +75,55 @@ test('un manager reste limité à son agence', async () => {
   await request(securedOfferApp({ user: manager, offer: otherAgencyOffer }))
     .get('/offres/51')
     .expect(403);
+});
+
+test('un administrateur d’agence lit son agence mais pas une autre', async () => {
+  const admin = { id: 3, role_actif: 'admin_agence', agence_id: 3 };
+
+  await request(securedOfferApp({
+    user: admin,
+    offer: { id: 56, fields: { gestionnaire: 7, agence_id: 3 } },
+  })).get('/offres/56').expect(200, { id: 56 });
+
+  await request(securedOfferApp({
+    user: admin,
+    offer: { id: 57, fields: { gestionnaire: 7, agence_id: 4 } },
+  })).get('/offres/57').expect(403);
+});
+
+test('un master consultant lit les offres de son équipe active, sans élargir son agence', async () => {
+  const master = { id: 2, role_actif: 'master_consultant', agence_id: 3 };
+  const users = [
+    { id: 7, fields: { agence_id: 3, master_consultant_id: 2, actif: true } },
+    { id: 8, fields: { agence_id: 3, master_consultant_id: 9, actif: true } },
+    { id: 9, fields: { agence_id: 3, master_consultant_id: 2, actif: false } },
+  ];
+
+  await request(securedOfferApp({
+    user: master,
+    users,
+    offer: { id: 52, fields: { gestionnaire: 7, agence_id: 3 } },
+  })).get('/offres/52').expect(200, { id: 52 });
+
+  await request(securedOfferApp({
+    user: master,
+    users,
+    offer: { id: 53, fields: { gestionnaire: 8, agence_id: 3 } },
+  })).get('/offres/53').expect(403);
+
+  await request(securedOfferApp({
+    user: master,
+    users,
+    offer: { id: 54, fields: { gestionnaire: 9, agence_id: 3 } },
+  })).get('/offres/54').expect(403);
+});
+
+test('le super admin ne reçoit aucun accès implicite aux données métier', async () => {
+  const superAdmin = { id: 1, role_actif: 'super_admin', agence_id: 3 };
+  await request(securedOfferApp({
+    user: superAdmin,
+    offer: { id: 55, fields: { gestionnaire: 7, agence_id: 3 } },
+  })).get('/offres/55').expect(403);
 });
 
 test('une route métier refuse une requête sans session', async () => {

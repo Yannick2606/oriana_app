@@ -165,7 +165,7 @@ test('un consultant ne crée pas d’offre sur le lot d’un autre et ne lit pas
   });
 });
 
-test('seuls manager et admin suppriment une offre et ses conditions', async () => {
+test('seuls directeur et admin d’agence suppriment une offre et ses conditions', async () => {
   const client = memoryClient();
   const agent = await authenticatedAgent(client);
   const offer = await agent.post('/offres').send({ lot_id: 10, nature: 'vente' }).expect(201);
@@ -174,7 +174,7 @@ test('seuls manager et admin suppriment une offre et ses conditions', async () =
   }).expect(201);
   await agent.delete(`/offres/${offer.body.data.id}`).expect(403);
 
-  const manager = { ...consultant, id: 2, roles: ['manager'], role_actif: 'manager' };
+  const manager = { ...consultant, id: 2, roles: ['directeur_agence'], role_actif: 'directeur_agence' };
   const managerAgent = await authenticatedAgent(client, manager);
   await managerAgent.delete(`/offres/${offer.body.data.id}`).expect(200, { status: 'ok' });
   assert.equal(client.tables.get('Conditions_Financieres').length, 0);

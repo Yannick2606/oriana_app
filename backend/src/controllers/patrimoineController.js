@@ -32,7 +32,7 @@ export function createPatrimoineController(resource, service) {
           resource,
           request.body,
           request.session.user,
-          request.accessScope,
+          request.writeScope,
         );
         return response.status(201).json({ data: serialize(record) });
       } catch (error) {
@@ -42,7 +42,7 @@ export function createPatrimoineController(resource, service) {
 
     async update(request, response, next) {
       try {
-        const record = await service.update(resource, request.params.id, request.body, request.accessScope);
+        const record = await service.update(resource, request.params.id, request.body, request.writeScope);
         return response.status(200).json({ data: serialize(record) });
       } catch (error) {
         return handleError(error, response, next);

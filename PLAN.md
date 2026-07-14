@@ -153,13 +153,13 @@
 
 ## Jalon 4 — Consolidation
 
-### [~] T-22A : Hiérarchie des rôles et rattachement d'équipe
+### [x] T-22A : Hiérarchie des rôles et rattachement d'équipe
 - Migrer `manager` vers `master_consultant` et `admin` vers `admin_agence`, ajouter
   `directeur_agence` et `super_admin`, ainsi que `master_consultant_id` sur les utilisateurs.
 - **Acceptation** : migration idempotente et sauvegardée ; rattachement uniquement entre un
   consultant et un master consultant actif de la même agence ; promotion super admin explicite.
 
-### [ ] T-22B : Autorisations équipe, agence et plateforme
+### [x] T-22B : Autorisations équipe, agence et plateforme
 - Consultant : ses données ; master consultant : son équipe ; directeur et admin d'agence :
   leur agence ; super admin : administration globale sans accès métier implicite.
 - **Acceptation** : cloisonnements testés par appels API directs pour les cinq rôles.

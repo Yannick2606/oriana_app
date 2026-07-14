@@ -1,31 +1,57 @@
+import { gristClient } from '../services/gristClient.js';
+import { normalizeRoleNames } from '../services/roleModel.js';
+
 function sameReference(left, right) {
-  return left !== undefined && left !== null && String(left) === String(right);
+  return left !== undefined && left !== null && (Array.isArray(right)
+    ? right.some((value) => String(left) === String(value)) : String(left) === String(right));
 }
 
-export function buildAccessScope(user) {
+export function buildAccessScope(user, teamIds = []) {
   if (!user?.agence_id || !user?.role_actif) {
     return null;
   }
 
-  if (user.role_actif === 'consultant') {
+  const role = normalizeRoleNames(user.role_actif)[0];
+  if (role === 'consultant') {
     return { agence_id: user.agence_id, gestionnaire: user.id };
   }
-
-  if (user.role_actif === 'manager' || user.role_actif === 'admin') {
+  if (role === 'master_consultant') {
+    return { agence_id: user.agence_id, gestionnaire: [user.id, ...teamIds] };
+  }
+  if (role === 'directeur_agence' || role === 'admin_agence') {
     return { agence_id: user.agence_id };
   }
 
   return null;
 }
 
-export function scopeByRole(request, response, next) {
-  const accessScope = buildAccessScope(request.session?.user);
+export function buildWriteScope(user) {
+  const role = normalizeRoleNames(user?.role_actif)[0];
+  if (role === 'consultant' || role === 'master_consultant') return { agence_id: user.agence_id, gestionnaire: user.id };
+  if (role === 'directeur_agence' || role === 'admin_agence') return { agence_id: user.agence_id };
+  return null;
+}
+
+export async function scopeByRole(request, response, next) {
+  const user = request.session?.user;
+  const role = normalizeRoleNames(user?.role_actif)[0];
+  let teamIds = [];
+  try {
+    if (role === 'master_consultant') {
+      const client = request.app.locals.utilisateursClient || gristClient;
+      const members = await client.list('Utilisateurs', { agence_id: [user.agence_id], master_consultant_id: [user.id], actif: [true] });
+      teamIds = members.map((member) => member.id);
+    }
+  } catch (error) { return next(error); }
+  const accessScope = buildAccessScope(user, teamIds);
 
   if (!accessScope) {
     return response.status(403).json({ error: 'FORBIDDEN' });
   }
 
   request.accessScope = accessScope;
+  request.writeScope = buildWriteScope(user);
+  user.equipe_ids = teamIds;
   return next();
 }
 

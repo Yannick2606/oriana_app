@@ -88,7 +88,7 @@ export function createQualificationService(client) {
       const cells = await Promise.all(listValues(asset.fields.cellules).map((id) => client.getById('Cellules', id)));
       return [...new Set(cells.filter((cell) => cell && resourceMatchesScope(cell, accessScope)).map((cell) => cell.fields.type_bien).filter(Boolean).map(String))];
     }
-    const filters = Object.fromEntries(Object.entries(accessScope).map(([field, value]) => [field, [value]]));
+    const filters = Object.fromEntries(Object.entries(accessScope).map(([field, value]) => [field, Array.isArray(value) ? value : [value]]));
     const cells = await client.list('Cellules', { ...filters, batiment_id: [asset.id] });
     return [...new Set(cells.map((cell) => cell.fields.type_bien).filter(Boolean).map(String))];
   }

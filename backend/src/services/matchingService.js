@@ -30,7 +30,7 @@ export function createMatchingService(client) {
 
       const [matches, lots] = await Promise.all([
         client.list('Matching_demandes_lots', { demande_id: [id] }),
-        client.list('Lots', Object.fromEntries(Object.entries(accessScope).map(([field, value]) => [field, [value]]))),
+        client.list('Lots', Object.fromEntries(Object.entries(accessScope).map(([field, value]) => [field, Array.isArray(value) ? value : [value]]))),
       ]);
       const allowedLots = new Set(lots.filter((lot) => resourceMatchesScope(lot, accessScope)).map((lot) => String(lot.id)));
       return matches

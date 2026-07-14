@@ -102,7 +102,7 @@ test('refuse une nature incompatible et une période inversée', async () => {
   }).expect(400, { error: 'INVALID_NATURE' });
 });
 
-test('un consultant ne lit pas le mandat d’un autre et seul un manager supprime', async () => {
+test('un consultant ne lit pas le mandat d’un autre et seul un directeur supprime', async () => {
   const client = memoryClient();
   const other = await client.create('Mandats', {
     offre_id: 11, societe_mandante: 20, type: 'simple', nature: 'vente', agence_id: 3,
@@ -112,12 +112,12 @@ test('un consultant ne lit pas le mandat d’un autre et seul un manager supprim
   await consultantAgent.get(`/mandats/${other.id}`).expect(403, { error: 'FORBIDDEN' });
   await consultantAgent.delete(`/mandats/${other.id}`).expect(403);
 
-  const manager = { ...consultant, id: 2, roles: ['manager'], role_actif: 'manager' };
+  const manager = { ...consultant, id: 2, roles: ['directeur_agence'], role_actif: 'directeur_agence' };
   const managerAgent = await agentFor(client, manager);
   await managerAgent.delete(`/mandats/${other.id}`).expect(200, { status: 'ok' });
 });
 
-test('un mandat partagé reste modifiable par son gestionnaire et le manager seulement', async () => {
+test('un mandat partagé reste modifiable par son gestionnaire et le directeur seulement', async () => {
   const client = memoryClient();
   const owner = await client.create('Mandats', {
     offre_id: 10, societe_mandante: 20, type: 'simple', nature: 'vente', agence_id: 3,
@@ -130,6 +130,6 @@ test('un mandat partagé reste modifiable par son gestionnaire et le manager seu
   await colleagueAgent.put(`/mandats/${owner.id}`).send({ honoraires_montant: 10 }).expect(403);
   await ownerAgent.put(`/mandats/${owner.id}`).send({ donnee_exclusive: true })
     .expect(403, { error: 'EXCLUSIVITY_FORBIDDEN' });
-  const managerAgent = await agentFor(client, { ...consultant, id: 2, roles: ['manager'], role_actif: 'manager' });
+  const managerAgent = await agentFor(client, { ...consultant, id: 2, roles: ['directeur_agence'], role_actif: 'directeur_agence' });
   await managerAgent.put(`/mandats/${owner.id}`).send({ donnee_exclusive: true }).expect(200);
 });

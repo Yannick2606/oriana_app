@@ -1,5 +1,7 @@
+import { normalizeRoleNames } from './roleModel.js';
+
 export function estManager(user) {
-  return user?.role_actif === 'manager' || user?.role_actif === 'admin';
+  return ['directeur_agence', 'admin_agence'].includes(normalizeRoleNames(user?.role_actif)[0]);
 }
 
 function memeReference(left, right) {
@@ -14,9 +16,14 @@ export function estGestionnaire(record, user) {
   return memeReference(record?.fields?.gestionnaire, user?.id);
 }
 
+function estDansEquipe(record, user) {
+  return normalizeRoleNames(user?.role_actif)[0] === 'master_consultant'
+    && user.equipe_ids?.some((id) => memeReference(record?.fields?.gestionnaire, id));
+}
+
 export function peutLire(record, user) {
   return memeAgence(record, user)
-    && (estManager(user) || estGestionnaire(record, user) || record.fields.donnee_exclusive === false);
+    && (estManager(user) || estGestionnaire(record, user) || estDansEquipe(record, user) || record.fields.donnee_exclusive === false);
 }
 
 export function peutEcrire(record, user) {

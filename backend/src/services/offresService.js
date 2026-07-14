@@ -25,7 +25,7 @@ export class OffresError extends Error {
 }
 
 function filtersForGrist(scope) {
-  return Object.fromEntries(Object.entries(scope).map(([field, value]) => [field, [value]]));
+  return Object.fromEntries(Object.entries(scope).map(([field, value]) => [field, Array.isArray(value) ? value : [value]]));
 }
 
 function objectInput(input) {

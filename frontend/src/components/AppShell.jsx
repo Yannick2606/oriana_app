@@ -5,7 +5,16 @@ import { Avatar, Badge, Button, SearchBar, Tooltip } from './ui';
 import { branding } from '../config/branding';
 
 const navigationIcons = { dashboard: LayoutDashboard, building: Building2, briefcase: BriefcaseBusiness, contacts: ContactRound, matching: Sparkles, bot: Bot, settings: Settings };
-const roleLabels = { consultant: 'Consultant', manager: 'Manager', admin: 'Administrateur', client: 'Client' };
+const roleLabels = {
+  consultant: 'Consultant',
+  master_consultant: 'Master consultant',
+  directeur_agence: 'Directeur d’agence',
+  admin_agence: 'Administrateur d’agence',
+  super_admin: 'Super administrateur',
+  manager: 'Master consultant',
+  admin: 'Administrateur d’agence',
+  client: 'Client',
+};
 
 function RoleSwitcher({ user, onRoleChange }) {
   const [open, setOpen] = useState(false);

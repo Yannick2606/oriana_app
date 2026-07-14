@@ -30,7 +30,11 @@ const pageDescriptions = {
 };
 
 function Dashboard({ user, onHelp }) {
-  const scope = user.role_actif === 'consultant' ? 'vos données' : user.role_actif === 'manager' ? 'l’activité de votre agence' : 'les données et référentiels de votre agence';
+  const scope = user.role_actif === 'consultant'
+    ? 'vos données'
+    : ['manager', 'master_consultant'].includes(user.role_actif)
+      ? 'votre activité et celle de votre équipe'
+      : 'les données et référentiels de votre agence';
   return <div className="space-y-7 animate-enter">
     <Breadcrumb items={['Accueil']}/>
     <PageHeader eyebrow="Vue d’ensemble" title={`Bienvenue, ${user.prenom || 'à vous'} 👋`} description={`Voici les informations utiles pour suivre ${scope} et identifier la prochaine action.`} actions={<><HelpButton onClick={onHelp}/><Button><Plus size={17}/>Nouvelle opportunité</Button></>}/>
@@ -57,7 +61,7 @@ export default function App() {
   const [helpOpen, setHelpOpen] = useState(false);
   const [activePage, setActivePage] = useState('accueil');
   const navigation = navigationForRole(user.role_actif);
-  const safeActivePage = canNavigateTo(user.role_actif, activePage) ? activePage : 'accueil';
+  const safeActivePage = canNavigateTo(user.role_actif, activePage) ? activePage : navigation[0]?.id;
 
   return <AppShell theme={theme} onToggleTheme={toggleTheme} collapsed={collapsed} onToggleCollapsed={() => setCollapsed((value) => !value)} mobileOpen={mobileOpen} onToggleMobile={() => setMobileOpen((value) => !value)} user={user} onLogout={logout} onRoleChange={changeRole} navigation={navigation} activePage={safeActivePage} onNavigate={setActivePage}>
     {safeActivePage === 'accueil' ? <Dashboard user={user} onHelp={() => setHelpOpen(true)}/> : safeActivePage === 'patrimoine' ? <PatrimoinePage/> : safeActivePage === 'offres' ? <OffresPage/> : safeActivePage === 'crm' || safeActivePage === 'matching' ? <CrmPage/> : safeActivePage === 'agents' ? <AgentsPage/> : <ModuleOrientation page={safeActivePage} onBack={() => setActivePage('accueil')}/>}

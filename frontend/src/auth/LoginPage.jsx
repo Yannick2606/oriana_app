@@ -6,7 +6,11 @@ import { Logo } from '../components/Logo';
 import { useTheme } from '../hooks/useTheme';
 import { useSession } from './sessionContext';
 
-const roleLabels = { consultant: 'Consultant', manager: 'Manager', admin: 'Administrateur', client: 'Client' };
+const roleLabels = {
+  consultant: 'Consultant', master_consultant: 'Master consultant', directeur_agence: 'Directeur d’agence',
+  admin_agence: 'Administrateur d’agence', super_admin: 'Super administrateur',
+  manager: 'Master consultant', admin: 'Administrateur d’agence', client: 'Client',
+};
 
 function errorMessage(error) {
   const code = error instanceof ApiError ? error.details?.error : null;

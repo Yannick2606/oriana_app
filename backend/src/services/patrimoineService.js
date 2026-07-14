@@ -20,7 +20,7 @@ function configFor(resource) {
 
 function filtersForGrist(accessScope) {
   return Object.fromEntries(
-    Object.entries(accessScope).map(([field, value]) => [field, [value]]),
+    Object.entries(accessScope).map(([field, value]) => [field, Array.isArray(value) ? value : [value]]),
   );
 }
 

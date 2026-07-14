@@ -22,7 +22,7 @@ function memoryClient() {
 const consultantA = { id: 7, roles: ['consultant'], role_actif: 'consultant', agence_id: 3 };
 const consultantB = { id: 8, roles: ['consultant'], role_actif: 'consultant', agence_id: 3 };
 const autreAgence = { id: 9, roles: ['consultant'], role_actif: 'consultant', agence_id: 4 };
-const manager = { id: 2, roles: ['manager'], role_actif: 'manager', agence_id: 3 };
+const manager = { id: 2, roles: ['directeur_agence'], role_actif: 'directeur_agence', agence_id: 3 };
 
 async function agentFor(client, user) {
   const agent = request.agent(createApp({ patrimoineClient: client, crmClient: client,
@@ -70,7 +70,7 @@ test('maintient le cloisonnement inter-agences même après partage', async () =
   await outsider.get(`/societes/${company.id}`).expect(403);
 });
 
-test('refuse un contact incohérent et réserve la suppression au manager', async () => {
+test('refuse un contact incohérent et réserve la suppression au directeur', async () => {
   const client = memoryClient(); const owner = await agentFor(client, consultantA);
   const first = await parcours(client, owner);
   const second = (await owner.post('/societes').send({ raison_sociale: 'Seconde' }).expect(201)).body.data;

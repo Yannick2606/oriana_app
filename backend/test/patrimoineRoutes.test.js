@@ -17,6 +17,7 @@ function memoryClient() {
     ['Cellules', []],
     ['Lots', []],
     ['Adresses', []],
+    ['Utilisateurs', []],
   ]);
   let nextId = 1;
 
@@ -52,6 +53,7 @@ function memoryClient() {
 function appFor(client, user) {
   return createApp({
     patrimoineClient: client,
+    utilisateursClient: client,
     sessionSecret: randomBytes(32).toString('hex'),
     authService: {
       async login() {
@@ -126,6 +128,30 @@ test('un consultant ne liste pas le patrimoine d’un autre consultant', async (
   await agent.put(`/sites/${otherSite.id}`).send({ nom: 'Intrus' }).expect(403);
 });
 
+test('un master consultant lit son équipe mais ne modifie pas ses données', async () => {
+  const client = memoryClient();
+  const teamSite = await client.create('Sites', { nom: 'Équipe', agence_id: 3, gestionnaire: 8 });
+  const outsideSite = await client.create('Sites', { nom: 'Hors équipe', agence_id: 3, gestionnaire: 9 });
+  client.tables.get('Utilisateurs').push(
+    { id: 8, fields: { agence_id: 3, master_consultant_id: 2, actif: true } },
+    { id: 9, fields: { agence_id: 3, master_consultant_id: 5, actif: true } },
+  );
+  const master = {
+    ...consultantA,
+    id: 2,
+    roles: ['master_consultant'],
+    role_actif: 'master_consultant',
+  };
+  const agent = await authenticatedAgent(client, master);
+
+  await agent.get(`/sites/${teamSite.id}`).expect(200);
+  await agent.get(`/sites/${outsideSite.id}`).expect(403);
+  await agent.put(`/sites/${teamSite.id}`).send({ nom: 'Modification interdite' }).expect(403);
+
+  client.tables.get('Utilisateurs')[0].fields.master_consultant_id = 5;
+  await agent.get(`/sites/${teamSite.id}`).expect(403);
+});
+
 test('une relation vers le patrimoine d’un autre consultant est refusée', async () => {
   const client = memoryClient();
   const otherSite = await client.create('Sites', { nom: 'Autre', agence_id: 3, gestionnaire: 8 });
@@ -161,7 +187,7 @@ test('les champs agence et gestionnaire ne peuvent pas être usurpés', async ()
   }).expect(400, { error: 'SERVER_MANAGED_FIELD' });
 });
 
-test('seuls manager et admin peuvent supprimer dans leur agence', async () => {
+test('seuls directeur et admin d’agence peuvent supprimer dans leur agence', async () => {
   const client = memoryClient();
   const ownSite = await client.create('Sites', { nom: 'À moi', agence_id: 3, gestionnaire: 7 });
   const consultantAgent = await authenticatedAgent(client, consultantA);
@@ -171,8 +197,8 @@ test('seuls manager et admin peuvent supprimer dans leur agence', async () => {
   const manager = {
     ...consultantA,
     id: 2,
-    roles: ['manager'],
-    role_actif: 'manager',
+    roles: ['directeur_agence'],
+    role_actif: 'directeur_agence',
   };
   const managerAgent = await authenticatedAgent(client, manager);
   await managerAgent.delete(`/sites/${ownSite.id}`).expect(200, { status: 'ok' });
