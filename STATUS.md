@@ -14,6 +14,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-15A terminée : premier mot de passe obligatoire validé sur Grist**
+  - Le workflow manuel « Vérification utilisateurs Grist » #4 a réussi sur `main` au commit `7db44be` en 28 secondes.
+  - La migration a été exécutée deux fois avec succès, confirmant son idempotence sur l'instance Grist réelle.
+  - La sauvegarde de structure a été produite et conservée comme artefact du workflow.
+  - La création et la réinitialisation administrateur imposent désormais le remplacement du mot de passe provisoire à la première connexion.
 - **2026-07-14 — T-15A implémentée localement, validation Grist réelle requise**
   - Migration versionnée `001-utilisateurs-premier-mot-de-passe` ajoutant le booléen `doit_changer_mot_de_passe` sans modifier les comptes existants.
   - Le workflow sauvegarde la structure de la table Utilisateurs avant migration, conserve l'artefact 30 jours et exécute deux fois la préparation pour vérifier son idempotence.
