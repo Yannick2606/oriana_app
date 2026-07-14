@@ -53,6 +53,29 @@ test('le callback protégé termine le traitement puis le statut restitue le ré
   assert.equal(status.body.data.resultat, JSON.stringify({ message: 'ok' }));
 });
 
+test('le callback n8n reste accessible sans session utilisateur', async () => {
+  const dataClient = client();
+  dataClient.tables.get('Traitements_Agents').push({
+    id: 99,
+    fields: { suivi_id: 'suivi-sans-session', statut_traitement: 'en_attente' },
+  });
+  const app = createApp({
+    patrimoineClient: dataClient,
+    agentsClient: dataClient,
+    agentsOptions: {
+      webhookBaseUrl: 'https://n8n.example.invalid',
+      sharedSecret: 'test-shared-secret',
+      backendPublicUrl: 'https://api.example.invalid',
+    },
+    sessionSecret: randomBytes(32).toString('hex'),
+  });
+
+  await request(app).post('/agents/callback').set('X-Oriana-Secret', 'test-shared-secret')
+    .send({ suivi_id: 'suivi-sans-session', statut: 'termine', resultat: { message: 'ok' } })
+    .expect(202);
+  assert.equal(dataClient.tables.get('Traitements_Agents')[0].fields.statut_traitement, 'termine');
+});
+
 test('refuse un faux secret, un agent inconnu et une demande hors périmètre', async () => {
   const dataClient = client(); const agent = await agentFor(dataClient);
   await agent.post('/agents/callback').set('X-Oriana-Secret', 'wrong-secret').send({}).expect(401);

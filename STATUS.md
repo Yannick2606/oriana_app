@@ -14,6 +14,12 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-12 : interception du callback par un routeur générique corrigée localement**
+  - Le test HTTP du middleware isolé répond 204 alors que le même appel via `createApp` répondait 401 : le secret et son transport n'étaient donc pas en cause.
+  - Le routeur de qualification, monté à la racine avant les routes agents, appliquait `requireAuth` à `/agents/callback` et exigeait à tort une session utilisateur avant le contrôle n8n.
+  - Les routes agents sont désormais montées avant les routeurs racine ; leur déclenchement et leur statut conservent leurs propres contrôles de session et de périmètre.
+  - Un test de régression vérifie qu'un callback porteur du bon secret fonctionne sans session utilisateur ; lint backend et 61 tests réussissent.
+  - Correctif non publié : T-12 reste ouverte jusqu'à autorisation, redéploiement, rotation du secret exposé et succès du contrôle réel complet.
 - **2026-07-14 — T-12 : résolution tardive du secret de callback à valider sur le VPS**
   - Le correctif précédent est bien déployé, mais le test HTTP interne reproduit encore un refus `401` alors que le middleware isolé accepte la même variable.
   - La route résout désormais le secret partagé au moment de chaque requête au lieu de conserver la valeur capturée lors de l'initialisation.

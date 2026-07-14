@@ -68,6 +68,16 @@ export function createApp({
   }));
   app.use(healthRoutes);
   app.use('/auth', createAuthRoutes(createAuthController(authService)));
+  const resolvedAgentsOptions = {
+    webhookBaseUrl: agentsOptions?.webhookBaseUrl ?? process.env.N8N_WEBHOOK_BASE_URL,
+    sharedSecret: agentsOptions?.sharedSecret ?? process.env.N8N_SHARED_SECRET,
+    backendPublicUrl: agentsOptions?.backendPublicUrl ?? process.env.BACKEND_PUBLIC_URL,
+    fetchImplementation: agentsOptions?.fetchImplementation ?? fetch,
+  };
+  app.use(createAgentsRoutes(
+    createAgentsController(createAgentsService(agentsClient, resolvedAgentsOptions)),
+    () => resolvedAgentsOptions.sharedSecret,
+  ));
   const patrimoineService = createPatrimoineService(patrimoineClient);
   for (const resource of patrimoineResources) {
     const controller = createPatrimoineController(resource, patrimoineService);
@@ -87,16 +97,5 @@ export function createApp({
   app.use('/utilisateurs', createUtilisateursRoutes(
     createUtilisateursController(createUtilisateursService(utilisateursClient)),
   ));
-  const resolvedAgentsOptions = {
-    webhookBaseUrl: agentsOptions?.webhookBaseUrl ?? process.env.N8N_WEBHOOK_BASE_URL,
-    sharedSecret: agentsOptions?.sharedSecret ?? process.env.N8N_SHARED_SECRET,
-    backendPublicUrl: agentsOptions?.backendPublicUrl ?? process.env.BACKEND_PUBLIC_URL,
-    fetchImplementation: agentsOptions?.fetchImplementation ?? fetch,
-  };
-  app.use(createAgentsRoutes(
-    createAgentsController(createAgentsService(agentsClient, resolvedAgentsOptions)),
-    () => resolvedAgentsOptions.sharedSecret,
-  ));
-
   return app;
 }
