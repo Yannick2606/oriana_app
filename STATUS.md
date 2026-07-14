@@ -9,11 +9,17 @@
 - [x] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
-- PHASE 1 : en cours — T-00 à T-18 terminées.
+- PHASE 1 : en cours — T-00 à T-19 terminées.
 - PHASE 2 : non planifiée (ne pas coder).
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-19 terminée : parcours CRM et matching**
+  - Le module CRM propose le parcours Société → Contact → Demande avec listes contextuelles, création et modification via les API backend sécurisées.
+  - Les formulaires respectent les relations société/contact, les natures de transaction, fourchettes de surface et budget et critères spécifiques du schéma.
+  - La sélection d'une demande charge son matching calculé par Grist et affiche les lots autorisés dans l'ordre de score renvoyé par le backend.
+  - Les entrées CRM et Matching de la navigation ouvrent ce même parcours unifié sans appel direct du frontend à Grist.
+  - Vérifications réussies : lint et 69 tests backend ; lint, build et 19 tests frontend, dont parcours complet et création d'un contact rattaché.
 - **2026-07-14 — T-18 terminée : offres et conditions financières**
   - Le module Offres charge les offres, leurs conditions et les lots associés exclusivement via le backend sécurisé.
   - La liste ouvre une fiche détaillée modifiable avec lot, nature, occupation, contrat et stade de commercialisation ; une nouvelle offre peut être créée depuis un lot du périmètre.

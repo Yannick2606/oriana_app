@@ -142,7 +142,7 @@
 - Fiche offre affichant les conditions selon la nature (vente / location / les deux).
 - **Acceptation** : une offre double-nature affiche correctement ses deux jeux de conditions.
 
-### [ ] T-19 : Écrans CRM (Societes, Contacts, Demandes) + matching
+### [x] T-19 : Écrans CRM (Societes, Contacts, Demandes) + matching
 - CRUD CRM + affichage des résultats de matching pour une demande.
 - **Acceptation** : parcours complet société→contact→demande→matching visible.
 

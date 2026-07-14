@@ -1,0 +1,9 @@
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { beforeEach, expect, test, vi } from 'vitest';
+import { crmApi } from '../api/crm';
+import { CrmPage } from './CrmPage';
+vi.mock('../api/crm',()=>({crmApi:{listAll:vi.fn(),create:vi.fn(),update:vi.fn(),matching:vi.fn()}}));
+const data={societes:[{id:1,raison_sociale:'Nova Conseil'}],contacts:[{id:2,societe_id:1,prenom:'Léa',nom:'Durand'}],demandes:[{id:3,societe_id:1,contact_id:2,nature_transaction:'location',secteur_geo:'Paris'}],lots:[{id:4,nom:'Lot Opéra'}]};
+beforeEach(()=>{crmApi.listAll.mockResolvedValue(data);crmApi.matching.mockResolvedValue({data:[{id:5,demande_id:3,lot_id:4,score_global:91}]});crmApi.create.mockResolvedValue({data:{id:6}});crmApi.update.mockResolvedValue({data:{id:1}});});
+test('parcourt société, contact, demande puis affiche le matching',async()=>{render(<CrmPage/>);await screen.findAllByText('Nova Conseil');fireEvent.click(screen.getByRole('button',{name:/Léa Durand/}));fireEvent.click(screen.getByRole('button',{name:/location · Paris/}));expect(await screen.findByText('Lot Opéra')).toBeInTheDocument();expect(screen.getByText('91%')).toBeInTheDocument();expect(crmApi.matching).toHaveBeenCalledWith(3);});
+test('crée un contact rattaché à la société sélectionnée',async()=>{render(<CrmPage/>);await screen.findAllByText('Nova Conseil');fireEvent.click(screen.getByRole('button',{name:'Créer un contact'}));fireEvent.change(screen.getByLabelText('Nom'),{target:{value:'Martin'}});fireEvent.click(screen.getByRole('button',{name:'Enregistrer'}));await waitFor(()=>expect(crmApi.create).toHaveBeenCalledWith('contacts',expect.objectContaining({nom:'Martin',societe_id:1})));});
