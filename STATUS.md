@@ -9,11 +9,17 @@
 - [x] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
-- PHASE 1 : en cours — T-00 à T-20 terminées.
+- PHASE 1 : en cours — T-00 à T-21 terminées.
 - PHASE 2 : non planifiée (ne pas coder).
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-21 terminée : revue de sécurité PHASE 1**
+  - Les six règles non négociables d'`AGENTS.md` ont été contrôlées et consignées dans `SECURITY_REVIEW.md` ; aucun écart n'a été trouvé.
+  - Aucun secret, jeton, mot de passe en clair ou clé privée n'est présent dans les fichiers suivis ; les fichiers `.env` restent ignorés.
+  - Le frontend ne contient aucun accès Grist/n8n et ne stocke aucune donnée sensible dans le navigateur ; toutes les autorisations restent appliquées côté serveur.
+  - Les mots de passe utilisent bcrypt avec coût 12 et remplacement initial obligatoire ; le callback n8n utilise un secret d'environnement comparé en temps constant.
+  - Dix-sept tests ciblés de cloisonnement consultant, hors périmètre et inter-agences sont verts, ainsi que les 69 tests backend et 20 tests frontend complets, les lints et le build.
 - **2026-07-14 — T-20 terminée : agent asynchrone depuis l'interface**
   - Le module Agents IA permet de choisir une demande lisible et de déclencher l'agent de démonstration via le backend uniquement.
   - L'interface affiche immédiatement l'état en cours sans bloquer l'application, puis interroge légèrement le statut jusqu'à `termine` ou `erreur`.

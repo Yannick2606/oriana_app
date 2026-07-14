@@ -153,7 +153,7 @@
 
 ## Jalon 4 — Consolidation
 
-### [ ] T-21 : Revue de sécurité PHASE 1
+### [x] T-21 : Revue de sécurité PHASE 1
 - Vérifier chaque règle d'AGENTS.md §1. Rejouer le test de cloisonnement consultant.
 - Vérifier qu'aucun secret n'est présent dans le dépôt (grep).
 - **Acceptation** : toutes les règles de sécurité vérifiées ; test de cloisonnement vert ;
