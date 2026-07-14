@@ -9,11 +9,17 @@
 - [x] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
-- PHASE 1 : en cours — T-00 à T-22D terminées ; clôture documentaire T-22 restante.
+- PHASE 1 : terminée — T-00 à T-22 et extensions T-22A à T-22D validées.
 - PHASE 2 : non planifiée (ne pas coder).
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-22 terminée : PHASE 1 clôturée**
+  - Le README permet à un tiers de configurer, installer, lancer, migrer et vérifier le monorepo sans dépendre de l'historique des échanges.
+  - Les cinq rôles, le changement obligatoire du mot de passe initial, les périmètres d'équipe/agence et l'Auto-formation sont documentés.
+  - La phase 1 livre le backend sécurisé, les modules métier et leurs interfaces, le contrat n8n asynchrone, l'administration hiérarchique et les migrations Grist sauvegardées.
+  - Prêts pour une future planification de phase 2 : jeu de données fictif 77/95, historique des négociations, enrichissements métier, agents supplémentaires, observabilité et déploiement industrialisé.
+  - Aucun développement de phase 2 ou de la cible n'est engagé par cette clôture.
 - **2026-07-14 — T-22D terminée : Auto-formation validée sur Grist**
   - Le workflow « Vérification utilisateurs Grist #7 » a réussi sur le commit correctif `04286c0` en 23 secondes.
   - La migration 003 est confirmée idempotente sur l'instance réelle ; le champ `progression_formation` est disponible et l'artefact de sauvegarde du schéma a été produit.

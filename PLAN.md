@@ -181,7 +181,7 @@
 - **Acceptation** : toutes les règles de sécurité vérifiées ; test de cloisonnement vert ;
   aucun secret trouvé.
 
-### [ ] T-22 : README + STATUS final PHASE 1
+### [x] T-22 : README + STATUS final PHASE 1
 - README : comment installer, configurer `.env`, lancer backend et frontend.
 - STATUS.md : PHASE 1 close, liste de ce qui est prêt pour PHASE 2.
 - **Acceptation** : un tiers peut installer et lancer le projet en suivant le README.
