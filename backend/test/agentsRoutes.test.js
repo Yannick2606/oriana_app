@@ -3,6 +3,7 @@ import { randomBytes } from 'node:crypto';
 import test from 'node:test';
 import request from 'supertest';
 import { createApp } from '../src/app.js';
+import { createRequireN8nSecret } from '../src/middlewares/requireN8nSecret.js';
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
 function client() {
@@ -57,4 +58,12 @@ test('refuse un faux secret, un agent inconnu et une demande hors périmètre', 
   await agent.post('/agents/callback').set('X-Oriana-Secret', 'wrong-secret').send({}).expect(401);
   await agent.post('/agents/inconnu/declencher').send({ objet_type: 'demande', objet_id: 20 }).expect(404, { error: 'UNKNOWN_AGENT' });
   await agent.post('/agents/demonstration/declencher').send({ objet_type: 'demande', objet_id: 21 }).expect(403, { error: 'FORBIDDEN' });
+});
+
+test('résout le secret du callback au moment de la requête', () => {
+  let expected = 'premier-secret';
+  const middleware = createRequireN8nSecret(() => expected);
+  const response = { status() { throw new Error('Le secret courant devait être accepté'); } };
+  expected = 'secret-actualise';
+  middleware({ get: () => 'secret-actualise' }, response, () => {});
 });

@@ -95,7 +95,7 @@ export function createApp({
   };
   app.use(createAgentsRoutes(
     createAgentsController(createAgentsService(agentsClient, resolvedAgentsOptions)),
-    resolvedAgentsOptions.sharedSecret,
+    () => resolvedAgentsOptions.sharedSecret,
   ));
 
   return app;

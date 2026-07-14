@@ -14,6 +14,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-12 : résolution tardive du secret de callback à valider sur le VPS**
+  - Le correctif précédent est bien déployé, mais le test HTTP interne reproduit encore un refus `401` alors que le middleware isolé accepte la même variable.
+  - La route résout désormais le secret partagé au moment de chaque requête au lieu de conserver la valeur capturée lors de l'initialisation.
+  - Un test de non-régression couvre cette résolution tardive ; lint backend et 60 tests réussissent.
+  - T-12 reste ouverte jusqu'au redéploiement, à la rotation du secret exposé et au succès du contrôle réel complet.
 - **2026-07-14 — T-12 : correctif de configuration du callback à valider sur le VPS**
   - Le contrôle réel a reproduit un refus `401` du callback, y compris lors d'un appel interne au conteneur backend avec sa propre variable d'environnement.
   - Le démarrage de production transmet désormais explicitement la configuration n8n à l'application ; le service sortant et le middleware de callback utilisent ainsi la même valeur résolue.
