@@ -14,6 +14,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-24 prête à publier : correction du build Docker frontend**
+  - Le premier build VPS a révélé que `.dockerignore` excluait le dossier `frontend`, rendant les instructions `COPY frontend/...` impossibles.
+  - Les conteneurs existants n'ont pas été remplacés : BuildKit a interrompu l'opération avant le déploiement.
+  - Le contexte inclut désormais les sources frontend mais continue d'ignorer son artefact local `dist` ; la procédure charge explicitement le `.env` racine.
+  - Vérifications réussies : lint et 83 tests backend, lint, build et 23 tests frontend ; le contrôle Docker final doit être rejoué sur le VPS équipé du moteur Docker.
 - **2026-07-14 — T-23 prête à publier : préparation du déploiement frontend**
   - L'API limite CORS à l'origine exacte configurée, accepte les cookies de session et refuse les origines navigateur inconnues.
   - La procédure VPS couvre le DNS `oriana.boreal.immo`, les variables publiques de build, Docker/Traefik et les contrôles fonctionnels après déploiement.

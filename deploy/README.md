@@ -23,8 +23,8 @@ déploiement, renseigner notamment :
 Depuis la racine du dépôt sur le VPS :
 
 ```sh
-docker compose -f deploy/docker-compose.yml up -d --build
-docker compose -f deploy/docker-compose.yml ps
+docker compose --env-file .env -f deploy/docker-compose.yml up -d --build
+docker compose --env-file .env -f deploy/docker-compose.yml ps
 ```
 
 Contrôle attendu : `https://api.boreal.immo/health` répond `{"status":"ok"}`.

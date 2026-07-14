@@ -4,6 +4,6 @@
 !.env.example
 node_modules
 **/node_modules
-frontend
+frontend/dist
 deploy
 *.log

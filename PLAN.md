@@ -192,6 +192,12 @@
 - **Acceptation** : tests CORS verts et procédure reproductible pour publier
   `oriana.boreal.immo` sans exposer de secret.
 
+### [x] T-24 : Corriger le contexte Docker de déploiement
+- Inclure les sources frontend dans le contexte de build tout en excluant `frontend/dist`.
+- Charger explicitement le `.env` racine lors des commandes Compose.
+- **Acceptation** : les Dockerfiles disposent de tous leurs fichiers sources et Compose reçoit
+  les variables publiques sans les inscrire dans le dépôt.
+
 ---
 
 ## Rappels transverses (valables pour toutes les tâches)
