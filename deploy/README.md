@@ -19,6 +19,10 @@ déploiement, renseigner notamment :
 - `FRONTEND_HOST=oriana.boreal.immo` ;
 - `VITE_API_BASE_URL=https://api.boreal.immo` ;
 - `VITE_ORGANIZATION_NAME` avec le nom affiché actuel, modifiable sans refonte du code.
+- `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=465`, `SMTP_USER` et `MAIL_FROM` avec l'adresse
+  Google Workspace d'envoi ;
+- `SMTP_APP_PASSWORD` avec un mot de passe d'application Google, jamais le mot de passe du compte ;
+- `FRONTEND_PUBLIC_URL=https://oriana.boreal.immo`.
 
 Depuis la racine du dépôt sur le VPS :
 

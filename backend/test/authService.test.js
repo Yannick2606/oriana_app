@@ -119,3 +119,67 @@ test('changeInitialPassword remplace le hash et lève uniquement le blocage requ
   assert.equal(readFields().doit_changer_mot_de_passe, false);
   assert.equal(await bcrypt.compare(newPassword, readFields().mot_de_passe_hash), true);
 });
+
+test('la demande de réinitialisation stocke seulement le hash du jeton et envoie le lien', async () => {
+  const fields = { email: 'test@example.invalid', actif: true };
+  let sent;
+  const usersClient = {
+    async list() { return [{ id: 7, fields: { ...fields } }]; },
+    async update(table, id, changes) { Object.assign(fields, changes); return { id, fields: { ...fields } }; },
+  };
+  const service = createAuthService({
+    usersClient,
+    createToken: () => 'jeton-secret-de-reinitialisation-1234567890',
+    now: () => new Date('2026-07-14T12:00:00.000Z'),
+    mailer: { async sendPasswordReset(message) { sent = message; } },
+  });
+  await service.requestPasswordReset({ email: 'TEST@example.invalid' });
+  assert.equal(sent.recipient, 'test@example.invalid');
+  assert.equal(sent.token, 'jeton-secret-de-reinitialisation-1234567890');
+  assert.notEqual(fields.reset_mot_de_passe_hash, sent.token);
+  assert.equal(fields.reset_mot_de_passe_hash.length, 64);
+  assert.equal(fields.reset_mot_de_passe_expiration, '2026-07-14T12:30:00.000Z');
+});
+
+test('une adresse inconnue reçoit la même réponse sans envoi de message', async () => {
+  let sent = false;
+  const service = createAuthService({
+    usersClient: { async list() { return []; } },
+    mailer: { async sendPasswordReset() { sent = true; } },
+  });
+  await service.requestPasswordReset({ email: 'inconnu@example.invalid' });
+  assert.equal(sent, false);
+});
+
+test('une demande encore valide ne renvoie pas plusieurs e-mails', async () => {
+  let sent = false;
+  const service = createAuthService({
+    usersClient: { async list() { return [{ id: 7, fields: { actif: true, reset_mot_de_passe_expiration: '2026-07-14T12:30:00.000Z' } }]; } },
+    now: () => new Date('2026-07-14T12:10:00.000Z'),
+    mailer: { async sendPasswordReset() { sent = true; } },
+  });
+  await service.requestPasswordReset({ email: 'test@example.invalid' });
+  assert.equal(sent, false);
+});
+
+test('un jeton valide remplace le mot de passe une seule fois et un jeton expiré est refusé', async () => {
+  const token = 'jeton-secret-de-reinitialisation-1234567890';
+  const { createHash } = await import('node:crypto');
+  const fields = {
+    actif: true,
+    reset_mot_de_passe_hash: createHash('sha256').update(token).digest('hex'),
+    reset_mot_de_passe_expiration: '2026-07-14T12:30:00.000Z',
+  };
+  const usersClient = {
+    async list(table, filters) {
+      return filters.reset_mot_de_passe_hash?.[0] === fields.reset_mot_de_passe_hash ? [{ id: 7, fields: { ...fields } }] : [];
+    },
+    async update(table, id, changes) { Object.assign(fields, changes); return { id, fields: { ...fields } }; },
+  };
+  const service = createAuthService({ usersClient, now: () => new Date('2026-07-14T12:10:00.000Z') });
+  const newPassword = randomBytes(24).toString('hex');
+  await service.resetPassword({ token, newPassword });
+  assert.equal(await bcrypt.compare(newPassword, fields.mot_de_passe_hash), true);
+  assert.equal(fields.reset_mot_de_passe_hash, '');
+  await assert.rejects(service.resetPassword({ token, newPassword }), (error) => error.code === 'INVALID_RESET_TOKEN');
+});

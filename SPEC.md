@@ -57,7 +57,8 @@ Le `agence_id` de l'utilisateur connecté filtre systématiquement toutes les re
 ### Utilisateurs
 `id` PK · `nom` · `prenom` · `email` (unique) · `mot_de_passe_hash` (bcrypt) · `roles` enum
 multiple (consultant|manager|admin|client) · `agence_id` FK→Agences · `actif` bool ·
-`derniere_connexion` · `doit_changer_mot_de_passe` bool.
+`derniere_connexion` · `doit_changer_mot_de_passe` bool · `reset_mot_de_passe_hash` texte
+(SHA-256) · `reset_mot_de_passe_expiration` texte (ISO 8601).
 > L'API expose `roles` ; la colonne technique existante dans Grist reste `role` (ChoiceList).
 > **Action Grist requise** : ajouter `mot_de_passe_hash` (absent aujourd'hui). Voir PLAN T-01.
 > Un utilisateur peut cumuler plusieurs rôles. S'il en possède plusieurs, il choisit un
@@ -181,6 +182,11 @@ les appels serveur sans en-tête `Origin` restent possibles pour n8n et les cont
 - `POST /auth/mot-de-passe/premiere-connexion` — body `{ nouveau_mot_de_passe }` ; uniquement
   pour une session portant `doit_changer_mot_de_passe=true`. Hache la nouvelle valeur avec
   bcrypt, désactive le drapeau puis met à jour la session.
+- `POST /auth/mot-de-passe/demande` — body `{ email }` ; répond toujours de façon générique,
+  crée un jeton aléatoire valable 30 minutes pour un compte actif et envoie le lien par SMTP.
+  Grist ne conserve que le hash SHA-256 du jeton.
+- `POST /auth/mot-de-passe/reinitialisation` — body `{ token, nouveau_mot_de_passe }` ; vérifie
+  le hash et l'expiration, remplace le hash bcrypt puis invalide immédiatement le jeton.
 
 ### Middleware (à appliquer sur toutes les routes protégées)
 - `requireAuth` — rejette 401 si pas de session valide.

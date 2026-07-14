@@ -14,6 +14,12 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-26 prête à publier : réinitialisation sécurisée par e-mail**
+  - La page de connexion propose désormais « Mot de passe oublié » sans révéler si l'adresse existe.
+  - Le backend génère un jeton aléatoire valable 30 minutes, conserve seulement son hash SHA-256 dans Grist et l'invalide après remplacement bcrypt.
+  - L'envoi utilise Google Workspace SMTP avec un mot de passe d'application fourni uniquement dans le `.env` du VPS.
+  - La migration 004 ajoute les deux champs techniques après sauvegarde du schéma ; la validation réelle Grist et l'envoi réel restent à exécuter après publication.
+  - Vérifications locales réussies : lint et 88 tests backend, lint, build et 24 tests frontend.
 - **2026-07-14 — T-25 prête à publier : droits temporaires du frontend**
   - Le build T-24 a réussi et le backend est sain ; le frontend redémarre avant de servir l'interface.
   - Les journaux Nginx montrent un refus lors de la création de `/var/cache/nginx/client_temp` : le tmpfs monté à l'exécution appartient à root alors que l'image utilise `USER nginx`.

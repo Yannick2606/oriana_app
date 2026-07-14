@@ -77,3 +77,20 @@ test('un mot de passe provisoire bloque les routes hors authentification jusquâ€
   await agent.get('/route-metier-inconnue').expect(404);
   assert.equal((await agent.get('/auth/me').expect(200)).body.user.doit_changer_mot_de_passe, false);
 });
+
+test('les routes publiques demandent puis appliquent une rÃ©initialisation', async () => {
+  const calls = [];
+  const app = createApp({
+    sessionSecret: randomBytes(32).toString('hex'),
+    authService: {
+      async requestPasswordReset(payload) { calls.push(['request', payload]); },
+      async resetPassword(payload) { calls.push(['reset', payload]); },
+    },
+  });
+  await request(app).post('/auth/mot-de-passe/demande').send({ email: 'test@example.invalid' }).expect(202, { status: 'accepted' });
+  await request(app).post('/auth/mot-de-passe/reinitialisation').send({ token: 'token', nouveau_mot_de_passe: 'mot-de-passe' }).expect(200, { status: 'ok' });
+  assert.deepEqual(calls, [
+    ['request', { email: 'test@example.invalid' }],
+    ['reset', { token: 'token', newPassword: 'mot-de-passe' }],
+  ]);
+});

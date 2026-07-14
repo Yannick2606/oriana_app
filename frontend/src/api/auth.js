@@ -11,5 +11,10 @@ export const authApi = {
   changeInitialPassword: (newPassword) => api.post('/auth/mot-de-passe/premiere-connexion', {
     nouveau_mot_de_passe: newPassword,
   }),
+  requestPasswordReset: (email) => api.post('/auth/mot-de-passe/demande', { email }),
+  resetPassword: ({ token, newPassword }) => api.post('/auth/mot-de-passe/reinitialisation', {
+    token,
+    nouveau_mot_de_passe: newPassword,
+  }),
   logout: () => api.post('/auth/logout', {}),
 };

@@ -98,5 +98,28 @@ export function createAuthController(authService) {
         return next(error);
       }
     },
+
+    async requestPasswordReset(request, response, next) {
+      try {
+        await authService.requestPasswordReset({ email: request.body?.email });
+        return response.status(202).json({ status: 'accepted' });
+      } catch (error) {
+        if (error instanceof AuthError) return response.status(error.status).json({ error: error.code });
+        return next(error);
+      }
+    },
+
+    async resetPassword(request, response, next) {
+      try {
+        await authService.resetPassword({
+          token: request.body?.token,
+          newPassword: request.body?.nouveau_mot_de_passe,
+        });
+        return response.status(200).json({ status: 'ok' });
+      } catch (error) {
+        if (error instanceof AuthError) return response.status(error.status).json({ error: error.code });
+        return next(error);
+      }
+    },
   };
 }

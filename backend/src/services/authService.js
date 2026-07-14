@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt';
+import { createHash, randomBytes } from 'node:crypto';
 
 import { gristClient } from './gristClient.js';
+import { mailService } from './mailService.js';
 import { normalizeRoleNames } from './roleModel.js';
 
 export class AuthError extends Error {
@@ -32,7 +34,18 @@ function publicUser(record, roles, roleActif) {
   };
 }
 
-export function createAuthService({ usersClient = gristClient, passwordComparer = bcrypt.compare, passwordHasher = (password) => bcrypt.hash(password, 12) } = {}) {
+function tokenHash(token) {
+  return createHash('sha256').update(token).digest('hex');
+}
+
+export function createAuthService({
+  usersClient = gristClient,
+  passwordComparer = bcrypt.compare,
+  passwordHasher = (password) => bcrypt.hash(password, 12),
+  mailer = mailService,
+  createToken = () => randomBytes(32).toString('hex'),
+  now = () => new Date(),
+} = {}) {
   return {
     async login({ email, motDePasse, roleActif }) {
       const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
@@ -113,6 +126,47 @@ export function createAuthService({ usersClient = gristClient, passwordComparer 
       });
       const roles = normalizeRoles(updated.fields.roles ?? updated.fields.role);
       return publicUser(updated, roles, roleActif);
+    },
+
+    async requestPasswordReset({ email }) {
+      const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+      if (!normalizedEmail) throw new AuthError('Adresse email requise', 400, 'INVALID_REQUEST');
+
+      const records = await usersClient.list('Utilisateurs', { email: [normalizedEmail] });
+      const userRecord = records.find((record) => record.fields.actif === true);
+      if (!userRecord) return;
+      const existingExpiration = Date.parse(userRecord.fields.reset_mot_de_passe_expiration || '');
+      if (Number.isFinite(existingExpiration) && existingExpiration > now().getTime()) return;
+
+      const token = createToken();
+      const expiration = new Date(now().getTime() + 30 * 60 * 1000).toISOString();
+      await usersClient.update('Utilisateurs', userRecord.id, {
+        reset_mot_de_passe_hash: tokenHash(token),
+        reset_mot_de_passe_expiration: expiration,
+      });
+      await mailer.sendPasswordReset({ recipient: normalizedEmail, token });
+    },
+
+    async resetPassword({ token, newPassword }) {
+      if (typeof token !== 'string' || token.length < 32) {
+        throw new AuthError('Lien invalide', 400, 'INVALID_RESET_TOKEN');
+      }
+      if (typeof newPassword !== 'string' || newPassword.length < 12) {
+        throw new AuthError('Mot de passe trop court', 400, 'WEAK_PASSWORD');
+      }
+      const records = await usersClient.list('Utilisateurs', { reset_mot_de_passe_hash: [tokenHash(token)] });
+      const userRecord = records[0];
+      const expiration = Date.parse(userRecord?.fields?.reset_mot_de_passe_expiration || '');
+      if (!userRecord || userRecord.fields.actif !== true || !Number.isFinite(expiration) || expiration <= now().getTime()) {
+        throw new AuthError('Lien invalide ou expiré', 400, 'INVALID_RESET_TOKEN');
+      }
+      const passwordHash = await passwordHasher(newPassword);
+      await usersClient.update('Utilisateurs', userRecord.id, {
+        mot_de_passe_hash: passwordHash,
+        doit_changer_mot_de_passe: false,
+        reset_mot_de_passe_hash: '',
+        reset_mot_de_passe_expiration: '',
+      });
     },
   };
 }

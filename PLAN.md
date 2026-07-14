@@ -203,6 +203,13 @@
 - Conserver le système de fichiers en lecture seule et `no-new-privileges`.
 - **Acceptation** : Nginx peut créer son cache et son PID sans exécution en root.
 
+### [~] T-26 : Réinitialisation sécurisée par e-mail
+- Ajouter « Mot de passe oublié », un lien unique valable 30 minutes et l'écran de remplacement.
+- Envoyer via Google Workspace SMTP avec un mot de passe d'application uniquement dans `.env`.
+- Stocker seulement le hash du jeton dans Grist et l'invalider après usage.
+- **Acceptation** : aucune adresse n'est divulguée, le jeton est à usage unique et le nouveau
+  mot de passe bcrypt permet la connexion.
+
 ---
 
 ## Rappels transverses (valables pour toutes les tâches)
