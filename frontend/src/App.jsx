@@ -6,6 +6,7 @@ import { Badge, Breadcrumb, Button, Card, EmptyState, HelpButton, Modal, Notific
 import { useTheme } from './hooks/useTheme';
 import { canNavigateTo, navigationForRole } from './navigation/navigation';
 import { PatrimoinePage } from './patrimoine/PatrimoinePage';
+import { OffresPage } from './offres/OffresPage';
 
 const rows = [
   { id: 1, lot: 'Lot A — Roissy', usage: 'Logistique', surface: '12 450 m²', statut: 'Disponible' },
@@ -57,7 +58,7 @@ export default function App() {
   const safeActivePage = canNavigateTo(user.role_actif, activePage) ? activePage : 'accueil';
 
   return <AppShell theme={theme} onToggleTheme={toggleTheme} collapsed={collapsed} onToggleCollapsed={() => setCollapsed((value) => !value)} mobileOpen={mobileOpen} onToggleMobile={() => setMobileOpen((value) => !value)} user={user} onLogout={logout} onRoleChange={changeRole} navigation={navigation} activePage={safeActivePage} onNavigate={setActivePage}>
-    {safeActivePage === 'accueil' ? <Dashboard user={user} onHelp={() => setHelpOpen(true)}/> : safeActivePage === 'patrimoine' ? <PatrimoinePage/> : <ModuleOrientation page={safeActivePage} onBack={() => setActivePage('accueil')}/>}
+    {safeActivePage === 'accueil' ? <Dashboard user={user} onHelp={() => setHelpOpen(true)}/> : safeActivePage === 'patrimoine' ? <PatrimoinePage/> : safeActivePage === 'offres' ? <OffresPage/> : <ModuleOrientation page={safeActivePage} onBack={() => setActivePage('accueil')}/>}
     <Modal open={helpOpen} onClose={() => setHelpOpen(false)} title="Votre vue d’ensemble"><p className="text-sm leading-6 text-oriana-discret">Cette page rassemble les informations de votre périmètre actif. Les menus visibles facilitent l’accès ; les autorisations restent systématiquement contrôlées par le backend.</p><Button className="mt-5" onClick={() => setHelpOpen(false)}>J’ai compris</Button></Modal>
   </AppShell>;
 }

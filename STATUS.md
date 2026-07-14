@@ -9,11 +9,17 @@
 - [x] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
-- PHASE 1 : en cours — T-00 à T-17 terminées.
+- PHASE 1 : en cours — T-00 à T-18 terminées.
 - PHASE 2 : non planifiée (ne pas coder).
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-18 terminée : offres et conditions financières**
+  - Le module Offres charge les offres, leurs conditions et les lots associés exclusivement via le backend sécurisé.
+  - La liste ouvre une fiche détaillée modifiable avec lot, nature, occupation, contrat et stade de commercialisation ; une nouvelle offre peut être créée depuis un lot du périmètre.
+  - Une offre vente ou location présente le jeu de conditions correspondant ; une offre `vente_et_location` affiche simultanément deux blocs clairement séparés.
+  - Les conditions vente et location sont créées ou modifiées indépendamment avec prix, loyers, charges, dépôt, taxes, taux et disponibilité prévus par le schéma.
+  - Vérifications réussies : lint et 69 tests backend ; lint, build et 17 tests frontend, dont double nature, modification indépendante de la vente et création d'une offre de location.
 - **2026-07-14 — T-17 terminée : qualification EAV dynamique**
   - Les fiches Bâtiment, Cellule et Lot affichent les caractéristiques renvoyées par le dictionnaire backend selon la famille réelle du bien et son niveau ; aucun champ métier n'est codé en dur dans l'interface.
   - Les types booléen, nombre, texte et liste pilotent automatiquement le contrôle affiché, avec unité et ordre issus du référentiel.

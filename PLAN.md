@@ -138,7 +138,7 @@
 - **Acceptation** : un entrepôt et un plateau de bureaux affichent des champs différents, sans
   code en dur ; les valeurs se sauvegardent et se relisent.
 
-### [ ] T-18 : Écran offres (dont double nature) + conditions
+### [x] T-18 : Écran offres (dont double nature) + conditions
 - Fiche offre affichant les conditions selon la nature (vente / location / les deux).
 - **Acceptation** : une offre double-nature affiche correctement ses deux jeux de conditions.
 
