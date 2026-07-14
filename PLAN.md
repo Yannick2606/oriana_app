@@ -128,7 +128,7 @@
 - **Acceptation** : un compte créé ou réinitialisé par l'admin ne peut accéder à aucune route
   métier avant le changement ; il y accède après modification et le drapeau repasse à `false`.
 
-### [ ] T-16 : Écran patrimoine (Site→Bâtiment→Cellule→Lot)
+### [x] T-16 : Écran patrimoine (Site→Bâtiment→Cellule→Lot)
 - Liste + fiche + création/édition de la hiérarchie.
 - **Acceptation** : on parcourt et édite la hiérarchie complète depuis l'UI.
 

@@ -9,11 +9,18 @@
 - [x] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
-- PHASE 1 : en cours — T-00 à T-15 terminées.
+- PHASE 1 : en cours — T-00 à T-16 terminées.
 - PHASE 2 : non planifiée (ne pas coder).
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-16 terminée : écran patrimoine hiérarchique**
+  - Le module Patrimoine remplace l'écran d'orientation et charge exclusivement les API backend sécurisées `sites`, `batiments`, `cellules` et `lots`.
+  - L'explorateur en quatre niveaux permet de parcourir Site → Bâtiment → Cellule → Lot, avec filtrage immédiat des descendants et fiche synthétique de l'élément sélectionné.
+  - Chaque niveau peut être créé depuis son contexte ; le parent courant est présélectionné et les lots couvrent aussi le cas du terrain nu rattaché directement à un site.
+  - Les fiches sont modifiables dans un panneau latéral responsive, sans appel direct à Grist et sans déplacer les contrôles d'autorisation hors du backend.
+  - La qualification dynamique reste volontairement hors de T-16 et sera ajoutée par T-17.
+  - Vérifications réussies : lint et 66 tests backend ; lint, build et 12 tests frontend, dont parcours complet, création d'un bâtiment et édition d'un lot.
 - **2026-07-14 — T-15A terminée : premier mot de passe obligatoire validé sur Grist**
   - Le workflow manuel « Vérification utilisateurs Grist » #4 a réussi sur `main` au commit `7db44be` en 28 secondes.
   - La migration a été exécutée deux fois avec succès, confirmant son idempotence sur l'instance Grist réelle.
