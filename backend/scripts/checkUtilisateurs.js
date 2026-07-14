@@ -12,11 +12,12 @@ try {
   if (!agency) throw new Error('Une agence est requise.');
   const suffix = Date.now().toString(36); const password = randomBytes(18).toString('hex');
   const service = createUtilisateursService(gristClient);
+  const adminAgence = { id: 0, role_actif: 'admin_agence', agence_id: agency.id };
   temporaryEmail = `test-t11-${suffix}@example.invalid`;
   const publicUser = await service.create({
     nom: 'TEST-T11', prenom: suffix, email: temporaryEmail,
     roles: ['consultant', 'manager'], agence_id: agency.id, actif: true, mot_de_passe: password,
-  });
+  }, adminAgence);
   created = publicUser.id;
   const stored = await gristClient.getById('Utilisateurs', created);
   if (!stored?.fields.mot_de_passe_hash || !(await bcrypt.compare(password, stored.fields.mot_de_passe_hash))) {
@@ -26,14 +27,14 @@ try {
     throw new Error('Le changement de mot de passe initial doit être obligatoire.');
   }
   const resetPassword = randomBytes(18).toString('hex');
-  await service.resetPassword(created, resetPassword);
+  await service.resetPassword(created, resetPassword, adminAgence);
   const resetStored = await gristClient.getById('Utilisateurs', created);
   if (resetStored.fields.doit_changer_mot_de_passe !== true
     || !(await bcrypt.compare(resetPassword, resetStored.fields.mot_de_passe_hash))) {
     throw new Error('La réinitialisation administrateur est invalide.');
   }
   if ('mot_de_passe_hash' in publicUser) throw new Error('Le hash a été exposé.');
-  const disabled = await service.update(created, { actif: false });
+  const disabled = await service.update(created, { actif: false }, adminAgence);
   if (disabled.actif !== false || 'mot_de_passe_hash' in disabled) throw new Error('Désactivation ou réponse invalide.');
   console.log('Utilisateur réel créé avec hash bcrypt, désactivé et relu sans exposition du hash.');
 } finally {

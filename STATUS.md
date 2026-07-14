@@ -14,6 +14,10 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-22D : correctif du contrôle réel utilisateurs**
+  - Le workflow #6 a bien exécuté la migration 003 et conservé l'artefact de sauvegarde, puis a échoué dans le contrôle historique T-11.
+  - Cause : `checkUtilisateurs.js` n'envoyait pas le contexte administrateur rendu obligatoire par T-22C lors des appels directs au service.
+  - Le script utilise désormais explicitement un administrateur d'agence pour créer, réinitialiser et désactiver son compte temporaire de niveau inférieur.
 - **2026-07-14 — T-22D en cours : parcours adaptatif prêt à valider sur Grist**
   - Un parcours s'ouvre à la première connexion et adapte ses étapes au rôle actif parmi les cinq rôles hiérarchiques.
   - L'utilisateur peut passer, reprendre, terminer ou recommencer depuis l'espace permanent « Auto-formation » ; la progression est distincte pour chaque rôle.
