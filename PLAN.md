@@ -170,7 +170,7 @@
   attribue `super_admin`.
 - **Acceptation** : aucun rôle ne peut administrer son niveau ou un niveau supérieur.
 
-### [~] T-22D : Parcours adaptatif et espace Auto-formation
+### [x] T-22D : Parcours adaptatif et espace Auto-formation
 - Présentation à la première connexion, progression distincte par rôle, possibilité de passer,
   reprendre et relancer depuis l'espace Auto-formation.
 - **Acceptation** : chacun des cinq rôles obtient un parcours adapté à ses droits réels.

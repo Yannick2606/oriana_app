@@ -9,11 +9,16 @@
 - [x] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
-- PHASE 1 : en cours — T-00 à T-21 terminées.
+- PHASE 1 : en cours — T-00 à T-22D terminées ; clôture documentaire T-22 restante.
 - PHASE 2 : non planifiée (ne pas coder).
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-22D terminée : Auto-formation validée sur Grist**
+  - Le workflow « Vérification utilisateurs Grist #7 » a réussi sur le commit correctif `04286c0` en 23 secondes.
+  - La migration 003 est confirmée idempotente sur l'instance réelle ; le champ `progression_formation` est disponible et l'artefact de sauvegarde du schéma a été produit.
+  - Le contrôle réel de création, réinitialisation et désactivation d'un utilisateur de niveau inférieur est également réussi avec le contexte d'administrateur d'agence.
+  - L'avertissement de compatibilité Node.js des actions GitHub est non bloquant et ne remet pas en cause les contrôles exécutés.
 - **2026-07-14 — T-22D : correctif du contrôle réel utilisateurs**
   - Le workflow #6 a bien exécuté la migration 003 et conservé l'artefact de sauvegarde, puis a échoué dans le contrôle historique T-11.
   - Cause : `checkUtilisateurs.js` n'envoyait pas le contexte administrateur rendu obligatoire par T-22C lors des appels directs au service.
