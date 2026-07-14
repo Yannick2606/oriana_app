@@ -9,11 +9,21 @@
 - [x] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
-- PHASE 1 : en cours — T-00 à T-14 terminées.
+- PHASE 1 : en cours — T-00 à T-15 terminées.
 - PHASE 2 : non planifiée (ne pas coder).
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-15 terminée : navigation selon le rôle actif**
+  - Matrice de navigation centralisée pour les trois rôles internes de PHASE 1 ; elle s'appuie uniquement sur le `role_actif` renvoyé par la session.
+  - Consultant, manager et admin accèdent aux modules métier prévus : Accueil, Patrimoine, Offres, CRM, Matching et Agents IA.
+  - L'entrée Administration est strictement réservée à l'admin dans l'interface ; consultant et manager ne la voient jamais. Les autorisations réelles restent contrôlées par le backend.
+  - Un sélecteur de rôle dans le profil et la sidebar permet aux comptes multirôles de basculer sans ressaisir leur mot de passe ; `POST /auth/role` relit préalablement le compte actif et ses rôles dans Grist.
+  - Le tableau de bord reprend la composition UI/UX validée : accueil personnalisé, indicateurs, actifs récents, activité guidée et prochaine action.
+  - Les modules futurs affichent uniquement une vue d'orientation avec retour à l'accueil ; aucun CRUD T-16+ ni aucune fonctionnalité PHASE 2, notamment les panneaux d'affichage, n'a été anticipé.
+  - Navigation active, repli de sidebar, fermeture mobile et déconnexion mobile sont pris en charge de manière accessible et responsive.
+  - Vérifications réussies : lint, build et 8 tests frontend, dont menus consultant/manager/admin, absence d'administration pour les rôles non autorisés et bascule multirôle ; lint backend et 63 tests.
+  - Prochaine tâche ajoutée avant T-16 : T-15A impose le remplacement à la première connexion de tout mot de passe créé ou réinitialisé par un administrateur.
 - **2026-07-14 — T-14 terminée : connexion et gestion de session frontend**
   - Écran de connexion responsive créé dans l'esthétique premium validée, avec modes clair et sombre, états d'attente et erreurs accessibles.
   - La session est restaurée au chargement via `GET /auth/me` ; un utilisateur non authentifié reste sur l'écran de connexion et ne peut pas atteindre l'espace protégé.

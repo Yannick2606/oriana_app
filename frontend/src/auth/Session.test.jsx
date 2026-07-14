@@ -12,7 +12,7 @@ function renderSession(client) {
 }
 
 test('un utilisateur non connecté reste sur la connexion', async () => {
-  const client = { me: vi.fn().mockRejectedValue(new ApiError('Non authentifié', 401, {})), login: vi.fn(), logout: vi.fn() };
+  const client = { me: vi.fn().mockRejectedValue(new ApiError('Non authentifié', 401, {})), login: vi.fn(), logout: vi.fn(), changeRole: vi.fn() };
   renderSession(client);
   expect(await screen.findByRole('heading', { name: 'Bienvenue' })).toBeInTheDocument();
   expect(screen.queryByText('Espace protégé')).not.toBeInTheDocument();

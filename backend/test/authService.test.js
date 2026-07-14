@@ -24,6 +24,12 @@ async function fixture({ actif = true, roles = ['consultant'] } = {}) {
         },
       }];
     },
+    async getById() {
+      return {
+        id: 7,
+        fields: { nom: 'Utilisateur', prenom: 'Test', roles, agence_id: 3, actif },
+      };
+    },
   };
 
   return { motDePasse, service: createAuthService({ usersClient }) };
@@ -72,5 +78,27 @@ test('login refuse un rôle actif non attribué', async () => {
   await assert.rejects(
     service.login({ email: 'test@example.invalid', motDePasse, roleActif: 'admin' }),
     (error) => error instanceof AuthError && error.status === 403,
+  );
+});
+
+test('changeRole relit les rôles courants avant de modifier la session', async () => {
+  const { service } = await fixture({ roles: ['consultant', 'manager'] });
+  const user = await service.changeRole({ userId: 7, roleActif: 'manager' });
+
+  assert.equal(user.role_actif, 'manager');
+  assert.deepEqual(user.roles, ['consultant', 'manager']);
+});
+
+test('changeRole refuse un rôle retiré ou un compte désactivé', async () => {
+  const { service } = await fixture({ roles: ['consultant'] });
+  await assert.rejects(
+    service.changeRole({ userId: 7, roleActif: 'admin' }),
+    (error) => error instanceof AuthError && error.status === 403,
+  );
+
+  const { service: inactiveService } = await fixture({ actif: false, roles: ['consultant', 'manager'] });
+  await assert.rejects(
+    inactiveService.changeRole({ userId: 7, roleActif: 'manager' }),
+    (error) => error instanceof AuthError && error.status === 401,
   );
 });

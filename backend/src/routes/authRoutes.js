@@ -8,6 +8,7 @@ export function createAuthRoutes(controller) {
   router.post('/login', controller.login);
   router.post('/logout', requireAuth, controller.logout);
   router.get('/me', requireAuth, controller.me);
+  router.post('/role', requireAuth, controller.changeRole);
 
   return router;
 }

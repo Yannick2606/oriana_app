@@ -109,11 +109,24 @@
 - **Acceptation** : login fonctionne bout en bout ; un utilisateur non connecté ne peut pas
   atteindre les écrans protégés.
 
-### [ ] T-15 : Navigation par rôle
+### [x] T-15 : Navigation par rôle
 - Menu et écrans visibles selon le rôle (consultant / manager / admin). Rappel : le frontend
   masque par confort, la sécurité reste au backend.
+- Un utilisateur multirôle peut changer de rôle actif depuis le profil sans se reconnecter ; le
+  backend relit ses rôles actuels avant de mettre la session à jour.
 - **Acceptation** : chaque rôle voit la navigation attendue ; aucun écran admin visible pour un
-  consultant.
+  consultant ; une bascule de rôle actualise immédiatement la navigation.
+
+### [ ] T-15A : Premier mot de passe obligatoire
+- Ajouter par migration Grist versionnée, idempotente, sauvegardée et testée le booléen
+  `doit_changer_mot_de_passe`, sans bloquer automatiquement les comptes existants.
+- Toute création ou réinitialisation de mot de passe par un admin positionne ce champ à `true`.
+- Après authentification, le backend bloque les routes métier tant que le mot de passe provisoire
+  n'a pas été remplacé ; le frontend impose l'écran de changement avant tout accès à l'application.
+- Le nouveau mot de passe est validé puis haché avec bcrypt ; aucune valeur en clair n'est stockée,
+  journalisée ou renvoyée.
+- **Acceptation** : un compte créé ou réinitialisé par l'admin ne peut accéder à aucune route
+  métier avant le changement ; il y accède après modification et le drapeau repasse à `false`.
 
 ### [ ] T-16 : Écran patrimoine (Site→Bâtiment→Cellule→Lot)
 - Liste + fiche + création/édition de la hiérarchie.

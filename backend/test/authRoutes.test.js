@@ -11,14 +11,17 @@ function testApp() {
     id: 7,
     nom: 'Utilisateur',
     prenom: 'Test',
-    roles: ['consultant'],
+    roles: ['consultant', 'manager'],
     role_actif: 'consultant',
     agence_id: 3,
   };
 
   return createApp({
     sessionSecret: randomBytes(32).toString('hex'),
-    authService: { async login() { return { selectionRequise: false, user }; } },
+    authService: {
+      async login() { return { selectionRequise: false, user }; },
+      async changeRole({ roleActif }) { return { ...user, role_actif: roleActif }; },
+    },
   });
 }
 
@@ -35,6 +38,9 @@ test('la session authentifiée est disponible via /auth/me puis détruite', asyn
   assert.match(login.headers['set-cookie'][0], /HttpOnly/);
 
   await agent.get('/auth/me').expect(200);
+  const changedRole = await agent.post('/auth/role').send({ role_actif: 'manager' }).expect(200);
+  assert.equal(changedRole.body.user.role_actif, 'manager');
+  assert.equal((await agent.get('/auth/me').expect(200)).body.user.role_actif, 'manager');
   await agent.post('/auth/logout').expect(200);
   await agent.get('/auth/me').expect(401);
 });
@@ -44,4 +50,5 @@ test('les routes de session refusent un utilisateur non authentifié', async () 
 
   await request(app).get('/auth/me').expect(401);
   await request(app).post('/auth/logout').expect(401);
+  await request(app).post('/auth/role').send({ role_actif: 'manager' }).expect(401);
 });

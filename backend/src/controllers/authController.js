@@ -64,5 +64,22 @@ export function createAuthController(authService) {
 
       return response.status(200).json({ user: responseUser(request.session.user) });
     },
+
+    async changeRole(request, response, next) {
+      try {
+        const user = await authService.changeRole({
+          userId: request.session.user.id,
+          roleActif: request.body?.role_actif,
+        });
+        request.session.user = user;
+        await saveSession(request);
+        return response.status(200).json({ user: responseUser(user) });
+      } catch (error) {
+        if (error instanceof AuthError) {
+          return response.status(error.status).json({ error: error.code });
+        }
+        return next(error);
+      }
+    },
   };
 }

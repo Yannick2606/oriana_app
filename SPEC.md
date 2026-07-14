@@ -171,6 +171,9 @@ Codes : 200 OK · 201 créé · 400 requête invalide · 401 non authentifié ·
   Réponse authentifiée `{ user: {id, nom, prenom, roles, role_actif} }`.
 - `POST /auth/logout` — invalide la session.
 - `GET /auth/me` — renvoie l'utilisateur courant (ou 401).
+- `POST /auth/role` — body `{ role_actif }` ; relit le compte dans Grist, vérifie qu'il est
+  toujours actif et que le rôle est toujours attribué, puis met à jour la session. Aucun nouveau
+  mot de passe n'est demandé tant que la session est valide.
 
 ### Middleware (à appliquer sur toutes les routes protégées)
 - `requireAuth` — rejette 401 si pas de session valide.

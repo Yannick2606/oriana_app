@@ -28,5 +28,11 @@ export function SessionProvider({ children, client = authApi }) {
     setStatus('anonymous');
   }
 
-  return <SessionContext.Provider value={{ status, user, login, logout }}>{children}</SessionContext.Provider>;
+  async function changeRole(roleActif) {
+    const result = await client.changeRole(roleActif);
+    setUser(result.user);
+    return result.user;
+  }
+
+  return <SessionContext.Provider value={{ status, user, login, logout, changeRole }}>{children}</SessionContext.Provider>;
 }
