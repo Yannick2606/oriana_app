@@ -164,7 +164,7 @@
   leur agence ; super admin : administration globale sans accès métier implicite.
 - **Acceptation** : cloisonnements testés par appels API directs pour les cinq rôles.
 
-### [ ] T-22C : Organisation des équipes et blocage hiérarchique
+### [x] T-22C : Organisation des équipes et blocage hiérarchique
 - Le directeur organise les rattachements et bloque/réactive consultant et master consultant.
 - L'admin d'agence gère les comptes de son agence ; seul le super admin gère les agences et
   attribue `super_admin`.

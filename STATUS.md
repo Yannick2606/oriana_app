@@ -14,6 +14,12 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-22C terminée : administration hiérarchique des équipes**
+  - Le directeur d'agence voit les niveaux inférieurs de son agence, rattache les consultants aux masters et bloque ou réactive uniquement consultants et masters.
+  - L'administrateur d'agence crée, modifie et réinitialise les comptes de niveaux inférieurs dans sa seule agence ; il ne peut ni administrer un autre admin ni attribuer super admin.
+  - Le super administrateur peut agir entre agences et reste le seul rôle autorisé à attribuer `super_admin` ; un compte déjà de même niveau demeure protégé.
+  - L'interface Administration propose le rattachement d'équipe et le blocage/réactivation, tandis que les contrôles décisifs restent appliqués par le backend.
+  - Vérifications réussies : 78 tests backend et 21 tests frontend, lint des deux zones et build frontend.
 - **2026-07-14 — T-22B terminée : autorisations hiérarchiques côté serveur**
   - Le consultant reste limité à ses données ; le master consultant lit ses données et celles de ses consultants actifs rattachés, sans pouvoir modifier les données de son équipe.
   - Le rattachement d'équipe est relu dans Grist à chaque requête : un consultant retiré de l'équipe disparaît immédiatement du périmètre du master consultant.

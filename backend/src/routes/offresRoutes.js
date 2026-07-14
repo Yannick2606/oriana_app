@@ -6,16 +6,15 @@ import { scopeByRole } from '../middlewares/scopeByRole.js';
 
 export function createOffresRoutes(controller) {
   const router = Router();
-  router.use(requireAuth, scopeByRole);
-  router.get('/offres', controller.listOffers);
-  router.get('/offres/:id', controller.getOffer);
-  router.post('/offres', controller.createOffer);
-  router.put('/offres/:id', controller.updateOffer);
-  router.delete('/offres/:id', requireManager, controller.deleteOffer);
-  router.get('/conditions-financieres', controller.listConditions);
-  router.get('/conditions-financieres/:id', controller.getCondition);
-  router.post('/conditions-financieres', controller.createCondition);
-  router.put('/conditions-financieres/:id', controller.updateCondition);
-  router.delete('/conditions-financieres/:id', requireManager, controller.deleteCondition);
+  router.get('/offres', requireAuth, scopeByRole, controller.listOffers);
+  router.get('/offres/:id', requireAuth, scopeByRole, controller.getOffer);
+  router.post('/offres', requireAuth, scopeByRole, controller.createOffer);
+  router.put('/offres/:id', requireAuth, scopeByRole, controller.updateOffer);
+  router.delete('/offres/:id', requireAuth, scopeByRole, requireManager, controller.deleteOffer);
+  router.get('/conditions-financieres', requireAuth, scopeByRole, controller.listConditions);
+  router.get('/conditions-financieres/:id', requireAuth, scopeByRole, controller.getCondition);
+  router.post('/conditions-financieres', requireAuth, scopeByRole, controller.createCondition);
+  router.put('/conditions-financieres/:id', requireAuth, scopeByRole, controller.updateCondition);
+  router.delete('/conditions-financieres/:id', requireAuth, scopeByRole, requireManager, controller.deleteCondition);
   return router;
 }

@@ -5,9 +5,8 @@ import { scopeByRole } from '../middlewares/scopeByRole.js';
 
 export function createQualificationRoutes(controller) {
   const router = Router();
-  router.use(requireAuth, scopeByRole);
-  router.get('/caracteristiques/dictionnaire', controller.dictionary);
-  router.get('/caracteristiques-bien', controller.listValues);
-  router.post('/caracteristiques-bien', controller.createValue);
+  router.get('/caracteristiques/dictionnaire', requireAuth, scopeByRole, controller.dictionary);
+  router.get('/caracteristiques-bien', requireAuth, scopeByRole, controller.listValues);
+  router.post('/caracteristiques-bien', requireAuth, scopeByRole, controller.createValue);
   return router;
 }

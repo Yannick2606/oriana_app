@@ -8,11 +8,17 @@ import { createApp } from '../src/app.js';
 const clone = (value) => JSON.parse(JSON.stringify(value));
 function client() {
   const tables = new Map([
-    ['Agences', [{ id: 3, fields: { nom: 'Boréal Nord', actif: true } }]],
+    ['Agences', [{ id: 3, fields: { nom: 'Boréal Nord', actif: true } }, { id: 4, fields: { nom: 'Boréal Sud', actif: true } }]],
     ['Utilisateurs', [{ id: 10, fields: { nom: 'Admin', prenom: 'Existant', email: 'admin@example.invalid',
       role: ['L', 'admin'], agence_id: 3, actif: true, mot_de_passe_hash: 'hash-non-public' } },
     { id: 11, fields: { nom: 'Master', prenom: 'Equipe', email: 'master@example.invalid',
-      role: ['L', 'master_consultant'], agence_id: 3, actif: true, mot_de_passe_hash: 'hash-non-public' } }]],
+      role: ['L', 'master_consultant'], agence_id: 3, actif: true, mot_de_passe_hash: 'hash-non-public' } },
+    { id: 12, fields: { nom: 'Consultant', prenom: 'Equipe', email: 'consultant@example.invalid',
+      role: ['L', 'consultant'], agence_id: 3, actif: true, mot_de_passe_hash: 'hash-non-public' } },
+    { id: 13, fields: { nom: 'Directeur', prenom: 'Agence', email: 'directeur@example.invalid',
+      role: ['L', 'directeur_agence'], agence_id: 3, actif: true, mot_de_passe_hash: 'hash-non-public' } },
+    { id: 14, fields: { nom: 'Consultant', prenom: 'Autre', email: 'autre@example.invalid',
+      role: ['L', 'consultant'], agence_id: 4, actif: true, mot_de_passe_hash: 'hash-non-public' } }]],
   ]);
   let nextId = 100;
   return {
@@ -57,7 +63,7 @@ test('un admin crée un compte multirôle dont le mot de passe est haché et jam
 
 test('un admin peut désactiver un compte sans exposer son hash', async () => {
   const dataClient = client(); const agent = await agentFor(dataClient, admin);
-  const response = await agent.put('/utilisateurs/10').send({ actif: false }).expect(200);
+  const response = await agent.put('/utilisateurs/12').send({ actif: false }).expect(200);
   assert.equal(response.body.data.actif, false);
   assert.equal('mot_de_passe_hash' in response.body.data, false);
 });
@@ -65,8 +71,8 @@ test('un admin peut désactiver un compte sans exposer son hash', async () => {
 test('une réinitialisation admin impose un nouveau changement à la connexion', async () => {
   const dataClient = client(); const agent = await agentFor(dataClient, admin);
   const password = randomBytes(18).toString('hex');
-  const response = await agent.put('/utilisateurs/10/mot-de-passe').send({ mot_de_passe: password }).expect(200);
-  const stored = dataClient.tables.get('Utilisateurs')[0].fields;
+  const response = await agent.put('/utilisateurs/12/mot-de-passe').send({ mot_de_passe: password }).expect(200);
+  const stored = dataClient.tables.get('Utilisateurs')[2].fields;
   assert.equal(stored.doit_changer_mot_de_passe, true);
   assert.equal(await bcrypt.compare(password, stored.mot_de_passe_hash), true);
   assert.equal('mot_de_passe_hash' in response.body.data, false);
@@ -80,15 +86,45 @@ test('refuse un email dupliqué, un rôle inconnu et une agence absente', async 
     .expect(409, { error: 'EMAIL_ALREADY_USED' });
   await agent.post('/utilisateurs').send({ ...base, roles: ['super-admin'] })
     .expect(400, { error: 'INVALID_ROLES' });
-  await agent.post('/utilisateurs').send({ ...base, agence_id: 999 })
-    .expect(400, { error: 'INVALID_AGENCY' });
+  const forcedAgency = await agent.post('/utilisateurs').send({ ...base, email: 'same-agency@example.invalid', agence_id: 999 }).expect(201);
+  assert.equal(forcedAgency.body.data.agence_id, 3);
 });
 
 test('refuse l’injection directe d’un hash ou d’un mot de passe en modification', async () => {
   const dataClient = client(); const agent = await agentFor(dataClient, admin);
   await agent.post('/utilisateurs').send({ mot_de_passe_hash: 'interdit' }).expect(400, { error: 'FORBIDDEN_FIELD' });
-  await agent.put('/utilisateurs/10').send({ mot_de_passe: randomBytes(18).toString('hex') })
+  await agent.put('/utilisateurs/12').send({ mot_de_passe: randomBytes(18).toString('hex') })
     .expect(400, { error: 'FORBIDDEN_FIELD' });
+});
+
+test('un directeur organise et bloque uniquement les consultants et masters de son agence', async () => {
+  const dataClient = client();
+  const directeur = { id: 13, roles: ['directeur_agence'], role_actif: 'directeur_agence', agence_id: 3 };
+  const agent = await agentFor(dataClient, directeur);
+  await agent.put('/utilisateurs/12').send({ master_consultant_id: 11, actif: false }).expect(200);
+  await agent.put('/utilisateurs/13').send({ actif: false }).expect(403, { error: 'FORBIDDEN' });
+  await agent.put('/utilisateurs/12').send({ email: 'interdit@example.invalid' }).expect(403, { error: 'FORBIDDEN' });
+  await agent.put('/utilisateurs/12/mot-de-passe').send({ mot_de_passe: randomBytes(18).toString('hex') }).expect(403, { error: 'FORBIDDEN' });
+});
+
+test('un admin d’agence ne peut administrer ni son niveau ni un super admin', async () => {
+  const dataClient = client(); const agent = await agentFor(dataClient, admin);
+  await agent.put('/utilisateurs/10').send({ actif: false }).expect(403, { error: 'FORBIDDEN' });
+  await agent.put('/utilisateurs/12').send({ roles: ['super_admin'] }).expect(403, { error: 'FORBIDDEN' });
+  await agent.put('/utilisateurs/14').send({ actif: false }).expect(403, { error: 'FORBIDDEN' });
+});
+
+test('seul le super admin agit entre agences et attribue super admin', async () => {
+  const dataClient = client();
+  const superAdmin = { id: 99, roles: ['super_admin'], role_actif: 'super_admin', agence_id: null };
+  const agent = await agentFor(dataClient, superAdmin);
+  assert.equal((await agent.get('/auth/me')).body.user.role_actif, 'super_admin');
+  const listing = await agent.get('/utilisateurs');
+  assert.equal(listing.status, 200, JSON.stringify(listing.body));
+  const crossAgency = await agent.put('/utilisateurs/14').send({ actif: false });
+  assert.equal(crossAgency.status, 200, JSON.stringify(crossAgency.body));
+  const promoted = await agent.put('/utilisateurs/13').send({ roles: ['super_admin'] }).expect(200);
+  assert.deepEqual(promoted.body.data.roles, ['super_admin']);
 });
 
 test('rattache un consultant uniquement à un master consultant de son agence', async () => {
