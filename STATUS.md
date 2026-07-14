@@ -14,6 +14,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-25 prête à publier : droits temporaires du frontend**
+  - Le build T-24 a réussi et le backend est sain ; le frontend redémarre avant de servir l'interface.
+  - Les journaux Nginx montrent un refus lors de la création de `/var/cache/nginx/client_temp` : le tmpfs monté à l'exécution appartient à root alors que l'image utilise `USER nginx`.
+  - Les tmpfs du cache et du PID reçoivent désormais explicitement l'UID/GID 101, sans retirer le mode lecture seule ni `no-new-privileges`.
+  - Vérifications réussies : lint et 83 tests backend, lint, build et 23 tests frontend ; le redémarrage réel reste à confirmer sur le VPS.
 - **2026-07-14 — T-24 prête à publier : correction du build Docker frontend**
   - Le premier build VPS a révélé que `.dockerignore` excluait le dossier `frontend`, rendant les instructions `COPY frontend/...` impossibles.
   - Les conteneurs existants n'ont pas été remplacés : BuildKit a interrompu l'opération avant le déploiement.

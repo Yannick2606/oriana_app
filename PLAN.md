@@ -198,6 +198,11 @@
 - **Acceptation** : les Dockerfiles disposent de tous leurs fichiers sources et Compose reçoit
   les variables publiques sans les inscrire dans le dépôt.
 
+### [x] T-25 : Corriger les droits temporaires Nginx
+- Attribuer les volumes temporaires du frontend à l'utilisateur non privilégié `nginx`.
+- Conserver le système de fichiers en lecture seule et `no-new-privileges`.
+- **Acceptation** : Nginx peut créer son cache et son PID sans exécution en root.
+
 ---
 
 ## Rappels transverses (valables pour toutes les tâches)
