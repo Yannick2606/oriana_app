@@ -1,0 +1,51 @@
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { expect, test, vi } from 'vitest';
+import { randomUUID } from 'node:crypto';
+import { ApiError } from '../api';
+import { ProtectedRoute } from './ProtectedRoute';
+import { SessionProvider } from './SessionContext';
+
+Object.defineProperty(window, 'matchMedia', { writable: true, value: vi.fn().mockImplementation(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() })) });
+
+function renderSession(client) {
+  return render(<SessionProvider client={client}><ProtectedRoute><h1>Espace protégé</h1></ProtectedRoute></SessionProvider>);
+}
+
+test('un utilisateur non connecté reste sur la connexion', async () => {
+  const client = { me: vi.fn().mockRejectedValue(new ApiError('Non authentifié', 401, {})), login: vi.fn(), logout: vi.fn() };
+  renderSession(client);
+  expect(await screen.findByRole('heading', { name: 'Bienvenue' })).toBeInTheDocument();
+  expect(screen.queryByText('Espace protégé')).not.toBeInTheDocument();
+});
+
+test('la connexion ouvre l’espace protégé sans stockage navigateur', async () => {
+  const ephemeralPassword = randomUUID();
+  const user = { id: 1, prenom: 'Julie', nom: 'Martin', roles: ['consultant'], role_actif: 'consultant' };
+  const client = { me: vi.fn().mockRejectedValue(new ApiError('Non authentifié', 401, {})), login: vi.fn().mockResolvedValue({ user }), logout: vi.fn() };
+  const localStorageSpy = vi.spyOn(Storage.prototype, 'setItem');
+  renderSession(client);
+  fireEvent.change(await screen.findByLabelText('Adresse email'), { target: { value: 'julie@example.test' } });
+  fireEvent.change(screen.getByLabelText('Mot de passe'), { target: { value: ephemeralPassword } });
+  fireEvent.click(screen.getByRole('button', { name: /Se connecter/ }));
+  expect(await screen.findByText('Espace protégé')).toBeInTheDocument();
+  expect(client.login).toHaveBeenCalledWith({ email: 'julie@example.test', motDePasse: ephemeralPassword, roleActif: undefined });
+  expect(localStorageSpy).not.toHaveBeenCalled();
+  localStorageSpy.mockRestore();
+});
+
+test('un compte multirôle choisit le rôle actif avant ouverture', async () => {
+  const ephemeralPassword = randomUUID();
+  const user = { id: 1, prenom: 'Julie', nom: 'Martin', roles: ['consultant', 'manager'], role_actif: 'manager' };
+  const client = {
+    me: vi.fn().mockRejectedValue(new ApiError('Non authentifié', 401, {})),
+    login: vi.fn().mockResolvedValueOnce({ selection_role_requise: true, roles: ['consultant', 'manager'] }).mockResolvedValueOnce({ user }),
+    logout: vi.fn(),
+  };
+  renderSession(client);
+  fireEvent.change(await screen.findByLabelText('Adresse email'), { target: { value: 'julie@example.test' } });
+  fireEvent.change(screen.getByLabelText('Mot de passe'), { target: { value: ephemeralPassword } });
+  fireEvent.click(screen.getByRole('button', { name: /Se connecter/ }));
+  fireEvent.click(await screen.findByRole('button', { name: /Manager/ }));
+  await waitFor(() => expect(screen.getByText('Espace protégé')).toBeInTheDocument());
+  expect(client.login).toHaveBeenLastCalledWith({ email: 'julie@example.test', motDePasse: ephemeralPassword, roleActif: 'manager' });
+});

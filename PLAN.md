@@ -103,7 +103,7 @@
 - **Acceptation** : `npm run build` passe ; l'écran affiche le logo et la charte ; aucune couleur
   interdite.
 
-### [ ] T-14 : Écran de connexion + gestion de session
+### [x] T-14 : Écran de connexion + gestion de session
 - Page login, appel `POST /auth/login`, stockage de la session (via cookie httpOnly géré par le
   backend), redirection selon rôle. Garde de route (rediriger vers login si non authentifié).
 - **Acceptation** : login fonctionne bout en bout ; un utilisateur non connecté ne peut pas

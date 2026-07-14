@@ -9,11 +9,20 @@
 - [x] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
-- PHASE 1 : en cours — T-00 à T-13 terminées.
+- PHASE 1 : en cours — T-00 à T-14 terminées.
 - PHASE 2 : non planifiée (ne pas coder).
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-14 terminée : connexion et gestion de session frontend**
+  - Écran de connexion responsive créé dans l'esthétique premium validée, avec modes clair et sombre, états d'attente et erreurs accessibles.
+  - La session est restaurée au chargement via `GET /auth/me` ; un utilisateur non authentifié reste sur l'écran de connexion et ne peut pas atteindre l'espace protégé.
+  - La connexion utilise `POST /auth/login` et gère le choix obligatoire du rôle actif pour les comptes multirôles avant l'ouverture de l'application.
+  - La déconnexion appelle `POST /auth/logout` et rétablit immédiatement la garde d'accès.
+  - Le cookie httpOnly reste entièrement géré par le backend avec `credentials: "include"` ; aucun mot de passe, jeton ou état de session sensible n'est stocké dans `localStorage` ou `sessionStorage`.
+  - Cible frontend actuelle validée : `oriana.boreal.immo`. L'hôte, l'organisation et l'URL API restent configurables pour accompagner un futur changement de nom ou de domaine sans refonte.
+  - Contrat distant contrôlé sur `api.boreal.immo` : `/auth/me` refuse correctement une requête sans session. La connexion réelle avec un compte Grist sera rejouée après déploiement du frontend et configuration CORS de l'origine retenue.
+  - Vérifications réussies : lint et build frontend, 4 tests frontend couvrant garde, connexion, multirôle et absence de stockage navigateur ; lint backend et 61 tests.
 - **2026-07-14 — T-13 terminée : Design System officiel orIAna**
   - Frontend React/Vite/Tailwind initialisé avec thèmes clair et sombre instantanés, design tokens centralisés et charte aubergine/lavande conforme.
   - Bibliothèque de composants génériques créée : formulaires, actions, navigation, retours utilisateur, overlays, tableaux, états vides et aide contextuelle.

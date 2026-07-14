@@ -3,6 +3,7 @@ import { ArrowRight, Building2, Plus, Sparkles, Users } from 'lucide-react';
 import { AppShell } from './components/AppShell';
 import { Accordion, Badge, Breadcrumb, Button, Card, Checkbox, EmptyState, Field, HelpButton, Input, Modal, Notification, PageHeader, Pagination, Radio, Select, Skeleton, Table, Tabs, Textarea, Toggle, Toolbar } from './components/ui';
 import { useTheme } from './hooks/useTheme';
+import { useSession } from './auth/sessionContext';
 
 const rows = [
   { id: 1, lot: 'Lot A — Roissy', usage: 'Logistique', surface: '12 450 m²', statut: 'Disponible' },
@@ -15,6 +16,7 @@ const columns = [
 ];
 
 export default function App() {
+  const { user, logout } = useSession();
   const { theme, toggleTheme } = useTheme();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -23,7 +25,7 @@ export default function App() {
   const [accordion, setAccordion] = useState('structure');
   const [alerts, setAlerts] = useState(true);
 
-  return <AppShell theme={theme} onToggleTheme={toggleTheme} collapsed={collapsed} onToggleCollapsed={() => setCollapsed((value) => !value)} mobileOpen={mobileOpen} onToggleMobile={() => setMobileOpen((value) => !value)}>
+  return <AppShell theme={theme} onToggleTheme={toggleTheme} collapsed={collapsed} onToggleCollapsed={() => setCollapsed((value) => !value)} mobileOpen={mobileOpen} onToggleMobile={() => setMobileOpen((value) => !value)} user={user} onLogout={logout}>
     <div className="space-y-7 animate-enter">
       <Breadcrumb items={['Accueil', 'Design System']}/>
       <PageHeader eyebrow="Fondations produit" title="Un espace simple pour décider vite." description="Le Design System orIAna rassemble les composants, les règles et les repères nécessaires à une expérience cohérente sur tous les écrans." actions={<><HelpButton onClick={() => setHelpOpen(true)}/><Button><Plus size={17}/>Nouvelle opportunité</Button></>}/>

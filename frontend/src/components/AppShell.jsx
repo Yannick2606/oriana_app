@@ -1,4 +1,4 @@
-import { Bell, Bot, Building2, ChevronLeft, LayoutDashboard, Menu, Moon, PanelLeftClose, Search, Sun, Users } from 'lucide-react';
+import { Bell, Bot, Building2, ChevronLeft, LayoutDashboard, LogOut, Menu, Moon, PanelLeftClose, Search, Sun, Users } from 'lucide-react';
 import { Logo } from './Logo';
 import { Avatar, Badge, Button, SearchBar, Tooltip } from './ui';
 import { branding } from '../config/branding';
@@ -10,7 +10,7 @@ const navigation = [
   { label: 'Assistant', icon: Bot },
 ];
 
-export function AppShell({ children, theme, onToggleTheme, collapsed, onToggleCollapsed, mobileOpen, onToggleMobile, backendStatus = 'Opérationnel' }) {
+export function AppShell({ children, theme, onToggleTheme, collapsed, onToggleCollapsed, mobileOpen, onToggleMobile, backendStatus = 'Opérationnel', user, onLogout }) {
   return <div className="min-h-screen bg-oriana-fond text-oriana-texte">
     <header className="fixed inset-x-0 top-0 z-40 flex h-16 items-center border-b border-oriana-bordure bg-oriana-fond/90 px-4 backdrop-blur-xl">
       <button className="mr-3 md:hidden" onClick={onToggleMobile} aria-label="Ouvrir la navigation"><Menu/></button>
@@ -20,7 +20,7 @@ export function AppShell({ children, theme, onToggleTheme, collapsed, onToggleCo
         <Tooltip label="Recherche"><Button className="md:hidden" variant="ghost" size="sm" aria-label="Rechercher"><Search size={18}/></Button></Tooltip>
         <Tooltip label="Notifications"><Button variant="ghost" size="sm" aria-label="Notifications"><Bell size={18}/><span className="sr-only">2 nouvelles notifications</span></Button></Tooltip>
         <Tooltip label={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}><Button variant="ghost" size="sm" onClick={onToggleTheme} aria-label="Changer de thème">{theme === 'dark' ? <Sun size={18}/> : <Moon size={18}/>}</Button></Tooltip>
-        <div className="ml-2 hidden items-center gap-2 border-l border-oriana-bordure pl-3 sm:flex"><Avatar name="Camille Martin"/><div className="hidden lg:block"><p className="text-xs font-semibold">Camille Martin</p><p className="text-[11px] text-oriana-discret">Rôle : Manager</p></div></div>
+        <div className="ml-2 hidden items-center gap-2 border-l border-oriana-bordure pl-3 sm:flex"><Avatar name={`${user?.prenom || ''} ${user?.nom || ''}`.trim() || 'Utilisateur'}/><div className="hidden lg:block"><p className="text-xs font-semibold">{user?.prenom} {user?.nom}</p><p className="text-[11px] text-oriana-discret">Rôle : {user?.role_actif}</p></div><Tooltip label="Se déconnecter"><Button variant="ghost" size="sm" aria-label="Se déconnecter" onClick={onLogout}><LogOut size={17}/></Button></Tooltip></div>
       </div>
     </header>
     {mobileOpen && <button className="fixed inset-0 z-40 bg-oriana-fondAlt/75 md:hidden" onClick={onToggleMobile} aria-label="Fermer la navigation"/>}
@@ -29,7 +29,7 @@ export function AppShell({ children, theme, onToggleTheme, collapsed, onToggleCo
         {navigation.map(({ label, icon: Icon, active }) => <button key={label} className={`flex w-full items-center gap-3 rounded-oriana px-3 py-2.5 text-sm font-semibold transition ${active ? 'bg-oriana-violet/20 text-oriana-lavandeClair' : 'text-oriana-discret hover:bg-oriana-surface hover:text-oriana-texte'}`}><Icon size={18}/>{!collapsed && <span>{label}</span>}</button>)}
       </nav>
       <div className="mt-auto space-y-3">
-        {!collapsed && <div className="rounded-oriana border border-oriana-bordure bg-oriana-surface p-3"><Badge variant="accent">Manager</Badge><p className="mt-2 text-xs leading-5 text-oriana-discret">Navigation préparée pour les droits associés au rôle actif.</p></div>}
+        {!collapsed && <div className="rounded-oriana border border-oriana-bordure bg-oriana-surface p-3"><Badge variant="accent">{user?.role_actif || 'Rôle actif'}</Badge><p className="mt-2 text-xs leading-5 text-oriana-discret">Les droits sont contrôlés côté serveur pour cette session.</p></div>}
         <Button variant="ghost" className="w-full" onClick={onToggleCollapsed} aria-label={collapsed ? 'Déployer la barre latérale' : 'Replier la barre latérale'}>{collapsed ? <ChevronLeft className="rotate-180" size={18}/> : <><PanelLeftClose size={18}/>Replier</>}</Button>
       </div>
     </aside>
