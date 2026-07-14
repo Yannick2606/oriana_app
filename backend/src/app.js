@@ -87,8 +87,15 @@ export function createApp({
   app.use('/utilisateurs', createUtilisateursRoutes(
     createUtilisateursController(createUtilisateursService(utilisateursClient)),
   ));
+  const resolvedAgentsOptions = {
+    webhookBaseUrl: agentsOptions?.webhookBaseUrl ?? process.env.N8N_WEBHOOK_BASE_URL,
+    sharedSecret: agentsOptions?.sharedSecret ?? process.env.N8N_SHARED_SECRET,
+    backendPublicUrl: agentsOptions?.backendPublicUrl ?? process.env.BACKEND_PUBLIC_URL,
+    fetchImplementation: agentsOptions?.fetchImplementation ?? fetch,
+  };
   app.use(createAgentsRoutes(
-    createAgentsController(createAgentsService(agentsClient, agentsOptions)), agentsOptions?.sharedSecret,
+    createAgentsController(createAgentsService(agentsClient, resolvedAgentsOptions)),
+    resolvedAgentsOptions.sharedSecret,
   ));
 
   return app;

@@ -14,6 +14,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-12 : correctif de configuration du callback à valider sur le VPS**
+  - Le contrôle réel a reproduit un refus `401` du callback, y compris lors d'un appel interne au conteneur backend avec sa propre variable d'environnement.
+  - Le démarrage de production transmet désormais explicitement la configuration n8n à l'application ; le service sortant et le middleware de callback utilisent ainsi la même valeur résolue.
+  - Vérifications locales réussies après correction : lint backend et 59 tests.
+  - T-12 reste ouverte jusqu'au redéploiement de ce correctif, à la rotation du secret exposé pendant le diagnostic et au succès du contrôle réel complet.
 - **2026-07-14 — T-12 : workflow n8n actif, contrôle réel prêt**
   - Backend déployé derrière Traefik sur `https://api.boreal.immo` ; contrôle de santé HTTPS validé avec une réponse HTTP 200.
   - Workflow n8n `oriana-demonstration` créé et activé avec comparaison du secret d'environnement, branche de refus et callback backend protégé.
