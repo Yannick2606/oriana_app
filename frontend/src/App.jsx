@@ -10,6 +10,7 @@ import { OffresPage } from './offres/OffresPage';
 import { CrmPage } from './crm/CrmPage';
 import { AgentsPage } from './agents/AgentsPage';
 import { AdministrationPage } from './administration/AdministrationPage';
+import { FormationExperience } from './formation/FormationExperience';
 
 const rows = [
   { id: 1, lot: 'Lot A — Roissy', usage: 'Logistique', surface: '12 450 m²', statut: 'Disponible' },
@@ -65,7 +66,8 @@ export default function App() {
   const safeActivePage = canNavigateTo(user.role_actif, activePage) ? activePage : navigation[0]?.id;
 
   return <AppShell theme={theme} onToggleTheme={toggleTheme} collapsed={collapsed} onToggleCollapsed={() => setCollapsed((value) => !value)} mobileOpen={mobileOpen} onToggleMobile={() => setMobileOpen((value) => !value)} user={user} onLogout={logout} onRoleChange={changeRole} navigation={navigation} activePage={safeActivePage} onNavigate={setActivePage}>
-    {safeActivePage === 'accueil' ? <Dashboard user={user} onHelp={() => setHelpOpen(true)}/> : safeActivePage === 'patrimoine' ? <PatrimoinePage/> : safeActivePage === 'offres' ? <OffresPage/> : safeActivePage === 'crm' || safeActivePage === 'matching' ? <CrmPage/> : safeActivePage === 'agents' ? <AgentsPage/> : safeActivePage === 'administration' ? <AdministrationPage user={user}/> : <ModuleOrientation page={safeActivePage} onBack={() => setActivePage('accueil')}/>}
+    {safeActivePage === 'accueil' ? <Dashboard user={user} onHelp={() => setHelpOpen(true)}/> : safeActivePage === 'patrimoine' ? <PatrimoinePage/> : safeActivePage === 'offres' ? <OffresPage/> : safeActivePage === 'crm' || safeActivePage === 'matching' ? <CrmPage/> : safeActivePage === 'agents' ? <AgentsPage/> : safeActivePage === 'administration' ? <AdministrationPage user={user}/> : safeActivePage === 'autoformation' ? null : <ModuleOrientation page={safeActivePage} onBack={() => setActivePage('accueil')}/>}
+    <FormationExperience user={user} pageVisible={safeActivePage === 'autoformation'}/>
     <Modal open={helpOpen} onClose={() => setHelpOpen(false)} title="Votre vue d’ensemble"><p className="text-sm leading-6 text-oriana-discret">Cette page rassemble les informations de votre périmètre actif. Les menus visibles facilitent l’accès ; les autorisations restent systématiquement contrôlées par le backend.</p><Button className="mt-5" onClick={() => setHelpOpen(false)}>J’ai compris</Button></Modal>
   </AppShell>;
 }

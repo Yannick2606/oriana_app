@@ -14,6 +14,12 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-22D en cours : parcours adaptatif prêt à valider sur Grist**
+  - Un parcours s'ouvre à la première connexion et adapte ses étapes au rôle actif parmi les cinq rôles hiérarchiques.
+  - L'utilisateur peut passer, reprendre, terminer ou recommencer depuis l'espace permanent « Auto-formation » ; la progression est distincte pour chaque rôle.
+  - La progression est enregistrée côté backend dans le champ Grist `progression_formation`, sans stockage navigateur ; la migration 003 est idempotente et sauvegarde le schéma avant ajout.
+  - Vérifications locales réussies : lint, 80 tests backend, lint, build et 23 tests frontend.
+  - T-22D reste en cours jusqu'au succès de la migration réelle via le workflow « Vérification utilisateurs Grist ».
 - **2026-07-14 — T-22C terminée : administration hiérarchique des équipes**
   - Le directeur d'agence voit les niveaux inférieurs de son agence, rattache les consultants aux masters et bloque ou réactive uniquement consultants et masters.
   - L'administrateur d'agence crée, modifie et réinitialise les comptes de niveaux inférieurs dans sa seule agence ; il ne peut ni administrer un autre admin ni attribuer super admin.

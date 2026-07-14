@@ -5,6 +5,7 @@ const navigation = [
   { id: 'crm', label: 'CRM', icon: 'contacts', roles: ['consultant', 'master_consultant', 'directeur_agence', 'admin_agence'] },
   { id: 'matching', label: 'Matching', icon: 'matching', roles: ['consultant', 'master_consultant', 'directeur_agence', 'admin_agence'] },
   { id: 'agents', label: 'Agents IA', icon: 'bot', roles: ['consultant', 'master_consultant', 'directeur_agence', 'admin_agence'] },
+  { id: 'autoformation', label: 'Auto-formation', icon: 'book', roles: ['consultant', 'master_consultant', 'directeur_agence', 'admin_agence', 'super_admin'] },
   { id: 'administration', label: 'Administration', icon: 'settings', roles: ['directeur_agence', 'admin_agence', 'super_admin'] },
 ];
 

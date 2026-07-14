@@ -40,6 +40,7 @@ jobs:
           path: |
             backend/tmp/grist-utilisateurs-schema-*.json
             backend/tmp/grist-utilisateurs-roles-schema-*.json
+            backend/tmp/grist-utilisateurs-formation-schema-*.json
           retention-days: 30
       - name: Vérifier l'administration des utilisateurs
         run: npm run check:utilisateurs

@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Bell, Bot, BriefcaseBusiness, Building2, ChevronLeft, ContactRound, LayoutDashboard, LogOut, Menu, Moon, PanelLeftClose, Search, Settings, Sparkles, Sun } from 'lucide-react';
+import { Bell, BookOpen, Bot, BriefcaseBusiness, Building2, ChevronLeft, ContactRound, LayoutDashboard, LogOut, Menu, Moon, PanelLeftClose, Search, Settings, Sparkles, Sun } from 'lucide-react';
 import { Logo } from './Logo';
 import { Avatar, Badge, Button, SearchBar, Tooltip } from './ui';
 import { branding } from '../config/branding';
 
-const navigationIcons = { dashboard: LayoutDashboard, building: Building2, briefcase: BriefcaseBusiness, contacts: ContactRound, matching: Sparkles, bot: Bot, settings: Settings };
+const navigationIcons = { dashboard: LayoutDashboard, building: Building2, briefcase: BriefcaseBusiness, contacts: ContactRound, matching: Sparkles, bot: Bot, settings: Settings, book: BookOpen };
 const roleLabels = {
   consultant: 'Consultant',
   master_consultant: 'Master consultant',
