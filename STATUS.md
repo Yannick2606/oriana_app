@@ -9,11 +9,20 @@
 - [x] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
-- PHASE 1 : en cours — T-00 à T-12 terminées.
+- PHASE 1 : en cours — T-00 à T-13 terminées.
 - PHASE 2 : non planifiée (ne pas coder).
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-13 terminée : Design System officiel orIAna**
+  - Frontend React/Vite/Tailwind initialisé avec thèmes clair et sombre instantanés, design tokens centralisés et charte aubergine/lavande conforme.
+  - Bibliothèque de composants génériques créée : formulaires, actions, navigation, retours utilisateur, overlays, tableaux, états vides et aide contextuelle.
+  - Layout universel responsive Header / Sidebar / Content / Footer ajouté avec rôle actif, recherche, notifications, statut backend et navigation repliable.
+  - Page de démonstration accessible créée, avec repères d'action, progressive disclosure, assistant IA strictement graphique et architecture compatible avec un futur mode Focus.
+  - Client API unique dans `src/api`, configuré exclusivement par `VITE_API_BASE_URL` et utilisant systématiquement `credentials: "include"` ; aucun accès frontend à Grist ou n8n.
+  - Build de production Docker multi-stage et nginx non privilégié préparés, avec healthcheck et routage Traefik paramétrable. Docker étant indisponible localement, la construction réelle de l'image reste à valider au déploiement.
+  - Documentation d'architecture ajoutée dans `DESIGN_SYSTEM.md` ; le nom d'organisation, l'hôte frontend et l'URL API restent remplaçables par configuration.
+  - Vérifications réussies : lint, build et test frontend ; lint backend et 61 tests ; contrôle du diff et absence de couleurs interdites ou d'URL Grist/n8n dans le code frontend.
 - **2026-07-14 — T-12 terminée : cycle n8n réel validé après rotation du secret**
   - Le backend redéployé répond en HTTPS et le contrôle réel confirme le cycle complet `en_attente → termine → résultat` entre le backend, n8n et Grist.
   - Le secret partagé exposé pendant le diagnostic a été remplacé simultanément côté backend et côté n8n, sans ajout au dépôt ; les deux services ont été recréés avec cette nouvelle valeur.

@@ -1,4 +1,30 @@
 services:
+  frontend:
+    build:
+      context: ..
+      dockerfile: frontend/Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+        VITE_ORGANIZATION_NAME: ${VITE_ORGANIZATION_NAME}
+    container_name: oriana-frontend
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=root_default
+      - traefik.http.routers.oriana.rule=Host(`${FRONTEND_HOST}`)
+      - traefik.http.routers.oriana.entrypoints=websecure
+      - traefik.http.routers.oriana.tls=true
+      - traefik.http.routers.oriana.tls.certresolver=mytlschallenge
+      - traefik.http.services.oriana.loadbalancer.server.port=8080
+    networks:
+      - traefik
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+    security_opt:
+      - no-new-privileges:true
+
   backend:
     build:
       context: ..

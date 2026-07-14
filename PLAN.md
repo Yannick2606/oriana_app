@@ -96,7 +96,7 @@
 
 ## Jalon 3 — Frontend
 
-### [ ] T-13 : Squelette frontend (Vite + React + Tailwind + charte)
+### [x] T-13 : Squelette frontend (Vite + React + Tailwind + charte)
 - Init Vite + React + Tailwind. Appliquer la charte (couleurs, logo orIAna, polices) via config
   Tailwind et un layout de base. Décor en CSS/SVG, aucune image externe.
 - Client API centralisé (`src/api/`) qui parle au backend (jamais à Grist/n8n).
