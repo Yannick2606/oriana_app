@@ -21,3 +21,12 @@ docker compose -f deploy/docker-compose.yml ps
 ```
 
 Contrôle attendu : `https://api.boreal.immo/health` répond `{"status":"ok"}`.
+
+Après activation du workflow n8n `oriana-demonstration`, valider le cycle réel depuis la
+racine du dépôt sur le VPS. Le contrôle crée puis supprime son propre suivi technique :
+
+```sh
+docker run --rm --network root_default --env-file .env \
+  -v "$PWD/backend/scripts:/app/scripts:ro" \
+  deploy-backend node scripts/checkAgentsLive.js
+```

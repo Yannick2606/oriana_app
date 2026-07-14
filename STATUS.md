@@ -6,7 +6,7 @@
 ## Checklist humaine préalable (à confirmer avant T-03)
 - [x] Ajouter le champ `mot_de_passe_hash` (texte) à la table Utilisateurs dans Grist.
 - [x] Renseigner un hash bcrypt pour au moins un compte de test par rôle (consultant, manager, admin).
-- [ ] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
+- [x] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
 - PHASE 1 : en cours — T-00 à T-11 terminées.
@@ -14,6 +14,12 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-12 : workflow n8n actif, contrôle réel prêt**
+  - Backend déployé derrière Traefik sur `https://api.boreal.immo` ; contrôle de santé HTTPS validé avec une réponse HTTP 200.
+  - Workflow n8n `oriana-demonstration` créé et activé avec comparaison du secret d'environnement, branche de refus et callback backend protégé.
+  - Secret n8n partagé par variables d'environnement distinctes sur le VPS, sans valeur dans le dépôt ni dans le workflow.
+  - Contrôle réel reproductible ajouté : il crée un suivi technique, appelle n8n, attend le callback, vérifie le résultat puis nettoie la ligne temporaire.
+  - T-12 reste ouverte jusqu'à l'exécution réussie de ce dernier contrôle sur le VPS.
 - **2026-07-13 — T-12 : déploiement backend préparé**
   - Image Docker minimale préparée pour le backend uniquement, exécutée avec l'utilisateur non privilégié `node`, système de fichiers en lecture seule et contrôle de santé.
   - Composition reliée au réseau Traefik externe `root_default`, sans port hôte exposé, avec routage TLS `api.boreal.immo` via `mytlschallenge`.
