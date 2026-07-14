@@ -9,11 +9,16 @@
 - [x] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
-- PHASE 1 : en cours — T-00 à T-11 terminées.
+- PHASE 1 : en cours — T-00 à T-12 terminées.
 - PHASE 2 : non planifiée (ne pas coder).
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-12 terminée : cycle n8n réel validé après rotation du secret**
+  - Le backend redéployé répond en HTTPS et le contrôle réel confirme le cycle complet `en_attente → termine → résultat` entre le backend, n8n et Grist.
+  - Le secret partagé exposé pendant le diagnostic a été remplacé simultanément côté backend et côté n8n, sans ajout au dépôt ; les deux services ont été recréés avec cette nouvelle valeur.
+  - Le fichier temporaire de rotation a été supprimé et les deux fichiers d'environnement du VPS sont limités au mode `600`.
+  - Un second contrôle réel après rotation a réussi ; les critères d'acceptation de T-12 sont remplis et T-13 peut commencer.
 - **2026-07-14 — T-12 : interception du callback par un routeur générique corrigée localement**
   - Le test HTTP du middleware isolé répond 204 alors que le même appel via `createApp` répondait 401 : le secret et son transport n'étaient donc pas en cause.
   - Le routeur de qualification, monté à la racine avant les routes agents, appliquait `requireAuth` à `/agents/callback` et exigeait à tort une session utilisateur avant le contrôle n8n.
