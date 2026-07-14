@@ -186,6 +186,12 @@
 - STATUS.md : PHASE 1 close, liste de ce qui est prêt pour PHASE 2.
 - **Acceptation** : un tiers peut installer et lancer le projet en suivant le README.
 
+### [x] T-23 : Préparer le déploiement du frontend
+- Autoriser strictement `FRONTEND_ORIGIN` sur l'API avec les cookies de session.
+- Documenter le DNS, les variables publiques, le déploiement Docker et les contrôles réels.
+- **Acceptation** : tests CORS verts et procédure reproductible pour publier
+  `oriana.boreal.immo` sans exposer de secret.
+
 ---
 
 ## Rappels transverses (valables pour toutes les tâches)

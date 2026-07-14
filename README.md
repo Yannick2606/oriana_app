@@ -90,6 +90,12 @@ npm run build --prefix frontend
 npm test --prefix frontend
 ```
 
+## Déploiement Docker
+
+La procédure VPS, le DNS, les variables attendues et les contrôles après publication sont
+documentés dans `deploy/README.md`. Le frontend public prévu est
+`https://oriana.boreal.immo` ; son libellé d'organisation reste configurable.
+
 ## Rôles et sécurité
 
 - consultant : ses propres données ;

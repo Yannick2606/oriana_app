@@ -14,6 +14,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-23 prête à publier : préparation du déploiement frontend**
+  - L'API limite CORS à l'origine exacte configurée, accepte les cookies de session et refuse les origines navigateur inconnues.
+  - La procédure VPS couvre le DNS `oriana.boreal.immo`, les variables publiques de build, Docker/Traefik et les contrôles fonctionnels après déploiement.
+  - Vérifications réussies : lint et 83 tests backend, lint, build et 23 tests frontend.
+  - La publication réelle reste dépendante de la création du DNS et de l'exécution des commandes sur le VPS par son administrateur.
 - **2026-07-14 — T-22 terminée : PHASE 1 clôturée**
   - Le README permet à un tiers de configurer, installer, lancer, migrer et vérifier le monorepo sans dépendre de l'historique des échanges.
   - Les cinq rôles, le changement obligatoire du mot de passe initial, les périmètres d'équipe/agence et l'Auto-formation sont documentés.

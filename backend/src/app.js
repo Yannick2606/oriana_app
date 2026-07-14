@@ -23,6 +23,7 @@ import { createUtilisateursRoutes } from './routes/utilisateursRoutes.js';
 import { createAgentsRoutes } from './routes/agentsRoutes.js';
 import { createFormationRoutes } from './routes/formationRoutes.js';
 import { requirePasswordChanged } from './middlewares/requirePasswordChanged.js';
+import { frontendCors } from './middlewares/frontendCors.js';
 import { authService as defaultAuthService } from './services/authService.js';
 import { gristClient } from './services/gristClient.js';
 import { patrimoineResources } from './services/patrimoineConfig.js';
@@ -48,6 +49,7 @@ export function createApp({
   agentsClient = patrimoineClient,
   agentsOptions,
   sessionSecret = process.env.SESSION_SECRET,
+  frontendOrigin = process.env.FRONTEND_ORIGIN,
 } = {}) {
   if (!sessionSecret) {
     throw new Error('Configuration de session incomplète : SESSION_SECRET');
@@ -58,6 +60,7 @@ export function createApp({
   app.disable('x-powered-by');
   app.locals.utilisateursClient = utilisateursClient;
   if (process.env.NODE_ENV === 'production') app.set('trust proxy', 1);
+  app.use(frontendCors(frontendOrigin));
   app.use(express.json());
   app.use(session({
     name: 'oriana.sid',

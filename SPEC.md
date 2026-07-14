@@ -163,6 +163,10 @@ Toutes les routes (sauf `/auth/login`) exigent une session valide. Le backend d�
 Codes : 200 OK · 201 créé · 400 requête invalide · 401 non authentifié · 403 interdit ·
 404 introuvable · 500 erreur serveur.
 
+En déploiement séparé, l'API autorise uniquement l'origine exacte définie par
+`FRONTEND_ORIGIN`, avec les cookies de session. Toute autre origine navigateur est refusée ;
+les appels serveur sans en-tête `Origin` restent possibles pour n8n et les contrôles internes.
+
 ### Authentification
 - `POST /auth/login` — body `{ email, mot_de_passe, role_actif? }` → vérifie bcrypt, refuse si
   `actif=false`. Si plusieurs rôles sont attribués et que `role_actif` est absent, renvoie la
