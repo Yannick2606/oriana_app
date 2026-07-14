@@ -146,7 +146,7 @@
 - CRUD CRM + affichage des résultats de matching pour une demande.
 - **Acceptation** : parcours complet société→contact→demande→matching visible.
 
-### [ ] T-20 : Déclenchement d'agent depuis l'UI (asynchrone)
+### [x] T-20 : Déclenchement d'agent depuis l'UI (asynchrone)
 - Un bouton déclenche un agent (`POST /agents/:agent/declencher`), l'UI affiche « traitement en
   cours », puis le résultat quand `statut=termine` (polling léger).
 - **Acceptation** : l'UI ne fige jamais ; le résultat s'affiche à la fin.

@@ -9,11 +9,16 @@
 - [x] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
-- PHASE 1 : en cours — T-00 à T-19 terminées.
+- PHASE 1 : en cours — T-00 à T-20 terminées.
 - PHASE 2 : non planifiée (ne pas coder).
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-20 terminée : agent asynchrone depuis l'interface**
+  - Le module Agents IA permet de choisir une demande lisible et de déclencher l'agent de démonstration via le backend uniquement.
+  - L'interface affiche immédiatement l'état en cours sans bloquer l'application, puis interroge légèrement le statut jusqu'à `termine` ou `erreur`.
+  - Le résultat final ou le message d'erreur est présenté dans la fiche de suivi ; le polling est arrêté au démontage de l'écran.
+  - Vérifications réussies : lint et 69 tests backend ; lint, build et 20 tests frontend, dont déclenchement, état intermédiaire et résultat final.
 - **2026-07-14 — T-19 terminée : parcours CRM et matching**
   - Le module CRM propose le parcours Société → Contact → Demande avec listes contextuelles, création et modification via les API backend sécurisées.
   - Les formulaires respectent les relations société/contact, les natures de transaction, fourchettes de surface et budget et critères spécifiques du schéma.
