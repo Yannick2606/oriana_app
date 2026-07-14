@@ -52,3 +52,28 @@ test('les routes de session refusent un utilisateur non authentifié', async () 
   await request(app).post('/auth/logout').expect(401);
   await request(app).post('/auth/role').send({ role_actif: 'manager' }).expect(401);
 });
+
+test('un mot de passe provisoire bloque les routes hors authentification jusqu’au changement', async () => {
+  const forcedUser = {
+    id: 12, nom: 'Compte', prenom: 'Nouveau', roles: ['consultant'], role_actif: 'consultant',
+    agence_id: 3, doit_changer_mot_de_passe: true,
+  };
+  const app = createApp({
+    sessionSecret: randomBytes(32).toString('hex'),
+    authService: {
+      async login() { return { selectionRequise: false, user: forcedUser }; },
+      async changeInitialPassword() { return { ...forcedUser, doit_changer_mot_de_passe: false }; },
+    },
+  });
+  const agent = request.agent(app);
+  await agent.post('/auth/login').send({
+    email: `${randomBytes(8).toString('hex')}@example.invalid`,
+    mot_de_passe: randomBytes(24).toString('hex'),
+  }).expect(200);
+  await agent.get('/route-metier-inconnue').expect(403, { error: 'PASSWORD_CHANGE_REQUIRED' });
+  await agent.post('/auth/mot-de-passe/premiere-connexion').send({
+    nouveau_mot_de_passe: randomBytes(24).toString('hex'),
+  }).expect(200);
+  await agent.get('/route-metier-inconnue').expect(404);
+  assert.equal((await agent.get('/auth/me').expect(200)).body.user.doit_changer_mot_de_passe, false);
+});

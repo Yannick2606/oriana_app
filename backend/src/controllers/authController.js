@@ -19,6 +19,7 @@ function responseUser(sessionUser) {
     prenom: sessionUser.prenom,
     roles: sessionUser.roles,
     role_actif: sessionUser.role_actif,
+    doit_changer_mot_de_passe: sessionUser.doit_changer_mot_de_passe === true,
   };
 }
 
@@ -78,6 +79,22 @@ export function createAuthController(authService) {
         if (error instanceof AuthError) {
           return response.status(error.status).json({ error: error.code });
         }
+        return next(error);
+      }
+    },
+
+    async changeInitialPassword(request, response, next) {
+      try {
+        const user = await authService.changeInitialPassword({
+          userId: request.session.user.id,
+          roleActif: request.session.user.role_actif,
+          newPassword: request.body?.nouveau_mot_de_passe,
+        });
+        request.session.user = user;
+        await saveSession(request);
+        return response.status(200).json({ user: responseUser(user) });
+      } catch (error) {
+        if (error instanceof AuthError) return response.status(error.status).json({ error: error.code });
         return next(error);
       }
     },

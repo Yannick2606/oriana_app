@@ -27,5 +27,16 @@ jobs:
           cache-dependency-path: backend/package-lock.json
       - name: Installer les dépendances
         run: npm ci
+      - name: Sauvegarder et préparer le schéma utilisateurs
+        run: |
+          GRIST_SCHEMA_BACKUP_PATH=tmp/grist-utilisateurs-schema-before.json npm run prepare:utilisateurs
+          GRIST_SCHEMA_BACKUP_PATH=tmp/grist-utilisateurs-schema-after-first-run.json npm run prepare:utilisateurs
+      - name: Conserver la sauvegarde de structure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: grist-utilisateurs-schema-before
+          path: backend/tmp/grist-utilisateurs-schema-*.json
+          retention-days: 30
       - name: Vérifier l'administration des utilisateurs
         run: npm run check:utilisateurs

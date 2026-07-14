@@ -49,3 +49,27 @@ test('un compte multirôle choisit le rôle actif avant ouverture', async () => 
   await waitFor(() => expect(screen.getByText('Espace protégé')).toBeInTheDocument());
   expect(client.login).toHaveBeenLastCalledWith({ email: 'julie@example.test', motDePasse: ephemeralPassword, roleActif: 'manager' });
 });
+
+test('un mot de passe provisoire impose son remplacement avant l’espace protégé', async () => {
+  const newPassword = randomUUID() + randomUUID();
+  const user = {
+    id: 1, prenom: 'Julie', nom: 'Martin', roles: ['consultant'], role_actif: 'consultant',
+    doit_changer_mot_de_passe: true,
+  };
+  const client = {
+    me: vi.fn().mockResolvedValue({ user }),
+    changeInitialPassword: vi.fn().mockResolvedValue({
+      user: { ...user, doit_changer_mot_de_passe: false },
+    }),
+    logout: vi.fn(), login: vi.fn(), changeRole: vi.fn(),
+  };
+  renderSession(client);
+  expect(await screen.findByRole('heading', { name: /Choisissez votre mot de passe/ })).toBeInTheDocument();
+  expect(screen.queryByText('Espace protégé')).not.toBeInTheDocument();
+  const inputs = screen.getAllByLabelText(/mot de passe/i);
+  fireEvent.change(inputs[0], { target: { value: newPassword } });
+  fireEvent.change(inputs[1], { target: { value: newPassword } });
+  fireEvent.click(screen.getByRole('button', { name: /Enregistrer et accéder/ }));
+  expect(await screen.findByText('Espace protégé')).toBeInTheDocument();
+  expect(client.changeInitialPassword).toHaveBeenCalledWith(newPassword);
+});

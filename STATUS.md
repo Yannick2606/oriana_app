@@ -14,6 +14,15 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-15A implémentée localement, validation Grist réelle requise**
+  - Migration versionnée `001-utilisateurs-premier-mot-de-passe` ajoutant le booléen `doit_changer_mot_de_passe` sans modifier les comptes existants.
+  - Le workflow sauvegarde la structure de la table Utilisateurs avant migration, conserve l'artefact 30 jours et exécute deux fois la préparation pour vérifier son idempotence.
+  - Toute création ou réinitialisation admin hache le mot de passe avec bcrypt et impose `doit_changer_mot_de_passe=true` ; aucune valeur sensible n'est renvoyée.
+  - Après connexion avec un mot de passe provisoire, un middleware global bloque toutes les routes métier, y compris les appels API directs, avec `PASSWORD_CHANGE_REQUIRED`.
+  - L'utilisateur ne conserve que les routes d'authentification nécessaires pour remplacer son mot de passe ou se déconnecter ; le nouveau mot de passe doit contenir au moins 12 caractères et différer du provisoire.
+  - L'écran frontend de première connexion masque entièrement l'application jusqu'au changement réussi, sans stockage navigateur.
+  - Les comptes existants dont le nouveau champ est vide ou faux ne sont pas bloqués automatiquement.
+  - Vérifications locales réussies : lint et 66 tests backend ; lint, build et 9 tests frontend. T-15A reste ouverte jusqu'au succès du workflow réel Utilisateurs Grist après publication autorisée.
 - **2026-07-14 — T-15 terminée : navigation selon le rôle actif**
   - Matrice de navigation centralisée pour les trois rôles internes de PHASE 1 ; elle s'appuie uniquement sur le `role_actif` renvoyé par la session.
   - Consultant, manager et admin accèdent aux modules métier prévus : Accueil, Patrimoine, Offres, CRM, Matching et Agents IA.

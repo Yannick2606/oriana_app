@@ -20,6 +20,7 @@ import { createCrmRoutes } from './routes/crmRoutes.js';
 import { createMatchingRoutes } from './routes/matchingRoutes.js';
 import { createUtilisateursRoutes } from './routes/utilisateursRoutes.js';
 import { createAgentsRoutes } from './routes/agentsRoutes.js';
+import { requirePasswordChanged } from './middlewares/requirePasswordChanged.js';
 import { authService as defaultAuthService } from './services/authService.js';
 import { gristClient } from './services/gristClient.js';
 import { patrimoineResources } from './services/patrimoineConfig.js';
@@ -68,6 +69,7 @@ export function createApp({
   }));
   app.use(healthRoutes);
   app.use('/auth', createAuthRoutes(createAuthController(authService)));
+  app.use(requirePasswordChanged);
   const resolvedAgentsOptions = {
     webhookBaseUrl: agentsOptions?.webhookBaseUrl ?? process.env.N8N_WEBHOOK_BASE_URL,
     sharedSecret: agentsOptions?.sharedSecret ?? process.env.N8N_SHARED_SECRET,

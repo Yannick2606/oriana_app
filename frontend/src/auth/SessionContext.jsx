@@ -34,5 +34,11 @@ export function SessionProvider({ children, client = authApi }) {
     return result.user;
   }
 
-  return <SessionContext.Provider value={{ status, user, login, logout, changeRole }}>{children}</SessionContext.Provider>;
+  async function changeInitialPassword(newPassword) {
+    const result = await client.changeInitialPassword(newPassword);
+    setUser(result.user);
+    return result.user;
+  }
+
+  return <SessionContext.Provider value={{ status, user, login, logout, changeRole, changeInitialPassword }}>{children}</SessionContext.Provider>;
 }

@@ -6,33 +6,35 @@ import bcrypt from 'bcrypt';
 
 import { AuthError, createAuthService } from '../src/services/authService.js';
 
-async function fixture({ actif = true, roles = ['consultant'] } = {}) {
+async function fixture({ actif = true, roles = ['consultant'], mustChange = false } = {}) {
   const motDePasse = randomBytes(24).toString('hex');
   const hash = await bcrypt.hash(motDePasse, 4);
+  const fields = {
+    nom: 'Utilisateur', prenom: 'Test', email: 'test@example.invalid',
+    mot_de_passe_hash: hash, roles, agence_id: 3, actif, doit_changer_mot_de_passe: mustChange,
+  };
   const usersClient = {
     async list() {
       return [{
         id: 7,
         fields: {
-          nom: 'Utilisateur',
-          prenom: 'Test',
-          email: 'test@example.invalid',
-          mot_de_passe_hash: hash,
-          roles,
-          agence_id: 3,
-          actif,
+          ...fields,
         },
       }];
     },
     async getById() {
       return {
         id: 7,
-        fields: { nom: 'Utilisateur', prenom: 'Test', roles, agence_id: 3, actif },
+        fields: { ...fields },
       };
+    },
+    async update(table, id, changes) {
+      Object.assign(fields, changes);
+      return { id, fields: { ...fields } };
     },
   };
 
-  return { motDePasse, service: createAuthService({ usersClient }) };
+  return { motDePasse, service: createAuthService({ usersClient }), readFields: () => ({ ...fields }) };
 }
 
 test('login accepte le bon mot de passe sans renvoyer le hash', async () => {
@@ -101,4 +103,19 @@ test('changeRole refuse un rôle retiré ou un compte désactivé', async () => 
     inactiveService.changeRole({ userId: 7, roleActif: 'manager' }),
     (error) => error instanceof AuthError && error.status === 401,
   );
+});
+
+test('changeInitialPassword remplace le hash et lève uniquement le blocage requis', async () => {
+  const { service, readFields, motDePasse } = await fixture({ mustChange: true });
+  await assert.rejects(
+    service.changeInitialPassword({ userId: 7, roleActif: 'consultant', newPassword: motDePasse }),
+    (error) => error instanceof AuthError && error.code === 'PASSWORD_UNCHANGED',
+  );
+  const newPassword = randomBytes(24).toString('hex');
+  const user = await service.changeInitialPassword({
+    userId: 7, roleActif: 'consultant', newPassword,
+  });
+  assert.equal(user.doit_changer_mot_de_passe, false);
+  assert.equal(readFields().doit_changer_mot_de_passe, false);
+  assert.equal(await bcrypt.compare(newPassword, readFields().mot_de_passe_hash), true);
 });

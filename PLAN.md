@@ -117,7 +117,7 @@
 - **Acceptation** : chaque rôle voit la navigation attendue ; aucun écran admin visible pour un
   consultant ; une bascule de rôle actualise immédiatement la navigation.
 
-### [ ] T-15A : Premier mot de passe obligatoire
+### [~] T-15A : Premier mot de passe obligatoire
 - Ajouter par migration Grist versionnée, idempotente, sauvegardée et testée le booléen
   `doit_changer_mot_de_passe`, sans bloquer automatiquement les comptes existants.
 - Toute création ou réinitialisation de mot de passe par un admin positionne ce champ à `true`.

@@ -50,12 +50,23 @@ test('un admin crée un compte multirôle dont le mot de passe est haché et jam
   assert.deepEqual(stored.role, ['L', 'consultant', 'manager']);
   assert.notEqual(stored.mot_de_passe_hash, password);
   assert.equal(await bcrypt.compare(password, stored.mot_de_passe_hash), true);
+  assert.equal(stored.doit_changer_mot_de_passe, true);
 });
 
 test('un admin peut désactiver un compte sans exposer son hash', async () => {
   const dataClient = client(); const agent = await agentFor(dataClient, admin);
   const response = await agent.put('/utilisateurs/10').send({ actif: false }).expect(200);
   assert.equal(response.body.data.actif, false);
+  assert.equal('mot_de_passe_hash' in response.body.data, false);
+});
+
+test('une réinitialisation admin impose un nouveau changement à la connexion', async () => {
+  const dataClient = client(); const agent = await agentFor(dataClient, admin);
+  const password = randomBytes(18).toString('hex');
+  const response = await agent.put('/utilisateurs/10/mot-de-passe').send({ mot_de_passe: password }).expect(200);
+  const stored = dataClient.tables.get('Utilisateurs')[0].fields;
+  assert.equal(stored.doit_changer_mot_de_passe, true);
+  assert.equal(await bcrypt.compare(password, stored.mot_de_passe_hash), true);
   assert.equal('mot_de_passe_hash' in response.body.data, false);
 });
 

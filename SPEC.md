@@ -57,7 +57,7 @@ Le `agence_id` de l'utilisateur connecté filtre systématiquement toutes les re
 ### Utilisateurs
 `id` PK · `nom` · `prenom` · `email` (unique) · `mot_de_passe_hash` (bcrypt) · `roles` enum
 multiple (consultant|manager|admin|client) · `agence_id` FK→Agences · `actif` bool ·
-`derniere_connexion`.
+`derniere_connexion` · `doit_changer_mot_de_passe` bool.
 > L'API expose `roles` ; la colonne technique existante dans Grist reste `role` (ChoiceList).
 > **Action Grist requise** : ajouter `mot_de_passe_hash` (absent aujourd'hui). Voir PLAN T-01.
 > Un utilisateur peut cumuler plusieurs rôles. S'il en possède plusieurs, il choisit un
@@ -174,12 +174,18 @@ Codes : 200 OK · 201 créé · 400 requête invalide · 401 non authentifié ·
 - `POST /auth/role` — body `{ role_actif }` ; relit le compte dans Grist, vérifie qu'il est
   toujours actif et que le rôle est toujours attribué, puis met à jour la session. Aucun nouveau
   mot de passe n'est demandé tant que la session est valide.
+- `POST /auth/mot-de-passe/premiere-connexion` — body `{ nouveau_mot_de_passe }` ; uniquement
+  pour une session portant `doit_changer_mot_de_passe=true`. Hache la nouvelle valeur avec
+  bcrypt, désactive le drapeau puis met à jour la session.
 
 ### Middleware (à appliquer sur toutes les routes protégées)
 - `requireAuth` — rejette 401 si pas de session valide.
 - `scopeByRole` — utilise exclusivement le `role_actif` validé côté serveur et injecte le filtre :
   `consultant` → `gestionnaire = user.id` ; `manager`/`admin` →
   `agence_id = user.agence_id`. Ce filtre est appliqué à CHAQUE lecture/écriture.
+- `requirePasswordChanged` — bloque avec `PASSWORD_CHANGE_REQUIRED` toutes les routes métier
+  d'une session utilisant encore un mot de passe provisoire. Les routes de changement et de
+  déconnexion restent accessibles.
 
 ### Ressources métier (patron REST identique pour chaque entité)
 Pour chaque ressource ci-dessous : `GET /{ressource}` (liste filtrée par rôle),
@@ -202,7 +208,9 @@ Ressources PHASE 1 : `sites`, `batiments`, `cellules`, `lots`, `offres`,
 
 ### Administration (admin uniquement)
 - `GET|POST|PUT /utilisateurs` — gestion des comptes. `POST` hache le mot de passe (bcrypt)
-  avant écriture. `PUT` peut désactiver (`actif=false`).
+  avant écriture et impose son remplacement initial. `PUT` peut désactiver (`actif=false`).
+- `PUT /utilisateurs/:id/mot-de-passe` — réinitialisation admin ; hache la nouvelle valeur et
+  repositionne obligatoirement `doit_changer_mot_de_passe=true`.
 
 ### Intégration n8n (contrat asynchrone — voir §6)
 - `POST /agents/:agent/declencher` — body `{ objet_type, objet_id }`. Le backend appelle le

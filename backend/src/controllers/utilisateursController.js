@@ -16,5 +16,12 @@ export function createUtilisateursController(service) {
     async update(request, response, next) {
       try { return response.status(200).json({ data: await service.update(request.params.id, request.body) }); } catch (error) { return handle(error, response, next); }
     },
+    async resetPassword(request, response, next) {
+      try {
+        return response.status(200).json({
+          data: await service.resetPassword(request.params.id, request.body?.mot_de_passe),
+        });
+      } catch (error) { return handle(error, response, next); }
+    },
   };
 }

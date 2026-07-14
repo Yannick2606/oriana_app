@@ -9,6 +9,7 @@ export function createAuthRoutes(controller) {
   router.post('/logout', requireAuth, controller.logout);
   router.get('/me', requireAuth, controller.me);
   router.post('/role', requireAuth, controller.changeRole);
+  router.post('/mot-de-passe/premiere-connexion', requireAuth, controller.changeInitialPassword);
 
   return router;
 }

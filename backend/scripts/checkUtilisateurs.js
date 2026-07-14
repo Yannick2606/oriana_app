@@ -22,6 +22,16 @@ try {
   if (!stored?.fields.mot_de_passe_hash || !(await bcrypt.compare(password, stored.fields.mot_de_passe_hash))) {
     throw new Error('Le mot de passe bcrypt n’est pas vérifiable.');
   }
+  if (stored.fields.doit_changer_mot_de_passe !== true) {
+    throw new Error('Le changement de mot de passe initial doit être obligatoire.');
+  }
+  const resetPassword = randomBytes(18).toString('hex');
+  await service.resetPassword(created, resetPassword);
+  const resetStored = await gristClient.getById('Utilisateurs', created);
+  if (resetStored.fields.doit_changer_mot_de_passe !== true
+    || !(await bcrypt.compare(resetPassword, resetStored.fields.mot_de_passe_hash))) {
+    throw new Error('La réinitialisation administrateur est invalide.');
+  }
   if ('mot_de_passe_hash' in publicUser) throw new Error('Le hash a été exposé.');
   const disabled = await service.update(created, { actif: false });
   if (disabled.actif !== false || 'mot_de_passe_hash' in disabled) throw new Error('Désactivation ou réponse invalide.');

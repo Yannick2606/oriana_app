@@ -18,6 +18,7 @@
     "check:crm": "node scripts/checkCrm.js",
     "check:matching": "node scripts/checkMatching.js",
     "check:utilisateurs": "node scripts/checkUtilisateurs.js",
+    "prepare:utilisateurs": "node scripts/prepareUtilisateurs.js",
     "prepare:agents": "node scripts/prepareAgents.js",
     "check:agents": "node scripts/checkAgents.js",
     "check:agents:live": "node scripts/checkAgentsLive.js",

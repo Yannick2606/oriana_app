@@ -69,6 +69,13 @@ function sanitize(input, create) {
   return data;
 }
 
+function validatePassword(value) {
+  if (typeof value !== 'string' || value.length < 12) {
+    throw new UtilisateursError('Mot de passe trop court', 400, 'WEAK_PASSWORD');
+  }
+  return value;
+}
+
 export function createUtilisateursService(client, passwordHasher = (password) => bcrypt.hash(password, 12)) {
   async function validateAgency(agencyId) {
     const agency = await client.getById('Agences', positiveId(agencyId));
@@ -90,9 +97,10 @@ export function createUtilisateursService(client, passwordHasher = (password) =>
       const data = sanitize(input, true);
       data.agence_id = await validateAgency(data.agence_id);
       await ensureUniqueEmail(data.email);
-      const passwordHash = await passwordHasher(input.mot_de_passe);
+      const passwordHash = await passwordHasher(validatePassword(input.mot_de_passe));
       let record = await client.create('Utilisateurs', {
         ...toGrist(data), actif: data.actif ?? true, mot_de_passe_hash: passwordHash,
+        doit_changer_mot_de_passe: true,
       });
       if (!record?.fields) {
         [record] = await client.list('Utilisateurs', { email: [data.email] });
@@ -107,6 +115,16 @@ export function createUtilisateursService(client, passwordHasher = (password) =>
       if ('agence_id' in data) data.agence_id = await validateAgency(data.agence_id);
       await ensureUniqueEmail(data.email, current.id);
       return publicRecord(await client.update('Utilisateurs', current.id, toGrist(data)));
+    },
+    async resetPassword(recordId, password) {
+      const id = positiveId(recordId);
+      const current = await client.getById('Utilisateurs', id);
+      if (!current) throw new UtilisateursError('Utilisateur introuvable', 404, 'NOT_FOUND');
+      const passwordHash = await passwordHasher(validatePassword(password));
+      return publicRecord(await client.update('Utilisateurs', id, {
+        mot_de_passe_hash: passwordHash,
+        doit_changer_mot_de_passe: true,
+      }));
     },
   };
 }
