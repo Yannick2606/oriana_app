@@ -1,7 +1,8 @@
 import bcrypt from 'bcrypt';
+import { normalizeRoleNames, ROLES } from './roleModel.js';
 
-const rolesAutorises = new Set(['consultant', 'manager', 'admin', 'client']);
-const champsModification = ['nom', 'prenom', 'email', 'roles', 'agence_id', 'actif'];
+const rolesAutorises = new Set(ROLES);
+const champsModification = ['nom', 'prenom', 'email', 'roles', 'agence_id', 'master_consultant_id', 'actif'];
 
 export class UtilisateursError extends Error {
   constructor(message, status, code) {
@@ -17,7 +18,7 @@ function positiveId(value) {
 
 function normalizeRoles(value) {
   if (!Array.isArray(value)) throw new UtilisateursError('Rôles invalides', 400, 'INVALID_ROLES');
-  const roles = [...new Set(value)];
+  const roles = normalizeRoleNames(value);
   if (roles.length === 0 || roles.some((role) => !rolesAutorises.has(role))) {
     throw new UtilisateursError('Rôles invalides', 400, 'INVALID_ROLES');
   }
@@ -30,7 +31,7 @@ function publicRecord(record) {
   } = record.fields;
   void omitted;
   const storedRoles = role ?? legacyRoles;
-  const roles = Array.isArray(storedRoles) ? storedRoles.filter((item) => item !== 'L') : storedRoles;
+  const roles = normalizeRoleNames(storedRoles);
   return { id: record.id, ...fields, roles };
 }
 
@@ -91,11 +92,23 @@ export function createUtilisateursService(client, passwordHasher = (password) =>
     }
   }
 
+  async function validateMaster(data, current) {
+    const merged = { ...current?.fields, ...data };
+    if (!merged.master_consultant_id) { if ('master_consultant_id' in data) data.master_consultant_id = null; return; }
+    const roles = normalizeRoleNames(merged.roles ?? merged.role);
+    if (!roles.includes('consultant')) throw new UtilisateursError('Rattachement réservé aux consultants', 400, 'INVALID_MASTER_RELATION');
+    const master = await client.getById('Utilisateurs', positiveId(merged.master_consultant_id));
+    const masterRoles = normalizeRoleNames(master?.fields?.roles ?? master?.fields?.role);
+    if (!master || !masterRoles.includes('master_consultant') || String(master.fields.agence_id) !== String(merged.agence_id)) throw new UtilisateursError('Master consultant invalide', 400, 'INVALID_MASTER_RELATION');
+    data.master_consultant_id = master.id;
+  }
+
   return {
     async list() { return (await client.list('Utilisateurs')).map(publicRecord); },
     async create(input) {
       const data = sanitize(input, true);
       data.agence_id = await validateAgency(data.agence_id);
+      await validateMaster(data);
       await ensureUniqueEmail(data.email);
       const passwordHash = await passwordHasher(validatePassword(input.mot_de_passe));
       let record = await client.create('Utilisateurs', {
@@ -113,6 +126,7 @@ export function createUtilisateursService(client, passwordHasher = (password) =>
       if (!current) throw new UtilisateursError('Utilisateur introuvable', 404, 'NOT_FOUND');
       const data = sanitize(input, false);
       if ('agence_id' in data) data.agence_id = await validateAgency(data.agence_id);
+      await validateMaster(data, current);
       await ensureUniqueEmail(data.email, current.id);
       return publicRecord(await client.update('Utilisateurs', current.id, toGrist(data)));
     },

@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 
 import { gristClient } from './gristClient.js';
+import { normalizeRoleNames } from './roleModel.js';
 
 export class AuthError extends Error {
   constructor(message, status, code, details) {
@@ -13,11 +14,7 @@ export class AuthError extends Error {
 }
 
 function normalizeRoles(value) {
-  if (Array.isArray(value)) {
-    return value.filter((role) => role !== 'L' && typeof role === 'string');
-  }
-
-  return typeof value === 'string' && value ? [value] : [];
+  return normalizeRoleNames(value);
 }
 
 function publicUser(record, roles, roleActif) {
@@ -30,6 +27,7 @@ function publicUser(record, roles, roleActif) {
     roles,
     role_actif: roleActif,
     agence_id: fields.agence_id,
+    master_consultant_id: fields.master_consultant_id || null,
     doit_changer_mot_de_passe: fields.doit_changer_mot_de_passe === true,
   };
 }
@@ -64,7 +62,7 @@ export function createAuthService({ usersClient = gristClient, passwordComparer 
         return { selectionRequise: true, roles };
       }
 
-      const selectedRole = roleActif ?? roles[0];
+      const selectedRole = roleActif ? normalizeRoleNames(roleActif)[0] : roles[0];
       if (!roles.includes(selectedRole)) {
         throw new AuthError('Rôle non autorisé', 403, 'INVALID_ROLE');
       }
@@ -86,11 +84,12 @@ export function createAuthService({ usersClient = gristClient, passwordComparer 
       }
 
       const roles = normalizeRoles(userRecord.fields.roles ?? userRecord.fields.role);
-      if (!roles.includes(roleActif)) {
+      const selectedRole = normalizeRoleNames(roleActif)[0];
+      if (!roles.includes(selectedRole)) {
         throw new AuthError('Rôle non autorisé', 403, 'INVALID_ROLE');
       }
 
-      return publicUser(userRecord, roles, roleActif);
+      return publicUser(userRecord, roles, selectedRole);
     },
 
     async changeInitialPassword({ userId, newPassword, roleActif }) {

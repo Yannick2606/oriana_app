@@ -14,6 +14,12 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-14 — T-22A en cours : modèle hiérarchique validé**
+  - Cinq rôles cibles : consultant, master consultant, directeur d'agence, administrateur d'agence et super administrateur.
+  - Le super administrateur conserve un périmètre administratif global sans accès métier implicite ; le directeur peut bloquer/réactiver uniquement les niveaux inférieurs de son agence.
+  - La migration versionnée transforme les anciens rôles, ajoute le rattachement consultant → master consultant et permet une promotion initiale explicite via `SUPER_ADMIN_EMAIL`.
+  - Vérifications locales réussies : lint et 71 tests backend ; la validation idempotente sur l'instance Grist réelle reste requise après publication.
+  - T-22 reste ouverte : la clôture PHASE 1 sera reprise après T-22A à T-22D.
 - **2026-07-14 — T-21 terminée : revue de sécurité PHASE 1**
   - Les six règles non négociables d'`AGENTS.md` ont été contrôlées et consignées dans `SECURITY_REVIEW.md` ; aucun écart n'a été trouvé.
   - Aucun secret, jeton, mot de passe en clair ou clé privée n'est présent dans les fichiers suivis ; les fichiers `.env` restent ignorés.

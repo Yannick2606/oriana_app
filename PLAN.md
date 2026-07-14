@@ -153,6 +153,28 @@
 
 ## Jalon 4 — Consolidation
 
+### [~] T-22A : Hiérarchie des rôles et rattachement d'équipe
+- Migrer `manager` vers `master_consultant` et `admin` vers `admin_agence`, ajouter
+  `directeur_agence` et `super_admin`, ainsi que `master_consultant_id` sur les utilisateurs.
+- **Acceptation** : migration idempotente et sauvegardée ; rattachement uniquement entre un
+  consultant et un master consultant actif de la même agence ; promotion super admin explicite.
+
+### [ ] T-22B : Autorisations équipe, agence et plateforme
+- Consultant : ses données ; master consultant : son équipe ; directeur et admin d'agence :
+  leur agence ; super admin : administration globale sans accès métier implicite.
+- **Acceptation** : cloisonnements testés par appels API directs pour les cinq rôles.
+
+### [ ] T-22C : Organisation des équipes et blocage hiérarchique
+- Le directeur organise les rattachements et bloque/réactive consultant et master consultant.
+- L'admin d'agence gère les comptes de son agence ; seul le super admin gère les agences et
+  attribue `super_admin`.
+- **Acceptation** : aucun rôle ne peut administrer son niveau ou un niveau supérieur.
+
+### [ ] T-22D : Parcours adaptatif et espace Auto-formation
+- Présentation à la première connexion, progression distincte par rôle, possibilité de passer,
+  reprendre et relancer depuis l'espace Auto-formation.
+- **Acceptation** : chacun des cinq rôles obtient un parcours adapté à ses droits réels.
+
 ### [x] T-21 : Revue de sécurité PHASE 1
 - Vérifier chaque règle d'AGENTS.md §1. Rejouer le test de cloisonnement consultant.
 - Vérifier qu'aucun secret n'est présent dans le dépôt (grep).

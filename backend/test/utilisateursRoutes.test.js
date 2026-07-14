@@ -10,7 +10,9 @@ function client() {
   const tables = new Map([
     ['Agences', [{ id: 3, fields: { nom: 'Boréal Nord', actif: true } }]],
     ['Utilisateurs', [{ id: 10, fields: { nom: 'Admin', prenom: 'Existant', email: 'admin@example.invalid',
-      role: ['L', 'admin'], agence_id: 3, actif: true, mot_de_passe_hash: 'hash-non-public' } }]],
+      role: ['L', 'admin'], agence_id: 3, actif: true, mot_de_passe_hash: 'hash-non-public' } },
+    { id: 11, fields: { nom: 'Master', prenom: 'Equipe', email: 'master@example.invalid',
+      role: ['L', 'master_consultant'], agence_id: 3, actif: true, mot_de_passe_hash: 'hash-non-public' } }]],
   ]);
   let nextId = 100;
   return {
@@ -43,11 +45,11 @@ test('un admin crée un compte multirôle dont le mot de passe est haché et jam
   const response = await agent.post('/utilisateurs').send({ nom: 'Martin', prenom: 'Julie',
     email: 'JULIE@EXAMPLE.INVALID', roles: ['consultant', 'manager'], agence_id: 3, mot_de_passe: password }).expect(201);
   assert.equal(response.body.data.email, 'julie@example.invalid');
-  assert.deepEqual(response.body.data.roles, ['consultant', 'manager']);
+  assert.deepEqual(response.body.data.roles, ['consultant', 'master_consultant']);
   assert.equal('mot_de_passe_hash' in response.body.data, false);
   assert.equal('mot_de_passe' in response.body.data, false);
   const stored = dataClient.tables.get('Utilisateurs').at(-1).fields;
-  assert.deepEqual(stored.role, ['L', 'consultant', 'manager']);
+  assert.deepEqual(stored.role, ['L', 'consultant', 'master_consultant']);
   assert.notEqual(stored.mot_de_passe_hash, password);
   assert.equal(await bcrypt.compare(password, stored.mot_de_passe_hash), true);
   assert.equal(stored.doit_changer_mot_de_passe, true);
@@ -89,6 +91,16 @@ test('refuse l’injection directe d’un hash ou d’un mot de passe en modific
     .expect(400, { error: 'FORBIDDEN_FIELD' });
 });
 
+test('rattache un consultant uniquement à un master consultant de son agence', async () => {
+  const dataClient = client(); const agent = await agentFor(dataClient, admin);
+  const base = { nom: 'Equipe', prenom: 'Consultant', email: 'team@example.invalid', roles: ['consultant'],
+    agence_id: 3, master_consultant_id: 11, mot_de_passe: randomBytes(18).toString('hex') };
+  const response = await agent.post('/utilisateurs').send(base).expect(201);
+  assert.equal(response.body.data.master_consultant_id, 11);
+  await agent.post('/utilisateurs').send({ ...base, email: 'invalid-team@example.invalid', roles: ['directeur_agence'] })
+    .expect(400, { error: 'INVALID_MASTER_RELATION' });
+});
+
 test('relit par email un utilisateur quand Grist répond 204 à la création', async () => {
   const dataClient = client(); const originalCreate = dataClient.create;
   dataClient.create = async (...args) => { await originalCreate(...args); return null; };
@@ -110,5 +122,5 @@ test('relit par email quand Grist renvoie uniquement l’identifiant créé', as
     agence_id: 3, mot_de_passe: randomBytes(18).toString('hex'),
   }).expect(201);
   assert.equal(response.body.data.email, 'id-only@example.invalid');
-  assert.deepEqual(response.body.data.roles, ['manager']);
+  assert.deepEqual(response.body.data.roles, ['master_consultant']);
 });

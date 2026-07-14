@@ -70,7 +70,7 @@ test('login demande un rôle actif pour un compte multirôle', async () => {
 
   assert.deepEqual(result, {
     selectionRequise: true,
-    roles: ['consultant', 'admin'],
+    roles: ['consultant', 'admin_agence'],
   });
 });
 
@@ -87,8 +87,8 @@ test('changeRole relit les rôles courants avant de modifier la session', async 
   const { service } = await fixture({ roles: ['consultant', 'manager'] });
   const user = await service.changeRole({ userId: 7, roleActif: 'manager' });
 
-  assert.equal(user.role_actif, 'manager');
-  assert.deepEqual(user.roles, ['consultant', 'manager']);
+  assert.equal(user.role_actif, 'master_consultant');
+  assert.deepEqual(user.roles, ['consultant', 'master_consultant']);
 });
 
 test('changeRole refuse un rôle retiré ou un compte désactivé', async () => {

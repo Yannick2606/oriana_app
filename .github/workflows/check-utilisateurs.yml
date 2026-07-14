@@ -16,6 +16,7 @@ jobs:
       GRIST_API_URL: ${{ secrets.GRIST_API_URL }}
       GRIST_API_KEY: ${{ secrets.GRIST_API_KEY }}
       GRIST_DOC_ID: ${{ secrets.GRIST_DOC_ID }}
+      SUPER_ADMIN_EMAIL: ${{ secrets.SUPER_ADMIN_EMAIL }}
     steps:
       - name: Récupérer le dépôt
         uses: actions/checkout@v4
@@ -36,7 +37,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: grist-utilisateurs-schema-before
-          path: backend/tmp/grist-utilisateurs-schema-*.json
+          path: |
+            backend/tmp/grist-utilisateurs-schema-*.json
+            backend/tmp/grist-utilisateurs-roles-schema-*.json
           retention-days: 30
       - name: Vérifier l'administration des utilisateurs
         run: npm run check:utilisateurs
