@@ -12,6 +12,7 @@
     "start": "node src/server.js",
     "check:grist": "node scripts/checkGrist.js",
     "audit:grist": "node scripts/auditGrist.js",
+    "migrate:postgres": "node scripts/migratePostgres.js",
     "check:patrimoine": "node scripts/checkPatrimoine.js",
     "check:qualification": "node scripts/checkQualification.js",
     "check:offres": "node scripts/checkOffres.js",
@@ -33,10 +34,12 @@
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "connect-pg-simple": "^10.0.0",
     "dotenv": "^16.6.1",
     "express": "^5.1.0",
     "express-session": "^1.19.0",
-    "nodemailer": "^7.0.13"
+    "nodemailer": "^7.0.13",
+    "pg": "^8.22.0"
   },
   "devDependencies": {
     "eslint": "^9.31.0",

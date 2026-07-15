@@ -10,11 +10,20 @@
 
 ## État par phase
 - PHASE 1 : terminée — T-00 à T-22 et extensions T-22A à T-22D validées.
-- Migration PostgreSQL : T-27 terminée ; T-28 en attente de validation.
+- Migration PostgreSQL : T-27 terminée ; T-28 en cours.
 - PHASE 2 : à reprioriser après la bascule PostgreSQL.
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-15 — T-28 en cours : socle PostgreSQL prêt à valider en CI**
+  - PostgreSQL 17.10 est défini sans port public sur un réseau Docker interne et avec volume persistant.
+  - Le schéma relationnel initial est versionné, normalise les RefList et conserve `legacy_grist_id`.
+  - Les sessions Express utilisent PostgreSQL en production ; le MemoryStore reste uniquement
+    utilisé par les tests qui injectent leur application sans démarrer le serveur.
+  - Une sauvegarde quotidienne vérifiée, une rétention configurable et un script de restauration
+    sont ajoutés ; une copie chiffrée hors VPS reste obligatoire avant la bascule métier.
+  - Vérifications locales réussies : lint et 90 tests backend. Docker étant absent localement,
+    le workflow PostgreSQL doit encore valider migration, idempotence, dump et restauration.
 - **2026-07-15 — T-27 terminée : audit Grist réel validé**
   - Le workflow « Audit Grist pour PostgreSQL » n°1 a réussi et produit l'artefact privé attendu.
   - Le document contient 20 tables et 75 enregistrements ; cinq tables cibles sont encore vides,

@@ -1,0 +1,66 @@
+name: Vérification PostgreSQL
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - backend/sql/**
+      - backend/scripts/migratePostgres.js
+      - backend/src/services/postgres.js
+      - backend/src/services/sessionStore.js
+      - deploy/docker-compose.yml
+      - deploy/backup-postgres.sh
+      - deploy/restore-postgres.sh
+
+permissions:
+  contents: read
+
+jobs:
+  postgres:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17.10-alpine
+        env:
+          POSTGRES_DB: oriana
+          POSTGRES_USER: oriana
+          POSTGRES_PASSWORD: test-ci-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U oriana -d oriana"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: oriana
+      POSTGRES_USER: oriana
+      POSTGRES_PASSWORD: test-ci-only
+      PGPASSWORD: test-ci-only
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci
+      - name: Vérifier lint et tests
+        run: npm run lint && npm test
+      - name: Vérifier les migrations et leur idempotence
+        run: npm run migrate:postgres && npm run migrate:postgres
+      - name: Vérifier le schéma et une restauration
+        run: |
+          test "$(psql -Atc "select count(*) from schema_migrations")" = "1"
+          test "$(psql -Atc "select count(*) from information_schema.tables where table_schema='public')" -ge "29"
+          pg_dump --format=custom --file=/tmp/oriana-ci.dump
+          pg_restore --list /tmp/oriana-ci.dump >/dev/null
+          createdb oriana_restore
+          pg_restore --dbname=oriana_restore --no-owner /tmp/oriana-ci.dump
+          test "$(psql --dbname=oriana_restore -Atc "select count(*) from schema_migrations")" = "1"

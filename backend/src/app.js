@@ -50,6 +50,7 @@ export function createApp({
   agentsOptions,
   sessionSecret = process.env.SESSION_SECRET,
   frontendOrigin = process.env.FRONTEND_ORIGIN,
+  sessionStore,
 } = {}) {
   if (!sessionSecret) {
     throw new Error('Configuration de session incomplète : SESSION_SECRET');
@@ -63,6 +64,7 @@ export function createApp({
   app.use(frontendCors(frontendOrigin));
   app.use(express.json());
   app.use(session({
+    store: sessionStore,
     name: 'oriana.sid',
     secret: sessionSecret,
     resave: false,

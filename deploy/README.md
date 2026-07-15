@@ -31,6 +31,36 @@ docker compose --env-file .env -f deploy/docker-compose.yml up -d --build
 docker compose --env-file .env -f deploy/docker-compose.yml ps
 ```
 
+## PostgreSQL privé
+
+Renseigner dans le `.env` du VPS `POSTGRES_DB`, `POSTGRES_USER` et un
+`POSTGRES_PASSWORD` aléatoire fort. PostgreSQL appartient uniquement au réseau Docker interne
+`database` : aucun port hôte ne doit être publié.
+
+Avant le premier démarrage du backend utilisant les sessions persistantes :
+
+```sh
+docker compose --env-file .env -f deploy/docker-compose.yml up -d postgres
+docker compose --env-file .env -f deploy/docker-compose.yml run --rm backend npm run migrate:postgres
+docker compose --env-file .env -f deploy/docker-compose.yml up -d --build backend postgres-backup
+```
+
+Contrôler ensuite l'état sans afficher les variables d'environnement :
+
+```sh
+docker compose --env-file .env -f deploy/docker-compose.yml ps
+docker compose --env-file .env -f deploy/docker-compose.yml exec postgres pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+```
+
+Le conteneur `postgres-backup` crée chaque jour un dump au format personnalisé, vérifie son
+catalogue et applique la rétention configurée. Le volume local protège contre une erreur
+applicative, mais pas contre la perte du VPS : une copie chiffrée hors serveur devra être
+configurée avant la bascule des données métier.
+
+Le test de restauration est obligatoire avant toute bascule. Il doit utiliser une base temporaire,
+contrôler `schema_migrations` et les volumes, puis supprimer uniquement cette base temporaire.
+Ne jamais tester une restauration destructive sur la base de production.
+
 Contrôle attendu : `https://api.boreal.immo/health` répond `{"status":"ok"}`.
 
 Ouvrir ensuite `https://oriana.boreal.immo` dans un navigateur et contrôler :
