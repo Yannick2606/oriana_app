@@ -10,11 +10,24 @@
 
 ## État par phase
 - PHASE 1 : terminée — T-00 à T-22 et extensions T-22A à T-22D validées.
-- Migration PostgreSQL : T-27 terminée ; T-28 en cours.
+- Migration PostgreSQL : T-27 et T-28 terminées ; T-29 en cours.
 - PHASE 2 : à reprioriser après la bascule PostgreSQL.
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-15 — T-28 terminée : PostgreSQL privé et sauvegardes validés sur le VPS**
+  - PostgreSQL 17.10 est déployé sur le réseau Docker interne sans port public, avec volume persistant
+    et six paramètres de production conservés uniquement dans le `.env` protégé en mode `600`.
+  - La migration `001-initial-schema.sql` est appliquée et idempotente : une migration enregistrée,
+    29 tables publiques et aucun secret dans le dépôt.
+  - Le backend utilise les sessions PostgreSQL en production ; la connexion est restée active après
+    un redémarrage réel du conteneur, et l'API publique répond `{"status":"ok"}`.
+  - La sauvegarde quotidienne a produit et vérifié un dump réel ; sa restauration dans la base
+    temporaire `oriana_restore_t28` a réussi avant suppression automatique de cette base.
+  - Le correctif de packaging `ffe5d96` inclut les scripts et le SQL dans l'image backend ; le
+    workflow « Vérification PostgreSQL » n°29434873706 et les 90 tests backend sont réussis.
+  - T-29 est lancée pour adapter la persistance métier et importer Grist de façon idempotente,
+    sans bascule de la source de vérité avant rapprochement et validation du retour arrière.
 - **2026-07-15 — T-28 en cours : socle PostgreSQL prêt à valider en CI**
   - PostgreSQL 17.10 est défini sans port public sur un réseau Docker interne et avec volume persistant.
   - Le schéma relationnel initial est versionné, normalise les RefList et conserve `legacy_grist_id`.

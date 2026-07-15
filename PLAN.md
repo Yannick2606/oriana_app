@@ -219,7 +219,7 @@
 - **Acceptation** : chaque donnée Grist utile possède une cible ou une décision d'exclusion ;
   aucune formule métier n'est perdue ; le schéma et la stratégie de bascule sont documentés.
 
-### [~] T-28 : Déployer PostgreSQL, migrations et sauvegardes
+### [x] T-28 : Déployer PostgreSQL, migrations et sauvegardes
 - Déployer PostgreSQL dans un réseau Docker privé, sans port public.
 - Ajouter les migrations versionnées et une configuration exclusivement par variables d'environnement.
 - Automatiser sauvegarde, rétention et contrôle d'intégrité, puis réussir un test de restauration.
@@ -227,7 +227,7 @@
 - **Acceptation** : base inaccessible publiquement, migration reproductible, sauvegarde et
   restauration vérifiées, sessions persistantes et aucun secret dans le dépôt.
 
-### [ ] T-29 : Adapter le backend et migrer les données
+### [~] T-29 : Adapter le backend et migrer les données
 - Introduire une couche de persistance PostgreSQL sans modifier les contrats API du frontend.
 - Créer un import Grist idempotent avec journal des conversions et rejets.
 - Invalider les sessions actives après réinitialisation d'un mot de passe.
