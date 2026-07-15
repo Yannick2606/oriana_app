@@ -10,10 +10,20 @@
 
 ## État par phase
 - PHASE 1 : terminée — T-00 à T-22 et extensions T-22A à T-22D validées.
-- PHASE 2 : non planifiée (ne pas coder).
+- Migration PostgreSQL : T-27 en cours.
+- PHASE 2 : à reprioriser après la bascule PostgreSQL.
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-15 — T-27 lancée : trajectoire PostgreSQL validée**
+  - T-26 est clôturée après validation réelle du message, du lien, du remplacement et de la connexion.
+  - PostgreSQL est retenu comme future source de vérité métier ; Grist restera la référence jusqu'à
+    une bascule contrôlée, puis servira au pilotage marketing et éditorial.
+  - Le chantier est découpé en audit, infrastructure et sauvegardes, adaptation et migration,
+    tests et bascule, puis reprise fonctionnelle.
+  - Le module futur Marketing IA combine Grist, Brevo, n8n et validation humaine ; PostgreSQL
+    conserve la référence des consentements et de la disponibilité des offres.
+  - Aucun déploiement PostgreSQL ni changement de production n'est engagé par cette décision documentaire.
 - **2026-07-14 — T-26 prête à publier : réinitialisation sécurisée par e-mail**
   - La page de connexion propose désormais « Mot de passe oublié » sans révéler si l'adresse existe.
   - Le backend génère un jeton aléatoire valable 30 minutes, conserve seulement son hash SHA-256 dans Grist et l'invalide après remplacement bcrypt.

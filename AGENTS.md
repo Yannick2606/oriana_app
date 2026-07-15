@@ -7,9 +7,10 @@
 ## 0. Contexte projet (une phrase)
 
 orIAna est une application d'intelligence pour l'immobilier d'entreprise (agence BORÉAL).
-Stack imposée : **backend-proxy Node.js/Express** + **frontend React (Vite + Tailwind)** +
-base de données **Grist** (existante, accédée par API) + agents **n8n** (existants, appelés
-par webhook). Ce dépôt contient le backend et le frontend. Grist et n8n sont externes.
+Stack cible : **backend-proxy Node.js/Express** + **frontend React (Vite + Tailwind)** +
+base métier **PostgreSQL** + agents **n8n** appelés par webhook. Grist reste temporairement la
+source de vérité pendant la migration, puis devient un outil marketing et éditorial distinct.
+Ce dépôt contient le backend, le frontend et les migrations PostgreSQL ; Grist et n8n sont externes.
 
 ## 1. Règles de sécurité — NON NÉGOCIABLES
 
@@ -76,7 +77,7 @@ En cas d'échec, réparer avant de continuer — ne pas laisser un échec « pou
 ## 4. Conventions de code
 
 - **Backend** : Node.js + Express. Structure en couches (routes → contrôleurs → services →
-  client Grist). Pas de logique d'accès Grist dans les routes ; elle vit dans un service dédié.
+  couche de persistance). Aucun accès direct à Grist ou PostgreSQL dans les routes.
 - **Frontend** : React fonctionnel avec hooks. Vite comme bundler. Tailwind pour le style.
   Pas de `<form>` HTML natif pour les soumissions — gérer via handlers (`onClick`, `onChange`).
 - **Pas de `localStorage`/`sessionStorage` pour des données sensibles.** Le jeton de session
@@ -94,6 +95,8 @@ En cas d'échec, réparer avant de continuer — ne pas laisser un échec « pou
 - Ne pas « améliorer » le schéma de données de sa propre initiative. Le schéma fait foi
   (SPEC.md §4). Toute limite rencontrée se signale dans STATUS.md, elle ne se contourne pas
   en silence.
+- Pendant la migration PostgreSQL, ne jamais basculer la production sans sauvegarde vérifiée,
+  rapprochement des données, test de restauration et procédure de retour arrière.
 - Ne pas désactiver une vérification de sécurité pour faire passer un test.
 
 ## 6. Charte visuelle (frontend)

@@ -203,12 +203,59 @@
 - Conserver le système de fichiers en lecture seule et `no-new-privileges`.
 - **Acceptation** : Nginx peut créer son cache et son PID sans exécution en root.
 
-### [~] T-26 : Réinitialisation sécurisée par e-mail
+### [x] T-26 : Réinitialisation sécurisée par e-mail
 - Ajouter « Mot de passe oublié », un lien unique valable 30 minutes et l'écran de remplacement.
 - Envoyer via Google Workspace SMTP avec un mot de passe d'application uniquement dans `.env`.
 - Stocker seulement le hash du jeton dans Grist et l'invalider après usage.
 - **Acceptation** : aucune adresse n'est divulguée, le jeton est à usage unique et le nouveau
   mot de passe bcrypt permet la connexion.
+
+## Jalon 5 — Migration vers PostgreSQL
+
+### [~] T-27 : Auditer Grist et concevoir PostgreSQL
+- Inventorier les tables, colonnes, références, formules, volumes et dépendances du backend.
+- Produire le modèle relationnel cible, les règles de conversion et la stratégie d'identifiants.
+- Définir les contrôles de rapprochement et le plan de retour arrière.
+- **Acceptation** : chaque donnée Grist utile possède une cible ou une décision d'exclusion ;
+  aucune formule métier n'est perdue ; le schéma et la stratégie de bascule sont documentés.
+
+### [ ] T-28 : Déployer PostgreSQL, migrations et sauvegardes
+- Déployer PostgreSQL dans un réseau Docker privé, sans port public.
+- Ajouter les migrations versionnées et une configuration exclusivement par variables d'environnement.
+- Automatiser sauvegarde, rétention et contrôle d'intégrité, puis réussir un test de restauration.
+- Remplacer le MemoryStore des sessions par un stockage PostgreSQL persistant.
+- **Acceptation** : base inaccessible publiquement, migration reproductible, sauvegarde et
+  restauration vérifiées, sessions persistantes et aucun secret dans le dépôt.
+
+### [ ] T-29 : Adapter le backend et migrer les données
+- Introduire une couche de persistance PostgreSQL sans modifier les contrats API du frontend.
+- Créer un import Grist idempotent avec journal des conversions et rejets.
+- Invalider les sessions actives après réinitialisation d'un mot de passe.
+- **Acceptation** : import rejouable, volumes et relations rapprochés, aucun appel Grist résiduel
+  dans les parcours métier migrés et tests backend verts.
+
+### [ ] T-30 : Tester et basculer en production
+- Tester les cinq rôles, les cloisonnements, tous les parcours métier et les agents asynchrones.
+- Effectuer une répétition de bascule, une sauvegarde finale et un test de retour arrière.
+- Passer Grist en lecture seule, migrer le delta final puis basculer le backend.
+- **Acceptation** : rapprochement complet, tests verts, supervision active et décision Go/No-Go
+  explicitement validée avant la bascule réelle.
+
+## Jalon 6 — Reprise fonctionnelle
+
+### [ ] T-31 : Reprioriser la suite métier
+- Définir les critères d'acceptation des panneaux d'affichage, baux, diagnostics, documents,
+  annonces, transactions, interactions et historique des négociations.
+- **Acceptation** : ordre fonctionnel validé avant tout nouveau développement.
+
+### [ ] T-32 : Marketing immobilier assisté par IA
+- Utiliser Grist pour le calendrier éditorial, les brouillons et la validation humaine.
+- Utiliser Brevo pour abonnements, segments, newsletters, préférences et désinscriptions.
+- Utiliser n8n et l'IA pour proposer newsletters et publications adaptées aux réseaux sociaux.
+- Conserver dans PostgreSQL la référence des consentements et vérifier la disponibilité des offres
+  avant toute diffusion.
+- **Acceptation** : consentement traçable, désinscription fonctionnelle, contenu validé par un
+  humain et aucune offre indisponible publiée.
 
 ---
 

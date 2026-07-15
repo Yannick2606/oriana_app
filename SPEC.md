@@ -14,8 +14,13 @@ Application d'intelligence pour l'immobilier d'entreprise de l'agence BORÉAL. T
 1. **Backend-proxy** (Node.js/Express) — détient les secrets, authentifie, applique les droits,
    sert de pont unique vers Grist et n8n.
 2. **Frontend** (React + Vite + Tailwind) — interface, vues par rôle.
-3. **Grist** (externe, existant) — base de données, source de vérité. Accès par API.
+3. **PostgreSQL** — base métier cible et future source de vérité, accessible uniquement par le backend.
 4. **n8n** (externe, existant) — agents d'intelligence, appelés par webhook.
+
+Pendant la transition, Grist reste la source de vérité de production. La bascule vers PostgreSQL
+n'intervient qu'après migration contrôlée, rapprochement complet et validation du retour arrière.
+Après la bascule, Grist est réservé au pilotage marketing et éditorial ; il ne porte plus les
+données métier de référence.
 
 Périmètre de code de la PHASE 1 (voir §7 pour le découpage phases) :
 authentification, gestion des rôles/droits, CRUD du patrimoine et des offres, CRM de base,
@@ -49,8 +54,9 @@ Le `agence_id` de l'utilisateur connecté filtre systématiquement toutes les re
 
 ## 4. Modèle de données (PHASE 1)
 
-> Source de vérité : Grist. Ces tables existent (ou sont à créer) côté Grist. Le backend les lit
-> via l'API Grist. Ne pas recréer une base locale : Grist EST la base.
+> Modèle métier à transposer dans PostgreSQL. Durant la migration, les tables Grist existantes
+> restent la référence de production. PostgreSQL est déployé comme service privé et versionné par
+> migrations ; aucune double écriture durable ne doit être introduite sans stratégie explicite.
 > Convention : `PK` identifiant · `FK→` référence · `[]FK→` liste de références.
 > **Toutes les tables métier portent `agence_id`.**
 
@@ -276,3 +282,17 @@ les ajouter (garder `agence_id` partout, garder le 4e rôle `client` prévu dans
 - On peut créer une société, un contact, une demande, et afficher le matching scoré.
 - Le déclenchement d'un agent n8n fonctionne en asynchrone (déclencher → statut → résultat).
 - lint + build + tests passent sur backend et frontend.
+
+## 9. Transition PostgreSQL et marketing assisté par IA
+
+- PostgreSQL devient la source de vérité pour l'authentification, les droits et toutes les données
+  métier après une bascule réversible et contrôlée.
+- Les sauvegardes automatiques, la rétention, le chiffrement des accès et un test réel de
+  restauration sont obligatoires avant la bascule.
+- Grist peut ensuite piloter le calendrier éditorial, les brouillons et les validations marketing.
+- Brevo gère les abonnements, segments, campagnes, préférences et désinscriptions ; PostgreSQL
+  conserve la référence des consentements, leur date et leur provenance.
+- n8n et les agents IA produisent des brouillons de newsletters et de publications sociales.
+  Une validation humaine est requise avant diffusion, au moins jusqu'à décision explicite contraire.
+- Une offre ne peut être publiée que si son état et sa disponibilité viennent d'être confirmés
+  depuis PostgreSQL.
