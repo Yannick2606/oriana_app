@@ -2,6 +2,12 @@ name: Audit Grist pour PostgreSQL
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/audit-grist.yml
+      - backend/scripts/auditGrist.js
+      - backend/package.json
 
 permissions:
   contents: read
