@@ -212,7 +212,7 @@
 
 ## Jalon 5 — Migration vers PostgreSQL
 
-### [~] T-27 : Auditer Grist et concevoir PostgreSQL
+### [x] T-27 : Auditer Grist et concevoir PostgreSQL
 - Inventorier les tables, colonnes, références, formules, volumes et dépendances du backend.
 - Produire le modèle relationnel cible, les règles de conversion et la stratégie d'identifiants.
 - Définir les contrôles de rapprochement et le plan de retour arrière.

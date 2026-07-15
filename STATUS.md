@@ -10,11 +10,22 @@
 
 ## État par phase
 - PHASE 1 : terminée — T-00 à T-22 et extensions T-22A à T-22D validées.
-- Migration PostgreSQL : T-27 en cours.
+- Migration PostgreSQL : T-27 terminée ; T-28 en attente de validation.
 - PHASE 2 : à reprioriser après la bascule PostgreSQL.
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-15 — T-27 terminée : audit Grist réel validé**
+  - Le workflow « Audit Grist pour PostgreSQL » n°1 a réussi et produit l'artefact privé attendu.
+  - Le document contient 20 tables et 75 enregistrements ; cinq tables cibles sont encore vides,
+    ce qui limite le volume à convertir sans réduire les exigences de contrôle.
+  - Le schéma réel et ses champs historiques sont cartographiés vers le modèle canonique ; les
+    listes de références seront normalisées et chaque ligne conservera `legacy_grist_id`.
+  - Les colonnes marquées comme formules ont toutes une formule vide, y compris les scores de
+    matching : aucune logique active ne sera perdue. Les quatre scores existants seront conservés
+    comme historique et le moteur futur sera spécifié séparément.
+  - T-28 ne démarre qu'après validation du résultat et conserve PostgreSQL privé, les migrations
+    versionnées, les sauvegardes automatiques et un test réel de restauration comme critères.
 - **2026-07-15 — T-27 : audit statique terminé, contrôle Grist réel prêt**
   - La cartographie Grist → PostgreSQL couvre les tables métier, les listes normalisées, les
     pièces jointes, les données EAV, le matching et la boîte aux lettres des agents.

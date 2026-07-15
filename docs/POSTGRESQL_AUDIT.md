@@ -98,3 +98,34 @@ calendrier éditorial, sans devenir une copie générale du CRM. Les publication
 
 Le workflow manuel `Audit Grist pour PostgreSQL` produit l'artefact privé nécessaire à ces
 confirmations. Il ne journalise ni contenu métier, ni mot de passe, ni clé Grist.
+
+## Résultat du contrôle réel du 15 juillet 2026
+
+Le workflow n°1 a réussi et a inventorié 20 tables pour 75 enregistrements :
+
+| Groupe | Tables | Volumes constatés |
+|---|---|---|
+| Organisation | Agences, Utilisateurs, Adresses | 1, 4, 6 |
+| Patrimoine | Sites, Batiments, Cellules, Lots | 5, 5, 0, 11 |
+| CRM | Societes, Contacts, Demandes | 7, 4, 2 |
+| Commercial | Mandats, Offres, Conditions_Financieres | 2, 0, 0 |
+| Qualification | Ref_Familles, Ref_Categories_Carac, Ref_Caracteristiques, Caracteristiques_Bien | 6, 4, 8, 0 |
+| Intelligence | Matching_demandes_lots, Traitements_Agents | 4, 0 |
+
+Constats structurants :
+
+- le schéma réel contient des champs historiques qui diffèrent du schéma canonique, notamment
+  `nom_site`, `consultant_responsable_id`, `proprietaire_id`, les composants d'adresse et plusieurs
+  champs calculés ; l'import doit donc utiliser une table de correspondance explicite ;
+- `Cellules`, `Offres`, `Conditions_Financieres`, `Caracteristiques_Bien` et
+  `Traitements_Agents` sont vides : leur schéma peut être créé directement sans migration de lignes ;
+- plusieurs colonnes sont marquées `isFormula=true` avec une formule vide. C'est le cas de champs
+  patrimoniaux, de `master_consultant_id` et des six scores du matching ;
+- aucune formule active n'est donc à traduire ou à perdre. Les quatre résultats de matching
+  existants seront importés comme valeurs historiques ; le futur moteur de recalcul devra être
+  spécifié et testé séparément avant de remplacer ces valeurs ;
+- les tables actuelles ne portent pas encore de pièces jointes effectivement utilisées dans le
+  périmètre audité ; la stratégie de stockage de fichiers reste néanmoins requise pour la cible.
+
+Conclusion : le modèle PostgreSQL cible et la stratégie d'import sont validés. Le faible volume
+réduit le risque technique, mais ne dispense pas des contrôles de relations et de droits.
