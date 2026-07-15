@@ -5,6 +5,7 @@ on:
   push:
     branches: [main]
     paths:
+      - .github/workflows/check-postgres.yml
       - backend/sql/**
       - backend/scripts/migratePostgres.js
       - backend/src/services/postgres.js
