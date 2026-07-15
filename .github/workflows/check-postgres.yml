@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - .github/workflows/check-postgres.yml
+      - backend/Dockerfile
       - backend/sql/**
       - backend/scripts/migratePostgres.js
       - backend/src/services/postgres.js
@@ -58,6 +59,12 @@ jobs:
       - run: npm ci
       - name: Vérifier lint et tests
         run: npm run lint && npm test
+      - name: Vérifier l'image de migration
+        working-directory: .
+        run: |
+          docker build -f backend/Dockerfile -t oriana-backend-postgres-check .
+          docker run --rm oriana-backend-postgres-check \
+            sh -c 'test -r scripts/migratePostgres.js && test -r sql/001-initial-schema.sql'
       - name: Vérifier les migrations et leur idempotence
         run: npm run migrate:postgres && npm run migrate:postgres
       - name: Vérifier le schéma et une restauration

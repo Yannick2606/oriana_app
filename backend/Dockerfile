@@ -9,6 +9,8 @@ WORKDIR /app
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY backend/package.json ./package.json
 COPY backend/src ./src
+COPY backend/scripts ./scripts
+COPY backend/sql ./sql
 USER node
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
