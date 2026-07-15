@@ -15,6 +15,16 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-15 — T-27 : audit statique terminé, contrôle Grist réel prêt**
+  - La cartographie Grist → PostgreSQL couvre les tables métier, les listes normalisées, les
+    pièces jointes, les données EAV, le matching et la boîte aux lettres des agents.
+  - La stratégie retient des identifiants PostgreSQL indépendants avec `legacy_grist_id`, un
+    import idempotent, un rapprochement par volumes/relations/agrégats et une bascule réversible.
+  - Un workflow manuel inventorie uniquement le schéma, les formules et les volumes Grist dans
+    un artefact privé ; aucune donnée métier ni aucun secret n'est écrit dans les journaux.
+  - Les formules exactes du matching, les pièces jointes et les valeurs Choice/ChoiceList restent
+    à confirmer par cet audit réel avant de figer le schéma SQL.
+  - Vérifications locales réussies : lint et 88 tests backend.
 - **2026-07-15 — T-27 lancée : trajectoire PostgreSQL validée**
   - T-26 est clôturée après validation réelle du message, du lien, du remplacement et de la connexion.
   - PostgreSQL est retenu comme future source de vérité métier ; Grist restera la référence jusqu'à
