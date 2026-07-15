@@ -43,6 +43,10 @@ jobs:
       POSTGRES_USER: oriana
       POSTGRES_PASSWORD: test-ci-only
       PGPASSWORD: test-ci-only
+      PGHOST: localhost
+      PGPORT: 5432
+      PGDATABASE: oriana
+      PGUSER: oriana
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
