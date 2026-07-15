@@ -62,10 +62,11 @@ jobs:
         run: npm run migrate:postgres && npm run migrate:postgres
       - name: Vérifier le schéma et une restauration
         run: |
-          test "$(psql -Atc "select count(*) from schema_migrations")" = "1"
-          test "$(psql -Atc "select count(*) from information_schema.tables where table_schema='public')" -ge "29"
+          test "$(psql -Atc 'select count(*) from schema_migrations')" = "1"
+          table_count="$(psql -Atc "select count(*) from information_schema.tables where table_schema = 'public'")"
+          test "$table_count" -ge 29
           pg_dump --format=custom --file=/tmp/oriana-ci.dump
           pg_restore --list /tmp/oriana-ci.dump >/dev/null
           createdb oriana_restore
           pg_restore --dbname=oriana_restore --no-owner /tmp/oriana-ci.dump
-          test "$(psql --dbname=oriana_restore -Atc "select count(*) from schema_migrations")" = "1"
+          test "$(psql --dbname=oriana_restore -Atc 'select count(*) from schema_migrations')" = "1"
