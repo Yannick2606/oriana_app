@@ -15,6 +15,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-16 — T-29 : second import réel annulé intégralement**
+  - Après correction des bâtiments, PostgreSQL a refusé le premier lot sans `agence_id` direct ;
+    la transaction a de nouveau effectué un rollback complet.
+  - Les 11 lots historiques étant directement rattachés à un bâtiment, leur agence doit être
+    héritée de ce bâtiment existant, conformément à la hiérarchie validée.
 - **2026-07-16 — T-29 : premier import réel annulé intégralement**
   - Le contrôle à blanc était vert sur 69 lignes et zéro rejet ; une sauvegarde pré-import vérifiée
     a été créée avant exécution.
