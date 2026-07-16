@@ -37,6 +37,7 @@ function normalizeList(value) {
 }
 
 const timestampColumns = new Set(['date_creation', 'date_mise_a_jour', 'derniere_connexion', 'reset_mot_de_passe_expiration']);
+const dateFields = new Set(['date_disponibilite', 'date_debut', 'date_fin', 'disponibilite']);
 const jsonTextFields = new Set(['progression_formation', 'resultat', 'scores_detail']);
 
 function writeValue(value, column) {
@@ -48,6 +49,7 @@ function writeValue(value, column) {
 function readValue(value, field) {
   if (value === null || value === undefined) return value;
   if (jsonTextFields.has(field) && typeof value === 'object') return JSON.stringify(value);
+  if (dateFields.has(field) && value instanceof Date) return value.toISOString().slice(0, 10);
   if (value instanceof Date) return value.toISOString();
   return value;
 }
@@ -131,4 +133,4 @@ export function createPostgresClient(pool) {
   };
 }
 
-export const testing = { tableDefinitions, normalizeList };
+export const testing = { tableDefinitions, normalizeList, readValue };
