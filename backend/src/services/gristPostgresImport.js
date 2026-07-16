@@ -71,6 +71,11 @@ async function upsert(client, table, record) {
     const result = await client.query(`SELECT id FROM ${target.target} WHERE lower(code) = lower($1) OR lower(libelle) = lower($1)`, [value]);
     values[column] = result.rows[0]?.id ?? null;
   }
+  for (const [column, [parentColumn, parentTable, parentValueColumn]] of Object.entries(config.inheritedRefs ?? {})) {
+    if (values[column] || !values[parentColumn]) continue;
+    const result = await client.query(`SELECT ${parentValueColumn} AS value FROM ${parentTable} WHERE id = $1`, [values[parentColumn]]);
+    values[column] = result.rows[0]?.value ?? null;
+  }
   const key = config.key ?? 'legacy_grist_id';
   if (key === 'legacy_grist_id') values.legacy_grist_id = Number(record.id);
   const entries = Object.entries(values).filter(([, value]) => value !== undefined);

@@ -15,6 +15,13 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-16 — T-29 : premier import réel annulé intégralement**
+  - Le contrôle à blanc était vert sur 69 lignes et zéro rejet ; une sauvegarde pré-import vérifiée
+    a été créée avant exécution.
+  - PostgreSQL a ensuite refusé un bâtiment sans `agence_id` direct ; la transaction a effectué
+    un rollback complet, sans import partiel ni bascule du backend.
+  - Les bâtiments historiques étant déjà rattachés à un site, leur agence doit être héritée de ce
+    site existant sans créer de relation artificielle.
 - **2026-07-16 — T-29 : qualification validée de l’usage historique `entrepôt`**
   - Les lots Grist 4 et 11 portent l’usage `entrepôt`, absent des six familles du référentiel.
   - Décision métier validée : rattachement à la famille `Logistique`, avec conservation séparée
