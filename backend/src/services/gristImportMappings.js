@@ -43,7 +43,7 @@ export function normalizedRoles(fields) {
 export function field(fields, canonical, ...aliases) { return first(fields, [canonical, ...aliases]); }
 
 export const importTables = [
-  'Agences', 'Adresses', 'Utilisateurs', 'Ref_Roles', 'Ref_Familles', 'Societes', 'Contacts',
+  'Agences', 'Adresses', 'Utilisateurs', 'Ref_Familles', 'Societes', 'Contacts',
   'Sites', 'Batiments', 'Cellules', 'Lots', 'Ref_Categories_Carac', 'Ref_Caracteristiques',
   'Caracteristiques_Bien', 'Offres', 'Conditions_Financieres', 'Mandats', 'Demandes',
   'Matching_demandes_lots', 'Traitements_Agents',

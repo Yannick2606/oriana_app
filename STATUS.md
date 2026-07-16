@@ -15,6 +15,15 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-16 — T-29 : contrôle VPS arrêté sur une table Grist absente**
+  - La migration PostgreSQL 002 a été appliquée avec succès, puis le contrôle à blanc s'est arrêté
+    avant toute lecture métier sur un `404` Grist.
+  - L'inventaire technique réel confirme 19 tables : `Ref_Roles` n'existe pas dans Grist ; les
+    rôles historiques sont portés par `Utilisateurs` et le référentiel PostgreSQL est déjà alimenté
+    par la migration 001.
+  - L'import ne requiert donc plus une table source inexistante et conserve la normalisation des
+    rôles depuis `Utilisateurs`, sans créer de table ni de donnée artificielle dans Grist.
+  - Aucun import PostgreSQL ni aucune bascule n'a été exécuté.
 - **2026-07-16 — T-29 : correctif CI de normalisation des rôles**
   - Le premier contrôle PostgreSQL réel a confirmé 94 tests sur 95 et isolé l'échec dans
     l'import de `utilisateur_roles` : un code de rôle textuel était traité à tort comme une
