@@ -176,10 +176,16 @@ test('un jeton valide remplace le mot de passe une seule fois et un jeton expirÃ
     },
     async update(table, id, changes) { Object.assign(fields, changes); return { id, fields: { ...fields } }; },
   };
-  const service = createAuthService({ usersClient, now: () => new Date('2026-07-14T12:10:00.000Z') });
+  const invalidated = [];
+  const service = createAuthService({
+    usersClient,
+    now: () => new Date('2026-07-14T12:10:00.000Z'),
+    invalidateUserSessions: async (id) => invalidated.push(id),
+  });
   const newPassword = randomBytes(24).toString('hex');
   await service.resetPassword({ token, newPassword });
   assert.equal(await bcrypt.compare(newPassword, fields.mot_de_passe_hash), true);
   assert.equal(fields.reset_mot_de_passe_hash, '');
+  assert.deepEqual(invalidated, [7]);
   await assert.rejects(service.resetPassword({ token, newPassword }), (error) => error.code === 'INVALID_RESET_TOKEN');
 });

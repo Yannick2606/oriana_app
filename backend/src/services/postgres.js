@@ -1,5 +1,8 @@
 import pg from 'pg';
 
+pg.types.setTypeParser(20, (value) => Number(value));
+pg.types.setTypeParser(1700, (value) => Number(value));
+
 function readPostgresConfig(environment = process.env) {
   const config = {
     host: environment.POSTGRES_HOST,

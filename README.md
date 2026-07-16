@@ -80,6 +80,21 @@ Les autres commandes `prepare:*` et `check:*` sont destinées à la préparation
 des modules correspondants. Les workflows GitHub Actions exécutent les mêmes contrôles avec des
 secrets configurés dans GitHub et conservent les sauvegardes comme artefacts.
 
+## Transition PostgreSQL
+
+La source métier reste Grist tant que `PERSISTENCE_PROVIDER=grist`. Après application des
+migrations PostgreSQL, le contrôle à blanc et l'import se lancent séparément :
+
+```bash
+npm run migrate:postgres --prefix backend
+npm run validate:import:grist --prefix backend
+npm run import:grist:postgres --prefix backend
+```
+
+Le contrôle à blanc n'écrit pas dans Grist. L'import est idempotent et transactionnel : tout
+rejet annule les écritures métier. `PERSISTENCE_PROVIDER=postgres` ne doit être activé qu'après
+sauvegarde, rapprochement complet, test de restauration et validation explicite de la bascule.
+
 ## Vérifications
 
 ```bash

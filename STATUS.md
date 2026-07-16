@@ -15,6 +15,24 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-15 — T-29 prête à publier pour validation PostgreSQL réelle**
+  - La persistance métier, l'authentification, l'administration des utilisateurs, la formation et
+    les agents utilisent un client configurable conservant le contrat `{ id, fields }` ; Grist
+    reste le fournisseur par défaut tant que `PERSISTENCE_PROVIDER` n'est pas basculé explicitement.
+  - La migration `002-import-grist.sql` ajoute le rattachement transitoire nullable
+    `lots.batiment_id` et les journaux techniques d'import, sans créer de cellules artificielles.
+  - Le contrôle à blanc lit les 20 tables Grist sans écrire dans Grist et ne restitue que volumes,
+    identifiants rejetés et codes ; aucun contenu métier ne figure dans les journaux.
+  - L'import PostgreSQL est transactionnel et idempotent par `legacy_grist_id`, résout les
+    dépendances et listes normalisées, conserve les quatre matchings comme historique et annule
+    intégralement les données métier au moindre rejet.
+  - Une réinitialisation de mot de passe publique ou administrative invalide toutes les sessions
+    PostgreSQL actives de l'utilisateur concerné.
+  - Vérifications locales réussies : lint et 95 tests backend (94 réussis, un test d'intégration
+    PostgreSQL ignoré faute de serveur local). Le workflow PostgreSQL exécutera migration 002,
+    intégration, relations, idempotence, dump et restauration après publication autorisée.
+  - T-29 reste en cours : aucun import réel, aucune bascule et aucune clôture ne sont engagés avant
+    succès CI, sauvegarde VPS, rapprochement des 75 lignes et validation des parcours réels.
 - **2026-07-15 — T-28 terminée : PostgreSQL privé et sauvegardes validés sur le VPS**
   - PostgreSQL 17.10 est déployé sur le réseau Docker interne sans port public, avec volume persistant
     et six paramètres de production conservés uniquement dans le `.env` protégé en mode `600`.

@@ -13,6 +13,8 @@
     "check:grist": "node scripts/checkGrist.js",
     "audit:grist": "node scripts/auditGrist.js",
     "migrate:postgres": "node scripts/migratePostgres.js",
+    "validate:import:grist": "node scripts/validateGristImport.js",
+    "import:grist:postgres": "node scripts/importGristPostgres.js",
     "check:patrimoine": "node scripts/checkPatrimoine.js",
     "check:qualification": "node scripts/checkQualification.js",
     "check:offres": "node scripts/checkOffres.js",

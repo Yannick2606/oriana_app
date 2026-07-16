@@ -45,6 +45,7 @@ export function createAuthService({
   mailer = mailService,
   createToken = () => randomBytes(32).toString('hex'),
   now = () => new Date(),
+  invalidateUserSessions = async () => {},
 } = {}) {
   return {
     async login({ email, motDePasse, roleActif }) {
@@ -167,6 +168,7 @@ export function createAuthService({
         reset_mot_de_passe_hash: '',
         reset_mot_de_passe_expiration: '',
       });
+      await invalidateUserSessions(userRecord.id);
     },
   };
 }

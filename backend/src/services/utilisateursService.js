@@ -78,7 +78,7 @@ function validatePassword(value) {
   return value;
 }
 
-export function createUtilisateursService(client, passwordHasher = (password) => bcrypt.hash(password, 12)) {
+export function createUtilisateursService(client, passwordHasher = (password) => bcrypt.hash(password, 12), invalidateUserSessions = async () => {}) {
   function actorRole(actor) { return normalizeRoleNames(actor?.role_actif)[0]; }
   function recordRoles(record) { return normalizeRoleNames(record?.fields?.role ?? record?.fields?.roles); }
   function sameAgency(record, actor) { return String(record?.fields?.agence_id) === String(actor?.agence_id); }
@@ -166,10 +166,12 @@ export function createUtilisateursService(client, passwordHasher = (password) =>
       if (!current) throw new UtilisateursError('Utilisateur introuvable', 404, 'NOT_FOUND');
       assertLowerTarget(current, actor);
       const passwordHash = await passwordHasher(validatePassword(password));
-      return publicRecord(await client.update('Utilisateurs', id, {
+      const updated = await client.update('Utilisateurs', id, {
         mot_de_passe_hash: passwordHash,
         doit_changer_mot_de_passe: true,
-      }));
+      });
+      await invalidateUserSessions(id);
+      return publicRecord(updated);
     },
   };
 }

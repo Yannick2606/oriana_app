@@ -9,8 +9,9 @@ on:
       - backend/Dockerfile
       - backend/sql/**
       - backend/scripts/migratePostgres.js
-      - backend/src/services/postgres.js
-      - backend/src/services/sessionStore.js
+      - backend/scripts/importGristPostgres.js
+      - backend/src/services/**
+      - backend/test/**
       - deploy/docker-compose.yml
       - deploy/backup-postgres.sh
       - deploy/restore-postgres.sh
@@ -57,14 +58,18 @@ jobs:
           cache: npm
           cache-dependency-path: backend/package-lock.json
       - run: npm ci
+      - name: Appliquer les migrations avant les tests d’intégration
+        run: npm run migrate:postgres
       - name: Vérifier lint et tests
+        env:
+          POSTGRES_INTEGRATION_TESTS: "1"
         run: npm run lint && npm test
       - name: Vérifier l'image de migration
         working-directory: .
         run: |
           docker build -f backend/Dockerfile -t oriana-backend-postgres-check .
           docker run --rm oriana-backend-postgres-check \
-            sh -c 'test -r scripts/migratePostgres.js && test -r sql/001-initial-schema.sql'
+            sh -c 'test -r scripts/migratePostgres.js && test -r sql/001-initial-schema.sql && test -r sql/002-import-grist.sql'
       - name: Vérifier les migrations et leur idempotence
         run: npm run migrate:postgres && npm run migrate:postgres
       - name: Vérifier le schéma et une restauration
@@ -74,11 +79,11 @@ jobs:
               -e PGPASSWORD -e PGPORT -e PGUSER -e PGDATABASE \
               -e PGHOST=127.0.0.1 postgres:17.10-alpine "$@"
           }
-          test "$(pg_client psql -Atc 'select count(*) from schema_migrations')" = "1"
+          test "$(pg_client psql -Atc 'select count(*) from schema_migrations')" = "2"
           table_count="$(pg_client psql -Atc "select count(*) from information_schema.tables where table_schema = 'public'")"
           test "$table_count" -ge 29
           pg_client pg_dump --format=custom --file=/backup/oriana-ci.dump
           pg_client pg_restore --list /backup/oriana-ci.dump >/dev/null
           pg_client createdb oriana_restore
           pg_client pg_restore --dbname=oriana_restore --no-owner /backup/oriana-ci.dump
-          test "$(pg_client psql --dbname=oriana_restore -Atc 'select count(*) from schema_migrations')" = "1"
+          test "$(pg_client psql --dbname=oriana_restore -Atc 'select count(*) from schema_migrations')" = "2"

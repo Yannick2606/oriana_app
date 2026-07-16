@@ -24,7 +24,7 @@ import { createAgentsRoutes } from './routes/agentsRoutes.js';
 import { createFormationRoutes } from './routes/formationRoutes.js';
 import { requirePasswordChanged } from './middlewares/requirePasswordChanged.js';
 import { frontendCors } from './middlewares/frontendCors.js';
-import { authService as defaultAuthService } from './services/authService.js';
+import { createAuthService } from './services/authService.js';
 import { gristClient } from './services/gristClient.js';
 import { patrimoineResources } from './services/patrimoineConfig.js';
 import { createPatrimoineService } from './services/patrimoineService.js';
@@ -38,7 +38,7 @@ import { createAgentsService } from './services/agentsService.js';
 import { createFormationService } from './services/formationService.js';
 
 export function createApp({
-  authService = defaultAuthService,
+  authService,
   patrimoineClient = gristClient,
   qualificationClient = patrimoineClient,
   offresClient = patrimoineClient,
@@ -51,6 +51,7 @@ export function createApp({
   sessionSecret = process.env.SESSION_SECRET,
   frontendOrigin = process.env.FRONTEND_ORIGIN,
   sessionStore,
+  invalidateUserSessions = async () => {},
 } = {}) {
   if (!sessionSecret) {
     throw new Error('Configuration de session incomplète : SESSION_SECRET');
@@ -77,7 +78,11 @@ export function createApp({
     },
   }));
   app.use(healthRoutes);
-  app.use('/auth', createAuthRoutes(createAuthController(authService)));
+  const resolvedAuthService = authService ?? createAuthService({
+    usersClient: utilisateursClient,
+    invalidateUserSessions,
+  });
+  app.use('/auth', createAuthRoutes(createAuthController(resolvedAuthService)));
   app.use(requirePasswordChanged);
   app.use(createFormationRoutes(createFormationController(createFormationService(utilisateursClient))));
   const resolvedAgentsOptions = {
@@ -107,7 +112,7 @@ export function createApp({
   }
   app.use(createMatchingRoutes(createMatchingController(createMatchingService(matchingClient))));
   app.use('/utilisateurs', createUtilisateursRoutes(
-    createUtilisateursController(createUtilisateursService(utilisateursClient)),
+    createUtilisateursController(createUtilisateursService(utilisateursClient, undefined, invalidateUserSessions)),
   ));
   return app;
 }
