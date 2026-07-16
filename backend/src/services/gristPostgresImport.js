@@ -33,8 +33,8 @@ export function validateSnapshot(snapshot) {
         const legacyId = sourceReference(record.fields, aliases);
         if (legacyId && !sourceIds[targetTable]?.has(legacyId)) rejections.push(rejection(table, record, `REFERENCE_ABSENTE_${targetTable}`));
       }
-      for (const [targetTable, aliases] of Object.values(config.valueRefs ?? {})) {
-        const value = sourceText(record.fields, aliases);
+      for (const [targetTable, aliases, transform = (value) => value] of Object.values(config.valueRefs ?? {})) {
+        const value = transform(sourceText(record.fields, aliases));
         const target = (snapshot[targetTable] ?? []).find((item) => [item.fields.code, item.fields.libelle].some((candidate) => normalizedText(candidate) === normalizedText(value)));
         if (value && !target) rejections.push(rejection(table, record, `VALEUR_REFERENCE_ABSENTE_${targetTable}`));
       }
@@ -64,8 +64,8 @@ async function upsert(client, table, record) {
   for (const [column, [targetTable, aliases]] of Object.entries(config.refs ?? {})) {
     values[column] = await targetId(client, importConfig[targetTable], sourceReference(record.fields, aliases));
   }
-  for (const [column, [targetTable, aliases]] of Object.entries(config.valueRefs ?? {})) {
-    const value = sourceText(record.fields, aliases);
+  for (const [column, [targetTable, aliases, transform = (value) => value]] of Object.entries(config.valueRefs ?? {})) {
+    const value = transform(sourceText(record.fields, aliases));
     if (!value) { values[column] = null; continue; }
     const target = importConfig[targetTable];
     const result = await client.query(`SELECT id FROM ${target.target} WHERE lower(code) = lower($1) OR lower(libelle) = lower($1)`, [value]);

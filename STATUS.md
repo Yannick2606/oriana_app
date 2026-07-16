@@ -15,6 +15,12 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-16 — T-29 : qualification validée de l’usage historique `entrepôt`**
+  - Les lots Grist 4 et 11 portent l’usage `entrepôt`, absent des six familles du référentiel.
+  - Décision métier validée : rattachement à la famille `Logistique`, avec conservation séparée
+    de la valeur historique d’origine dans PostgreSQL.
+  - La migration 004 et la conversion explicite sont préparées ; aucun import ni aucune bascule
+    n’a encore été exécuté.
 - **2026-07-16 — T-29 : conservation explicite des champs historiques des lots**
   - Le contrôle à blanc a confirmé que `Lots.nom` est vide sur 11 lignes et que
     `reference_lot` est renseignée sur les 11 ; cette référence devient le nom historique sans
