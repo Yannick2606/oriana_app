@@ -1,7 +1,7 @@
 import { field, importConfig, importTables, listValue, referenceValue } from './gristImportMappings.js';
 
 const listRelations = {
-  'Utilisateurs.roles': ['utilisateur_roles', 'utilisateur_id', 'role_code', 'Ref_Roles'],
+  'Utilisateurs.roles': ['utilisateur_roles', 'utilisateur_id', 'role_code'],
   'Sites.parcelles': ['site_parcelles', 'site_id', 'parcelle'],
   'Lots.cellules': ['lot_cellules', 'lot_id', 'cellule_id', 'Cellules'],
   'Ref_Caracteristiques.familles': ['ref_caracteristique_familles', 'caracteristique_id', 'famille_id', 'Ref_Familles'],

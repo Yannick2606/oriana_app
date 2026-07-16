@@ -15,6 +15,13 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-16 — T-29 : correctif CI de normalisation des rôles**
+  - Le premier contrôle PostgreSQL réel a confirmé 94 tests sur 95 et isolé l'échec dans
+    l'import de `utilisateur_roles` : un code de rôle textuel était traité à tort comme une
+    référence Grist numérique, produisant une valeur nulle refusée par PostgreSQL.
+  - Les rôles normalisés sont désormais insérés directement par leur code ; les RefList métier
+    continuent d'être résolues par `legacy_grist_id`.
+  - Aucun import VPS ni aucune bascule n'a été exécuté.
 - **2026-07-15 — T-29 prête à publier pour validation PostgreSQL réelle**
   - La persistance métier, l'authentification, l'administration des utilisateurs, la formation et
     les agents utilisent un client configurable conservant le contrat `{ id, fields }` ; Grist
