@@ -11,6 +11,8 @@ const listRelations = {
 };
 
 function sourceReference(fields, aliases) { return referenceValue(field(fields, aliases[0], ...aliases.slice(1))); }
+function normalizedText(value) { return String(value ?? '').trim().toLocaleLowerCase('fr-FR'); }
+function sourceText(fields, aliases) { return field(fields, aliases[0], ...aliases.slice(1)); }
 function rejection(table, record, code) { return { source_table: table, legacy_grist_id: Number(record.id), code }; }
 
 export async function readGristSnapshot(client) {
@@ -30,6 +32,11 @@ export function validateSnapshot(snapshot) {
       for (const [targetTable, aliases] of Object.values({ ...config.refs, ...config.deferredRefs })) {
         const legacyId = sourceReference(record.fields, aliases);
         if (legacyId && !sourceIds[targetTable]?.has(legacyId)) rejections.push(rejection(table, record, `REFERENCE_ABSENTE_${targetTable}`));
+      }
+      for (const [targetTable, aliases] of Object.values(config.valueRefs ?? {})) {
+        const value = sourceText(record.fields, aliases);
+        const target = (snapshot[targetTable] ?? []).find((item) => [item.fields.code, item.fields.libelle].some((candidate) => normalizedText(candidate) === normalizedText(value)));
+        if (value && !target) rejections.push(rejection(table, record, `VALEUR_REFERENCE_ABSENTE_${targetTable}`));
       }
       for (const [name, getter] of Object.entries(config.lists ?? {})) {
         const relation = listRelations[`${table}.${name}`];
@@ -56,6 +63,13 @@ async function upsert(client, table, record) {
   const config = importConfig[table]; const values = config.values(record.fields);
   for (const [column, [targetTable, aliases]] of Object.entries(config.refs ?? {})) {
     values[column] = await targetId(client, importConfig[targetTable], sourceReference(record.fields, aliases));
+  }
+  for (const [column, [targetTable, aliases]] of Object.entries(config.valueRefs ?? {})) {
+    const value = sourceText(record.fields, aliases);
+    if (!value) { values[column] = null; continue; }
+    const target = importConfig[targetTable];
+    const result = await client.query(`SELECT id FROM ${target.target} WHERE lower(code) = lower($1) OR lower(libelle) = lower($1)`, [value]);
+    values[column] = result.rows[0]?.id ?? null;
   }
   const key = config.key ?? 'legacy_grist_id';
   if (key === 'legacy_grist_id') values.legacy_grist_id = Number(record.id);

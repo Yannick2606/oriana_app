@@ -15,6 +15,15 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-16 — T-29 : conservation explicite des champs historiques des lots**
+  - Le contrôle à blanc a confirmé que `Lots.nom` est vide sur 11 lignes et que
+    `reference_lot` est renseignée sur les 11 ; cette référence devient le nom historique sans
+    écraser ni modifier Grist.
+  - Les 11 lots portent aussi des données utiles de disponibilité, étage, statut, transaction et
+    usage ; six portent des charges et loyers, cinq un prix de vente.
+  - La migration 003 conserve ces valeurs directement sur `lots`, relie `usage` au référentiel
+    `ref_familles` et n'invente ni cellule, ni offre, ni condition financière.
+  - Aucun import PostgreSQL ni aucune bascule n'a été exécuté.
 - **2026-07-16 — T-29 : contrôle VPS arrêté sur une table Grist absente**
   - La migration PostgreSQL 002 a été appliquée avec succès, puis le contrôle à blanc s'est arrêté
     avant toute lecture métier sur un `404` Grist.
