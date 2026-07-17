@@ -11,10 +11,53 @@
 ## État par phase
 - PHASE 1 : terminée — T-00 à T-22 et extensions T-22A à T-22D validées.
 - Migration PostgreSQL : T-27, T-28 et T-29 terminées ; T-30 non démarrée.
-- PHASE 2 : à reprioriser après la bascule PostgreSQL.
+- Reprise fonctionnelle : T-30A est active ; toute bascule PostgreSQL reste bloquée.
+- PHASE 2 : vision modulaire repriorisée par T-31 ; aucun développement démarré.
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-17 — T-30A active : premier audit des interactions corrigé localement**
+  - Les raccourcis visibles du tableau de bord ouvrent désormais un parcours réel : patrimoine,
+    qualification et création d'une nouvelle société dans le CRM.
+  - La pagination de démonstration ne présente plus de page suivante fictive et tous les boutons
+    partagés reçoivent par défaut le type HTML `button`.
+  - Recherche globale, notifications et assistant IA ne restent plus silencieux : ils affichent
+    explicitement leur état fonctionnel sans simuler une fonctionnalité encore absente.
+  - Le tiroir latéral possède maintenant un intitulé accessible. La navigation mobile et les
+    périmètres visibles des cinq rôles sont couverts par des tests de non-régression.
+  - Les 32 tests frontend, dont les nouveaux contrôles T-30A, sont verts ; le
+    lint et le build frontend sont verts. La recette humaine et la publication restent à faire.
+- **2026-07-17 — T-31 : vision produit et ordre de reprise validés**
+  - La prochaine priorité est T-30A : auditer et réparer les boutons et parcours réels sur desktop
+    et smartphone. T-30 reste bloquée tant que l'application n'est pas effectivement utilisable.
+  - La suite est organisée en socle commun réutilisable et modules CRM, immobilier d'entreprise,
+    fonds de commerce, marketing/site, todolist et veille, avec fiche relation à 360°, boîte de
+    réception universelle et prochain geste recommandé comme principes directeurs.
+  - Le bac à sable devra contenir des données fictives cohérentes et des photographies d'immeubles
+    maîtrisées juridiquement, sans donnée personnelle réelle ni dépendance à des URL externes.
+  - Le CRM reposera sur des tunnels configurables, mesurables par agence, équipe et consultant ; le
+    directeur d'agence pourra déléguer leur administration. Les analyses portent sur les processus
+    sans notation opaque ni décision automatique sur les personnes.
+  - La capture mobile privilégiera la voix et trois modes explicites : signal terrain, article ou
+    document et carte de visite. OCR et IA préparent les données, tâches et rattachements, mais une
+    validation humaine précède toute écriture définitive ou publication.
+  - Le scan de carte permet un premier contact très simple, dicté par le consultant et relu avant
+    envoi. La remise volontaire justifie le suivi relationnel attendu, pas un consentement marketing
+    général ; abonnements, information, opposition et préférences restent distincts par canal.
+  - Le marketing couvrira site institutionnel, blog, extraits d'annonces, espace prospect/client,
+    recherches enregistrées, email/WhatsApp, réseaux sociaux, talents et franchise, sous charte
+    éditoriale et validation humaine. Les finalités et consentements ne seront pas mélangés.
+  - La veille associera sources territoriales et portefeuille client aux signaux faibles captés par
+    les consultants ; faits, sources, confiance et interprétation IA resteront clairement séparés.
+  - Une passerelle IA indépendante pilotera fournisseurs, modèles, secours, budgets, quotas et
+    consommations. Les fonctions essentielles conserveront un mode sans IA afin d'éviter un blocage.
+  - Une intégration Epineon est réservée comme future couche de protection des flux externes ; son
+    contrat ne sera pas inventé avant réception de la documentation et ne remplacera pas la sécurité
+    globale de la plateforme.
+  - PostgreSQL reste la cible métier. Après T-30, Grist pourra servir temporairement au travail
+    éditorial, mais les connecteurs Grist, Brevo, n8n, WhatsApp et IA resteront remplaçables.
+  - Aucun code PHASE 2, aucune bascule, aucun déploiement et aucune publication GitHub n'ont été
+    engagés par cette mise à jour documentaire.
 - **2026-07-16 — T-29 terminée : import PostgreSQL rapproché et réversible**
   - Les 19 tables Grist réellement accessibles totalisent 69 lignes : l'écart avec l'audit de
     75 lignes correspond aux six rôles attendus dans une table `Ref_Roles` absente de Grist ; les

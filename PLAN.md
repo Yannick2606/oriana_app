@@ -237,6 +237,17 @@
     volumes identiques, zéro rejet et zéro relation orpheline ; sauvegarde et restauration
     temporaire vérifiées ; backend PostgreSQL isolé et tests backend/CI verts.
 
+### [ ] T-30A : Rendre l'application réellement utilisable avant bascule
+- Auditer sur desktop et smartphone chaque bouton, formulaire, navigation et retour d'erreur des
+  parcours connexion, patrimoine, offres, CRM, matching, agents et administration.
+- Corriger les actions non cliquables et vérifier les parcours réels avec chacun des cinq rôles,
+  sans déplacer les autorisations hors du backend.
+- Ajouter les tests frontend de non-régression couvrant les actions principales, puis réaliser une
+  recette humaine guidée sur le bac à sable.
+- **Acceptation** : aucun bouton sans effet, les parcours prioritaires sont réalisables de bout en
+  bout au clavier, à la souris et sur smartphone, lint/build/tests sont verts et la recette humaine
+  autorise explicitement la préparation de T-30.
+
 ### [ ] T-30 : Tester et basculer en production
 - Tester les cinq rôles, les cloisonnements, tous les parcours métier et les agents asynchrones.
 - Effectuer une répétition de bascule, une sauvegarde finale et un test de retour arrière.
@@ -244,21 +255,140 @@
 - **Acceptation** : rapprochement complet, tests verts, supervision active et décision Go/No-Go
   explicitement validée avant la bascule réelle.
 
-## Jalon 6 — Reprise fonctionnelle
+## Jalon 6 — Socle modulaire et bac à sable
 
-### [ ] T-31 : Reprioriser la suite métier
-- Définir les critères d'acceptation des panneaux d'affichage, baux, diagnostics, documents,
-  annonces, transactions, interactions et historique des négociations.
-- **Acceptation** : ordre fonctionnel validé avant tout nouveau développement.
+### [x] T-31 : Reprioriser la suite métier et arrêter la vision modulaire
+- Organiser orIAna autour d'un socle commun réutilisable et de modules indépendants : CRM,
+  immobilier d'entreprise, fonds de commerce, marketing/site, todolist et veille.
+- Faire de la fiche relation à 360°, de la boîte de réception universelle et du « prochain geste
+  recommandé » les principes directeurs de l'expérience utilisateur.
+- Maintenir PostgreSQL comme future source de vérité métier ; après T-30, Grist devient un outil
+  éditorial transitoire et optionnel, jamais une dépendance fonctionnelle obligatoire.
+- **Acceptation** : vision, ordre de réalisation et exigences transverses consignés avant tout
+  développement du nouveau périmètre. Décision validée lors des échanges produit de juillet 2026.
 
-### [ ] T-32 : Marketing immobilier assisté par IA
-- Utiliser Grist pour le calendrier éditorial, les brouillons et la validation humaine.
-- Utiliser Brevo pour abonnements, segments, newsletters, préférences et désinscriptions.
-- Utiliser n8n et l'IA pour proposer newsletters et publications adaptées aux réseaux sociaux.
-- Conserver dans PostgreSQL la référence des consentements et vérifier la disponibilité des offres
-  avant toute diffusion.
-- **Acceptation** : consentement traçable, désinscription fonctionnelle, contenu validé par un
-  humain et aucune offre indisponible publiée.
+### [ ] T-32 : Enrichir le bac à sable
+- Créer un jeu fictif cohérent couvrant les cinq rôles, tunnels CRM, sociétés, contacts, demandes,
+  bâtiments, lots, offres, tâches, interactions et alertes de veille.
+- Ajouter des photographies d'immeubles utilisables légalement et stockées par orIAna, sans URL
+  externe fragile ni donnée personnelle réelle.
+- Fournir un chargement idempotent, réinitialisable et strictement séparé de la production.
+- **Acceptation** : démonstration réaliste de bout en bout, relations cohérentes, médias visibles,
+  aucune donnée réelle et réinitialisation documentée.
+
+### [ ] T-33 : Extraire le socle applicatif réutilisable
+- Isoler identité, rôles, agences, fichiers, notifications, audit, préférences, consentements,
+  tâches, capture et connecteurs externes derrière des contrats stables.
+- Préserver un monolithe modulaire déployable simplement ; aucune multiplication prématurée des
+  services ni dépendance directe d'un module métier à un fournisseur externe.
+- **Acceptation** : frontières documentées, dépendances contrôlées et tests existants conservés.
+
+## Jalon 7 — Usage mobile, CRM et pilotage commercial
+
+### [ ] T-34 : Capture mobile, voix, OCR et boîte de réception
+- Proposer une PWA smartphone avec capture explicite « signal terrain », « article/document » et
+  « carte de visite », import de photo, fonctionnement hors ligne et commentaire vocal.
+- Extraire les données par OCR, conserver source/date/auteur/niveau de confiance, détecter les
+  doublons et maintenir chaque capture en brouillon privé jusqu'à validation humaine.
+- Prévoir masquage des données de tiers inutiles, rétention limitée des médias bruts et rattachement
+  à un territoire, client, opportunité, tâche ou idée éditoriale.
+- **Acceptation** : aucune donnée extraite n'est publiée ou versée définitivement sans validation ;
+  les erreurs de faible confiance sont signalées et la source reste traçable.
+
+### [ ] T-35 : CRM par tunnels configurables
+- Permettre plusieurs tunnels de vente, leurs étapes, règles de passage, motifs de perte et KPI.
+- Mesurer conversion, durée par étape, qualité de qualification, origine, relances, engagements et
+  performance des processus et consultants sans produire de notation opaque.
+- Réserver création/modification des tunnels au directeur d'agence, avec délégation explicite,
+  révocable et auditée.
+- **Acceptation** : droits serveur testés, historique des changements conservé et analyse possible
+  par tunnel, agence, équipe et consultant.
+
+### [ ] T-36 : Assistant d'interaction et prochain geste recommandé
+- Après un échange, privilégier une dictée smartphone ; transcrire, structurer le compte rendu,
+  détecter engagements, dates et tâches, puis faire confirmer toute écriture.
+- Fournir au consultant et au manager des analyses, alertes et pistes d'amélioration expliquées,
+  contestables et sans décision automatique engageante.
+- **Acceptation** : texte brut conservé, modifications IA visibles, engagements confirmés et chaque
+  recommandation accompagnée de ses éléments justificatifs.
+
+### [ ] T-37 : Carte de visite et premier contact simple
+- Scanner la carte, rechercher les doublons, rattacher le contexte dicté et proposer un message de
+  bienvenue très court, dicté ou choisi dans un modèle validé.
+- Parcours cible : scanner, dicter, vérifier le destinataire, envoyer ; aucun envoi automatique.
+- Enregistrer la remise volontaire de la carte comme source du suivi relationnel attendu, sans la
+  convertir automatiquement en consentement marketing général ; gérer séparément information,
+  opposition et préférences par canal.
+- **Acceptation** : message relu avant envoi, preuve du contexte conservée, absence d'inscription
+  automatique à une campagne et désactivation simple de tout suivi ultérieur.
+
+### [ ] T-38 : Todolist et agenda transversal
+- Centraliser tâches manuelles et proposées par l'IA, échéances, responsables, rappels et liens vers
+  les fiches CRM ou métier.
+- **Acceptation** : aucune tâche IA n'est créée silencieusement et chaque engagement validé peut
+  devenir une action suivie.
+
+## Jalon 8 — Marketing, portail et veille
+
+### [ ] T-39 : Marketing, site, blog et diffusion multicanale
+- Construire le site institutionnel et un blog publiant des extraits d'annonces qui conduisent vers
+  une connexion, une recherche enregistrée ou une prise de contact avec le consultant.
+- Gérer charte éditoriale, calendrier, brouillons IA, validation humaine, réseaux sociaux, email et
+  WhatsApp lorsque le cadre contractuel et réglementaire le permet.
+- Cibler prospects/clients, communauté, futurs talents et futurs franchisés sans mélanger leurs
+  finalités ni leurs préférences.
+- Utiliser PostgreSQL pour les références et consentements ; Grist, Brevo et n8n restent des
+  connecteurs remplaçables, non des sources métier obligatoires.
+- **Acceptation** : désinscription et préférences fonctionnelles, provenance des contenus traçable,
+  droits de publication vérifiés et aucune offre indisponible diffusée.
+
+### [ ] T-40 : Portail prospect et client
+- Permettre consultation des informations réservées, recherches sauvegardées, alertes, critères,
+  documents, rendez-vous, retours et préférences de communication.
+- **Acceptation** : cloisonnement client testé, exposition minimale des données et historique des
+  consentements accessible.
+
+### [ ] T-41 : Veille territoriale, portefeuille et signaux terrain
+- Abonner consultant ou manager à des territoires, thèmes et clients ; agréger sources autorisées,
+  photos de panneaux, articles photographiés et observations dictées.
+- Séparer faits sourcés, résumé et interprétation IA ; dater, géolocaliser seulement avec accord,
+  qualifier la confiance et proposer rattachements, alertes ou tâches.
+- **Acceptation** : sources et droits conservés, article complet jamais republié sans autorisation,
+  alerte personnalisable et aucune interprétation présentée comme un fait.
+
+## Jalon 9 — Gouvernance de l'IA et sécurité renforcée
+
+### [ ] T-42 : Passerelle IA indépendante et pilotage des consommations
+- Faire appeler tous les fournisseurs par une interface orIAna unique ; conserver prompts, formats,
+  évaluations et données dans notre socle, sans dépendre de la mémoire d'un fournisseur.
+- Router selon usage, qualité, confidentialité, coût et disponibilité ; prévoir modèle principal,
+  secours, mode économique, file d'attente et fonctionnement essentiel sans IA.
+- Mesurer requêtes, tokens, audio, images, coût, latence, erreurs, quotas et budgets par agence,
+  utilisateur, module, usage, fournisseur et modèle, avec alertes configurables.
+- **Acceptation** : changement de fournisseur démontré par configuration, plafonds respectés et
+  aucune fonction essentielle bloquée par l'indisponibilité d'un modèle.
+
+### [ ] T-43 : Intégrer la future couche Epineon
+- Réserver un connecteur de sécurité interchangeable entre la passerelle orIAna et les services
+  externes, sans inventer le contrat Epineon avant réception de sa documentation.
+- Évaluer alors hébergement, protocoles, filtrage, prévention d'exfiltration et d'injection,
+  conservation, performances, reprise, journalisation et articulation RGPD.
+- Conserver parallèlement chiffrement, segmentation, mises à jour, contrôle d'accès, sauvegardes et
+  supervision : aucune couche unique n'est considérée comme une protection absolue.
+- **Acceptation** : flux sensibles bloqués par défaut selon la politique validée, aucun secret ou
+  contenu métier dans les journaux et tests de panne/contournement réussis.
+
+## Jalon 10 — Modules métier enrichis
+
+### [ ] T-44 : Immobilier d'entreprise
+- Reprendre panneaux d'affichage, baux, diagnostics, documents, annonces, transactions,
+  interactions et historique des négociations sur le socle commun.
+- **Acceptation** : critères métier détaillés et validés avant code, parcours réels testés.
+
+### [ ] T-45 : Fonds de commerce
+- Spécifier le vocabulaire, les données, documents, valorisations, mandats, confidentialité et
+  parcours propres aux fonds de commerce sans dupliquer le CRM, le marketing ou les tâches.
+- **Acceptation** : périmètre métier validé et composants communs effectivement réutilisés.
 
 ---
 

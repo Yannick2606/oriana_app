@@ -4,6 +4,9 @@ import App from './App';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { SessionProvider } from './auth/SessionContext';
 
+vi.mock('./api/crm', () => ({ crmApi: { listAll: vi.fn().mockResolvedValue({ societes: [], contacts: [], demandes: [], lots: [] }), matching: vi.fn() } }));
+vi.mock('./api/patrimoine', () => ({ patrimoineApi: { listAll: vi.fn().mockResolvedValue({ sites: [], batiments: [], cellules: [], lots: [] }) } }));
+
 Object.defineProperty(window, 'matchMedia', { writable: true, value: vi.fn().mockImplementation(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() })) });
 
 function renderApp(role, roles = [role]) {
@@ -51,4 +54,45 @@ test('un utilisateur multirôle change de rôle sans nouvelle connexion', async 
   fireEvent.click(screen.getByRole('menuitemradio', { name: 'Administrateur d’agence' }));
   expect(await screen.findByRole('button', { name: 'Administration' })).toBeInTheDocument();
   expect(client.changeRole).toHaveBeenCalledWith('admin_agence');
+});
+
+test('les raccourcis du tableau de bord ouvrent un parcours réel', async () => {
+  renderApp('consultant');
+  fireEvent.click(await screen.findByRole('button', { name: 'Voir le patrimoine' }));
+  expect(await screen.findByRole('heading', { name: 'Patrimoine' })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Accueil' }));
+  fireEvent.click(await screen.findByRole('button', { name: 'Nouvelle opportunité' }));
+  expect(await screen.findByRole('dialog', { name: 'Créer société' })).toBeInTheDocument();
+});
+
+test('les utilitaires visibles expliquent leur disponibilité au lieu de rester muets', async () => {
+  renderApp('consultant');
+  fireEvent.click(await screen.findByRole('button', { name: 'Notifications' }));
+  const notifications = screen.getByRole('dialog', { name: 'Notifications' });
+  expect(notifications).toBeInTheDocument();
+  fireEvent.click(screen.getAllByRole('button', { name: 'Fermer' })[1]);
+  fireEvent.click(screen.getByRole('button', { name: 'Ouvrir l’assistant IA' }));
+  expect(screen.getByRole('dialog', { name: 'Assistant IA' })).toBeInTheDocument();
+});
+
+test.each([
+  ['consultant', false],
+  ['master_consultant', false],
+  ['directeur_agence', true],
+  ['admin_agence', true],
+  ['super_admin', true],
+])('la navigation du rôle %s respecte son périmètre', async (role, hasAdministration) => {
+  renderApp(role);
+  await screen.findByRole('navigation', { name: 'Navigation principale' });
+  expect(Boolean(screen.queryByRole('button', { name: 'Administration' }))).toBe(hasAdministration);
+});
+
+test('la navigation mobile s’ouvre, navigue puis se referme', async () => {
+  renderApp('consultant');
+  const menu = await screen.findByRole('button', { name: 'Ouvrir la navigation' });
+  fireEvent.click(menu);
+  expect(screen.getByRole('button', { name: 'Fermer la navigation' })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'CRM' }));
+  expect(await screen.findByRole('heading', { name: 'CRM' })).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Fermer la navigation' })).not.toBeInTheDocument();
 });
