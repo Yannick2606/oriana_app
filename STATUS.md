@@ -10,11 +10,32 @@
 
 ## État par phase
 - PHASE 1 : terminée — T-00 à T-22 et extensions T-22A à T-22D validées.
-- Migration PostgreSQL : T-27 et T-28 terminées ; T-29 en cours.
+- Migration PostgreSQL : T-27, T-28 et T-29 terminées ; T-30 non démarrée.
 - PHASE 2 : à reprioriser après la bascule PostgreSQL.
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-16 — T-29 terminée : import PostgreSQL rapproché et réversible**
+  - Les 19 tables Grist réellement accessibles totalisent 69 lignes : l'écart avec l'audit de
+    75 lignes correspond aux six rôles attendus dans une table `Ref_Roles` absente de Grist ; les
+    rôles sont portés par `Utilisateurs` et normalisés vers le référentiel PostgreSQL.
+  - Le contrôle à blanc final ne contient aucun rejet. L'import réel a réussi puis a été rejoué :
+    les deux exécutions sont `reussi`, avec volumes source/cible identiques et zéro rejet.
+  - Le rapprochement confirme 5 bâtiments sur 5 reliés au bon site et à la bonne agence, 11 lots
+    sur 11 reliés au bon bâtiment et à la bonne agence, deux usages historiques `entrepôt`
+    conservés et rattachés à `Logistique`, et quatre matchings historiques valides.
+  - Aucun bâtiment, lot, matching, demande ou mandat importé n'est orphelin. Aucune cellule
+    artificielle n'a été créée et le lien transitoire direct lot → bâtiment est conservé.
+  - La sauvegarde pré-import `20260716T180344Z` a été restaurée avec succès dans une base
+    temporaire, vérifiée puis supprimée sans toucher à la base active. La sauvegarde post-import
+    `20260716T184545Z` est vérifiée et conservée.
+  - Un backend éphémère isolé de Traefik a démarré avec `PERSISTENCE_PROVIDER=postgres` : santé
+    HTTP 200, contrat `{ id, fields }` valide, authentification PostgreSQL et refus sans session
+    conformes, filtres hiérarchiques cohérents. Le conteneur de test a ensuite été supprimé.
+  - L'API et l'application de production répondent HTTP 200 et n'ont pas été basculées : Grist
+    reste la source de vérité jusqu'à la répétition et à la décision Go/No-Go de T-30.
+  - Vérifications réussies : lint backend, 97 tests (96 locaux et l'intégration PostgreSQL en CI),
+    workflow PostgreSQL #20 vert au commit `8534f27`.
 - **2026-07-16 — T-29 : second import réel annulé intégralement**
   - Après correction des bâtiments, PostgreSQL a refusé le premier lot sans `agence_id` direct ;
     la transaction a de nouveau effectué un rollback complet.

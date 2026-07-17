@@ -227,12 +227,15 @@
 - **Acceptation** : base inaccessible publiquement, migration reproductible, sauvegarde et
   restauration vérifiées, sessions persistantes et aucun secret dans le dépôt.
 
-### [~] T-29 : Adapter le backend et migrer les données
+### [x] T-29 : Adapter le backend et migrer les données
 - Introduire une couche de persistance PostgreSQL sans modifier les contrats API du frontend.
 - Créer un import Grist idempotent avec journal des conversions et rejets.
 - Invalider les sessions actives après réinitialisation d'un mot de passe.
 - **Acceptation** : import rejouable, volumes et relations rapprochés, aucun appel Grist résiduel
   dans les parcours métier migrés et tests backend verts.
+  - Validation réelle : 69 lignes issues des 19 tables Grist accessibles importées deux fois à
+    volumes identiques, zéro rejet et zéro relation orpheline ; sauvegarde et restauration
+    temporaire vérifiées ; backend PostgreSQL isolé et tests backend/CI verts.
 
 ### [ ] T-30 : Tester et basculer en production
 - Tester les cinq rôles, les cloisonnements, tous les parcours métier et les agents asynchrones.
