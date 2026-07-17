@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Bell, BookOpen, Bot, BriefcaseBusiness, Building2, ChevronLeft, ContactRound, LayoutDashboard, LogOut, Menu, Moon, PanelLeftClose, Search, Settings, Sparkles, Sun } from 'lucide-react';
 import { Logo } from './Logo';
-import { Avatar, Badge, Button, SearchBar, Tooltip } from './ui';
+import { Avatar, Badge, Button, Modal, SearchBar, Tooltip } from './ui';
 import { branding } from '../config/branding';
 
 const navigationIcons = { dashboard: LayoutDashboard, building: Building2, briefcase: BriefcaseBusiness, contacts: ContactRound, matching: Sparkles, bot: Bot, settings: Settings, book: BookOpen };
@@ -37,14 +37,20 @@ function RoleSwitcher({ user, onRoleChange }) {
 }
 
 export function AppShell({ children, theme, onToggleTheme, collapsed, onToggleCollapsed, mobileOpen, onToggleMobile, backendStatus = 'Opérationnel', user, onLogout, onRoleChange, navigation, activePage, onNavigate }) {
+  const [utility, setUtility] = useState(null);
+  const utilityContent = {
+    search: ['Recherche globale', 'La recherche transversale sera activée avec les modules CRM et patrimoine. Utilisez pour le moment la navigation principale pour accéder aux données.'],
+    notifications: ['Notifications', 'Aucune notification non lue. Les alertes métier seront ajoutées avec les tunnels CRM et la veille territoriale.'],
+    assistant: ['Assistant IA', 'L’assistant conversationnel sera activé dans une tâche dédiée avec suivi des coûts, validation humaine et choix du fournisseur IA.'],
+  };
   return <div className="min-h-screen bg-oriana-fond text-oriana-texte">
     <header className="fixed inset-x-0 top-0 z-40 flex h-16 items-center border-b border-oriana-bordure bg-oriana-fond/90 px-4 backdrop-blur-xl">
       <button className="mr-3 md:hidden" onClick={onToggleMobile} aria-label="Ouvrir la navigation"><Menu/></button>
       <div className="w-56"><Logo compact={collapsed}/></div>
-      <SearchBar className="mx-auto hidden w-full max-w-xl md:block" placeholder="Rechercher un bien, une société, un contact…"/>
+      <SearchBar className="mx-auto hidden w-full max-w-xl md:block" placeholder="Rechercher un bien, une société, un contact…" readOnly onClick={() => setUtility('search')}/>
       <div className="ml-auto flex items-center gap-1.5">
-        <Tooltip label="Recherche"><Button className="md:hidden" variant="ghost" size="sm" aria-label="Rechercher"><Search size={18}/></Button></Tooltip>
-        <Tooltip label="Notifications"><Button variant="ghost" size="sm" aria-label="Notifications"><Bell size={18}/><span className="sr-only">2 nouvelles notifications</span></Button></Tooltip>
+        <Tooltip label="Recherche"><Button className="md:hidden" variant="ghost" size="sm" aria-label="Rechercher" onClick={() => setUtility('search')}><Search size={18}/></Button></Tooltip>
+        <Tooltip label="Notifications"><Button variant="ghost" size="sm" aria-label="Notifications" onClick={() => setUtility('notifications')}><Bell size={18}/></Button></Tooltip>
         <Tooltip label={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}><Button variant="ghost" size="sm" onClick={onToggleTheme} aria-label="Changer de thème">{theme === 'dark' ? <Sun size={18}/> : <Moon size={18}/>}</Button></Tooltip>
         <div className="ml-2 hidden items-center gap-2 border-l border-oriana-bordure pl-3 sm:flex"><Avatar name={`${user?.prenom || ''} ${user?.nom || ''}`.trim() || 'Utilisateur'}/><div className="hidden lg:block"><p className="text-xs font-semibold">{user?.prenom} {user?.nom}</p><RoleSwitcher user={user} onRoleChange={onRoleChange}/></div><Tooltip label="Se déconnecter"><Button variant="ghost" size="sm" aria-label="Se déconnecter" onClick={onLogout}><LogOut size={17}/></Button></Tooltip></div>
       </div>
@@ -64,6 +70,10 @@ export function AppShell({ children, theme, onToggleTheme, collapsed, onToggleCo
       <main id="contenu" className="mx-auto w-full max-w-[1600px] flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
       <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-oriana-bordure px-6 py-4 text-xs text-oriana-discret"><span>{branding.appName} v0.1.0 · © {branding.organizationName} 2026</span><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-oriana-lavandeMoyen"/>Backend : {backendStatus}</span></footer>
     </div>
-    <button aria-label="Ouvrir l’assistant IA" className="fixed bottom-6 right-6 z-30 grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-oriana-lavandeMoyen to-oriana-violet text-white shadow-oriana-lg transition hover:scale-105"><Bot size={21}/></button>
+    <button type="button" onClick={() => setUtility('assistant')} aria-label="Ouvrir l’assistant IA" className="fixed bottom-6 right-6 z-30 grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-oriana-lavandeMoyen to-oriana-violet text-white shadow-oriana-lg transition hover:scale-105"><Bot size={21}/></button>
+    <Modal open={Boolean(utility)} onClose={() => setUtility(null)} title={utility ? utilityContent[utility][0] : ''}>
+      <p className="text-sm leading-6 text-oriana-discret">{utility ? utilityContent[utility][1] : ''}</p>
+      <Button className="mt-5" onClick={() => setUtility(null)}>Fermer</Button>
+    </Modal>
   </div>;
 }

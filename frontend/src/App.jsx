@@ -31,7 +31,7 @@ const pageDescriptions = {
   administration: ['Administration', 'Gérez les utilisateurs et les référentiels de l’agence.'],
 };
 
-function Dashboard({ user, onHelp }) {
+function Dashboard({ user, onHelp, onNavigate, onCreateOpportunity }) {
   const scope = user.role_actif === 'consultant'
     ? 'vos données'
     : ['manager', 'master_consultant'].includes(user.role_actif)
@@ -39,13 +39,13 @@ function Dashboard({ user, onHelp }) {
       : 'les données et référentiels de votre agence';
   return <div className="space-y-7 animate-enter">
     <Breadcrumb items={['Accueil']}/>
-    <PageHeader eyebrow="Vue d’ensemble" title={`Bienvenue, ${user.prenom || 'à vous'} 👋`} description={`Voici les informations utiles pour suivre ${scope} et identifier la prochaine action.`} actions={<><HelpButton onClick={onHelp}/><Button><Plus size={17}/>Nouvelle opportunité</Button></>}/>
+    <PageHeader eyebrow="Vue d’ensemble" title={`Bienvenue, ${user.prenom || 'à vous'} 👋`} description={`Voici les informations utiles pour suivre ${scope} et identifier la prochaine action.`} actions={<><HelpButton onClick={onHelp}/><Button onClick={onCreateOpportunity}><Plus size={17}/>Nouvelle opportunité</Button></>}/>
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {[['Patrimoine suivi', '128 actifs', Building2], ['Relations actives', '42 sociétés', Users], ['Actions suggérées', '7 priorités', Sparkles], ['Taux de qualification', '86 %', ArrowRight]].map(([label, value, Icon]) => <Card key={label} className="relative overflow-hidden"><div className="absolute -right-5 -top-5 h-24 w-24 rounded-full bg-oriana-violet/10"/><Icon className="text-oriana-lavande" size={19}/><p className="mt-5 text-xs font-semibold uppercase tracking-wider text-oriana-discret">{label}</p><p className="mt-1 font-titre text-2xl">{value}</p></Card>)}
     </div>
     <div className="grid gap-6 xl:grid-cols-[1.6fr_1fr]">
-      <Card><Toolbar><div><h2 className="font-titre text-xl">Actifs récents</h2><p className="mt-1 text-xs text-oriana-discret">Les dernières informations de votre périmètre.</p></div><Button variant="secondary" size="sm">Voir le patrimoine<ArrowRight size={15}/></Button></Toolbar><div className="mt-4"><Table columns={columns} rows={rows}/></div><div className="mt-4"><Pagination page={1} total={3}/></div></Card>
-      <div className="space-y-4"><Notification title="Deux biens à compléter" description="Ajoutez les informations ICPE et désenfumage avant publication."/><Card><h2 className="font-titre text-xl">Prochaine étape</h2><p className="mt-2 text-sm leading-6 text-oriana-discret">Qualifiez le lot de Roissy pour obtenir un matching plus pertinent.</p><Button className="mt-5 w-full">Continuer la qualification<ArrowRight size={16}/></Button></Card></div>
+      <Card><Toolbar><div><h2 className="font-titre text-xl">Actifs récents</h2><p className="mt-1 text-xs text-oriana-discret">Les dernières informations de votre périmètre.</p></div><Button variant="secondary" size="sm" onClick={() => onNavigate('patrimoine')}>Voir le patrimoine<ArrowRight size={15}/></Button></Toolbar><div className="mt-4"><Table columns={columns} rows={rows}/></div><div className="mt-4"><Pagination page={1} total={1}/></div></Card>
+      <div className="space-y-4"><Notification title="Deux biens à compléter" description="Ajoutez les informations ICPE et désenfumage avant publication."/><Card><h2 className="font-titre text-xl">Prochaine étape</h2><p className="mt-2 text-sm leading-6 text-oriana-discret">Qualifiez le lot de Roissy pour obtenir un matching plus pertinent.</p><Button className="mt-5 w-full" onClick={() => onNavigate('patrimoine')}>Continuer la qualification<ArrowRight size={16}/></Button></Card></div>
     </div>
   </div>;
 }
@@ -62,11 +62,12 @@ export default function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [activePage, setActivePage] = useState('accueil');
+  const [crmCreateRequest, setCrmCreateRequest] = useState(0);
   const navigation = navigationForRole(user.role_actif);
   const safeActivePage = canNavigateTo(user.role_actif, activePage) ? activePage : navigation[0]?.id;
 
   return <AppShell theme={theme} onToggleTheme={toggleTheme} collapsed={collapsed} onToggleCollapsed={() => setCollapsed((value) => !value)} mobileOpen={mobileOpen} onToggleMobile={() => setMobileOpen((value) => !value)} user={user} onLogout={logout} onRoleChange={changeRole} navigation={navigation} activePage={safeActivePage} onNavigate={setActivePage}>
-    {safeActivePage === 'accueil' ? <Dashboard user={user} onHelp={() => setHelpOpen(true)}/> : safeActivePage === 'patrimoine' ? <PatrimoinePage/> : safeActivePage === 'offres' ? <OffresPage/> : safeActivePage === 'crm' || safeActivePage === 'matching' ? <CrmPage/> : safeActivePage === 'agents' ? <AgentsPage/> : safeActivePage === 'administration' ? <AdministrationPage user={user}/> : safeActivePage === 'autoformation' ? null : <ModuleOrientation page={safeActivePage} onBack={() => setActivePage('accueil')}/>}
+    {safeActivePage === 'accueil' ? <Dashboard user={user} onHelp={() => setHelpOpen(true)} onNavigate={setActivePage} onCreateOpportunity={() => { setCrmCreateRequest((value) => value + 1); setActivePage('crm'); }}/> : safeActivePage === 'patrimoine' ? <PatrimoinePage/> : safeActivePage === 'offres' ? <OffresPage/> : safeActivePage === 'crm' || safeActivePage === 'matching' ? <CrmPage createSocieteRequest={crmCreateRequest}/> : safeActivePage === 'agents' ? <AgentsPage/> : safeActivePage === 'administration' ? <AdministrationPage user={user}/> : safeActivePage === 'autoformation' ? null : <ModuleOrientation page={safeActivePage} onBack={() => setActivePage('accueil')}/>}
     <FormationExperience user={user} pageVisible={safeActivePage === 'autoformation'}/>
     <Modal open={helpOpen} onClose={() => setHelpOpen(false)} title="Votre vue d’ensemble"><p className="text-sm leading-6 text-oriana-discret">Cette page rassemble les informations de votre périmètre actif. Les menus visibles facilitent l’accès ; les autorisations restent systématiquement contrôlées par le backend.</p><Button className="mt-5" onClick={() => setHelpOpen(false)}>J’ai compris</Button></Modal>
   </AppShell>;

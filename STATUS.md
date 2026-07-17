@@ -11,11 +11,22 @@
 ## État par phase
 - PHASE 1 : terminée — T-00 à T-22 et extensions T-22A à T-22D validées.
 - Migration PostgreSQL : T-27, T-28 et T-29 terminées ; T-30 non démarrée.
-- Reprise fonctionnelle : T-30A est la prochaine tâche proposée avant toute bascule PostgreSQL.
+- Reprise fonctionnelle : T-30A est active ; toute bascule PostgreSQL reste bloquée.
 - PHASE 2 : vision modulaire repriorisée par T-31 ; aucun développement démarré.
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-17 — T-30A active : premier audit des interactions corrigé localement**
+  - Les raccourcis visibles du tableau de bord ouvrent désormais un parcours réel : patrimoine,
+    qualification et création d'une nouvelle société dans le CRM.
+  - La pagination de démonstration ne présente plus de page suivante fictive et tous les boutons
+    partagés reçoivent par défaut le type HTML `button`.
+  - Recherche globale, notifications et assistant IA ne restent plus silencieux : ils affichent
+    explicitement leur état fonctionnel sans simuler une fonctionnalité encore absente.
+  - Le tiroir latéral possède maintenant un intitulé accessible. La navigation mobile et les
+    périmètres visibles des cinq rôles sont couverts par des tests de non-régression.
+  - Les 32 tests frontend, dont les nouveaux contrôles T-30A, sont verts ; le
+    lint et le build frontend sont verts. La recette humaine et la publication restent à faire.
 - **2026-07-17 — T-31 : vision produit et ordre de reprise validés**
   - La prochaine priorité est T-30A : auditer et réparer les boutons et parcours réels sur desktop
     et smartphone. T-30 reste bloquée tant que l'application n'est pas effectivement utilisable.
