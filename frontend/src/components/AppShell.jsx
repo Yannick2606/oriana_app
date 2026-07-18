@@ -56,15 +56,15 @@ export function AppShell({ children, theme, onToggleTheme, collapsed, onToggleCo
       </div>
     </header>
     {mobileOpen && <button className="fixed inset-0 z-40 bg-oriana-fondAlt/75 md:hidden" onClick={onToggleMobile} aria-label="Fermer la navigation"/>}
-    <aside className={`fixed bottom-0 left-0 top-16 z-40 flex flex-col border-r border-oriana-bordure bg-oriana-fondAlt p-3 transition-all duration-oriana ${collapsed ? 'w-20' : 'w-64'} ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
-      {!collapsed && <p className="mb-3 px-3 text-[10px] font-bold uppercase tracking-[.22em] text-oriana-lavande">Espace de travail</p>}
+    <aside className={`oriana-sidebar fixed bottom-0 left-0 top-16 z-40 flex flex-col border-r p-3 transition-all duration-oriana ${collapsed ? 'w-20' : 'w-64'} ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+      {!collapsed && <p className="sidebar-kicker mb-3 px-3 text-[10px] font-bold uppercase tracking-[.22em]">Espace de travail</p>}
       <nav aria-label="Navigation principale" className="space-y-1">
-        {navigation.map(({ id, label, icon }) => { const Icon = navigationIcons[icon]; const active = activePage === id; return <button key={id} title={collapsed ? label : undefined} aria-label={collapsed ? label : undefined} aria-current={active ? 'page' : undefined} onClick={() => { onNavigate(id); if (mobileOpen) onToggleMobile(); }} className={`flex min-h-11 w-full items-center gap-3 rounded-oriana px-3 py-2.5 text-sm font-semibold transition ${active ? 'bg-oriana-violet/25 text-oriana-lavandeClair shadow-[inset_3px_0_0_#CE93D8]' : 'text-oriana-discret hover:bg-oriana-surface hover:text-oriana-texte'}`}><Icon size={18}/>{!collapsed && <span>{label}</span>}</button>; })}
+        {navigation.map(({ id, label, icon }) => { const Icon = navigationIcons[icon]; const active = activePage === id; return <button key={id} title={collapsed ? label : undefined} aria-label={collapsed ? label : undefined} aria-current={active ? 'page' : undefined} onClick={() => { onNavigate(id); if (mobileOpen) onToggleMobile(); }} className={`sidebar-link flex min-h-11 w-full items-center gap-3 rounded-oriana px-3 py-2.5 text-sm font-semibold transition ${active ? 'sidebar-link-active' : ''}`}><Icon size={18}/>{!collapsed && <span>{label}</span>}</button>; })}
       </nav>
       <div className="mt-auto space-y-3">
-        {!collapsed && <div className="rounded-oriana border border-oriana-bordure bg-oriana-surface p-3"><RoleSwitcher user={user} onRoleChange={onRoleChange}/><p className="mt-2 text-xs leading-5 text-oriana-discret">Les droits sont contrôlés côté serveur pour cette session.</p></div>}
-        <Button variant="ghost" className="w-full sm:hidden" onClick={onLogout}><LogOut size={17}/>{!collapsed && 'Se déconnecter'}</Button>
-        <Button variant="ghost" className="w-full" onClick={onToggleCollapsed} aria-label={collapsed ? 'Déployer la barre latérale' : 'Replier la barre latérale'}>{collapsed ? <ChevronLeft className="rotate-180" size={18}/> : <><PanelLeftClose size={18}/>Replier</>}</Button>
+        {!collapsed && <div className="sidebar-role rounded-oriana border p-3"><RoleSwitcher user={user} onRoleChange={onRoleChange}/><p className="mt-2 text-xs leading-5">Les droits sont contrôlés côté serveur pour cette session.</p></div>}
+        <Button variant="ghost" className="sidebar-control w-full sm:hidden" onClick={onLogout}><LogOut size={17}/>{!collapsed && 'Se déconnecter'}</Button>
+        <Button variant="ghost" className="sidebar-control w-full" onClick={onToggleCollapsed} aria-label={collapsed ? 'Déployer la barre latérale' : 'Replier la barre latérale'}>{collapsed ? <ChevronLeft className="rotate-180" size={18}/> : <><PanelLeftClose size={18}/>Replier</>}</Button>
       </div>
     </aside>
     <div className={`flex min-h-screen flex-col pt-16 transition-all duration-oriana ${collapsed ? 'md:pl-20' : 'md:pl-64'}`}>
