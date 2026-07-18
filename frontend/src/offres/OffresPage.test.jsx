@@ -88,3 +88,18 @@ test('une offre locative masque les conditions de vente', async () => {
   fireEvent.click(screen.getByRole('button', { name: 'Transactions' }));
   expect(screen.getByRole('heading', { name: 'Négociations locatives' })).toBeInTheDocument();
 });
+
+test('une offre à vendre masque les conditions locatives', async () => {
+  offresApi.listAll.mockResolvedValue({
+    ...data,
+    offers: [{ ...data.offers[0], nature: 'vente' }],
+    conditions: [data.conditions[0]],
+  });
+  render(<OffresPage/>);
+  await screen.findByRole('heading', { name: 'Horizon flexible' });
+  expect(screen.getByText('À vendre')).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Conditions de vente' })).toBeInTheDocument();
+  expect(screen.queryByRole('heading', { name: 'Conditions de location' })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Transactions' }));
+  expect(screen.getByRole('heading', { name: 'Négociations de vente' })).toBeInTheDocument();
+});
