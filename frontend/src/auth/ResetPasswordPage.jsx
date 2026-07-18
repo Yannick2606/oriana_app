@@ -31,7 +31,7 @@ export function ResetPasswordPage({ token }) {
       {done ? <><p className="mt-4 text-sm leading-6 text-oriana-discret">Votre mot de passe a été remplacé. Vous pouvez maintenant vous connecter.</p><Button className="mt-6 w-full" onClick={() => window.location.reload()}>Revenir à la connexion</Button></> : <>
         <p className="mt-2 text-sm leading-6 text-oriana-discret">Choisissez au moins 12 caractères. Ce lien ne pourra être utilisé qu’une fois.</p>
         <div className="mt-6 space-y-4"><Field label="Nouveau mot de passe"><Input type="password" autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} disabled={pending}/></Field><Field label="Confirmer le mot de passe"><Input type="password" autoComplete="new-password" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} disabled={pending}/></Field></div>
-        {error && <p role="alert" className="mt-4 text-sm text-oriana-lavandeClair">{error}</p>}
+        {error && <p role="alert" className="mt-4 text-sm font-medium text-oriana-violet">{error}</p>}
         <Button className="mt-6 w-full" onClick={submit} disabled={pending}>{pending ? 'Enregistrement…' : 'Enregistrer le mot de passe'}</Button>
       </>}
     </Card></div>

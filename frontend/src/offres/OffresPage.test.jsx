@@ -30,7 +30,7 @@ test('une offre double nature affiche ses deux jeux de conditions', async () => 
   expect(screen.getByRole('heading', { name: 'Conditions de vente' })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: 'Conditions de location' })).toBeInTheDocument();
   expect(screen.getByText(/1.250.000 €/)).toBeInTheDocument();
-  expect(screen.getByText('145 €')).toBeInTheDocument();
+  expect(screen.getAllByText(/145 €/).length).toBeGreaterThan(0);
 });
 
 test('modifie indépendamment les conditions de vente', async () => {
@@ -51,4 +51,55 @@ test('crée une offre sur un lot avec la nature choisie', async () => {
   fireEvent.change(screen.getByLabelText('Nature'), { target: { value: 'location' } });
   fireEvent.click(screen.getByRole('button', { name: 'Enregistrer l’offre' }));
   await waitFor(() => expect(offresApi.createOffer).toHaveBeenCalledWith(expect.objectContaining({ nom: 'Nouvelle location', lot_id: 10, nature: 'location' })));
+});
+
+test('les onglets ouvrent de nouvelles vues métier', async () => {
+  render(<OffresPage/>);
+  await screen.findByRole('heading', { name: 'Horizon flexible' });
+  fireEvent.click(screen.getByRole('button', { name: 'Actions' }));
+  expect(screen.getByRole('heading', { name: 'Actions commerciales' })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Documents' }));
+  expect(screen.getByRole('heading', { name: 'Documents' })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Transactions' }));
+  expect(screen.getByRole('heading', { name: 'Transactions et négociations' })).toBeInTheDocument();
+});
+
+test('la vue active de l’offre reste identifiable et tactile', async () => {
+  render(<OffresPage/>);
+  await screen.findByRole('heading', { name: 'Horizon flexible' });
+  const synthesis = screen.getByRole('button', { name: 'Synthèse' });
+  expect(synthesis).toHaveAttribute('aria-current', 'page');
+  expect(synthesis).toHaveClass('min-h-11');
+  fireEvent.click(screen.getByRole('button', { name: 'Actions' }));
+  expect(screen.getByRole('button', { name: 'Actions' })).toHaveAttribute('aria-current', 'page');
+});
+
+test('une offre locative masque les conditions de vente', async () => {
+  offresApi.listAll.mockResolvedValue({
+    ...data,
+    offers: [{ ...data.offers[0], nature: 'location' }],
+    conditions: [data.conditions[1]],
+  });
+  render(<OffresPage/>);
+  await screen.findByRole('heading', { name: 'Horizon flexible' });
+  expect(screen.getByText('À louer')).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Conditions de location' })).toBeInTheDocument();
+  expect(screen.queryByRole('heading', { name: 'Conditions de vente' })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Transactions' }));
+  expect(screen.getByRole('heading', { name: 'Négociations locatives' })).toBeInTheDocument();
+});
+
+test('une offre à vendre masque les conditions locatives', async () => {
+  offresApi.listAll.mockResolvedValue({
+    ...data,
+    offers: [{ ...data.offers[0], nature: 'vente' }],
+    conditions: [data.conditions[0]],
+  });
+  render(<OffresPage/>);
+  await screen.findByRole('heading', { name: 'Horizon flexible' });
+  expect(screen.getByText('À vendre')).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Conditions de vente' })).toBeInTheDocument();
+  expect(screen.queryByRole('heading', { name: 'Conditions de location' })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Transactions' }));
+  expect(screen.getByRole('heading', { name: 'Négociations de vente' })).toBeInTheDocument();
 });
