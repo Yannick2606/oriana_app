@@ -16,12 +16,17 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-18 — T-30 : preuve PostgreSQL éphémère réussie**
+  - Le workflow manuel `Vérification PostgreSQL` #27 a réussi sur `t30-preparation-go-no-go` au commit distant `9de92844c288f8c8ba155456efc261cece55a71c` ; job `postgres` vert, durée totale 47 secondes.
+  - Le scénario restaure une archive dans une base éphémère, refuse le nettoyage avec un marqueur divergent, vérifie que la base subsiste, puis la supprime avec le marqueur exact.
+  - REV-02 et REV-05 sont closes ; aucune donnée réelle, fusion ou opération de production n'a été impliquée.
+  - Le verdict reste No-Go avant PR à cause du périmètre combiné T30B/T-30, et No-Go avant bascule tant que les preuves externes de répétition complète ne sont pas réunies.
 - **2026-07-18 — T-30 : deux blocages de sécurité corrigés et contre-revus localement**
   - Le pré-contrôle transmet désormais aux processus enfants une liste blanche minimale et exclut tous les secrets, preuves externes et variables Vite ; un test sentinelle protège cette isolation.
   - La restauration crée un marqueur unique de répétition ; le nettoyage exige le même identifiant et refuse une base sans marqueur ou avec marqueur divergent.
   - Le workflow PostgreSQL éphémère vérifie restauration, refus d'un mauvais marqueur, conservation de la base, puis suppression avec le marqueur exact.
   - Contrôles réussis : isolation 2/2, backend 96 réussis et 1 ignoré, frontend 39/39, lint, build, syntaxe shell et YAML.
-  - Aucun workflow déclenché et aucune base réelle créée ou supprimée ; le verdict reste No-Go jusqu'à la preuve PostgreSQL éphémère et aux prérequis externes.
+  - À cette étape, aucun workflow n'avait encore été déclenché ; la preuve PostgreSQL éphémère a depuis été obtenue par le workflow #27.
 - **2026-07-18 — T-30 : revue finale de branche, verdict No-Go avant PR**
   - La branche est 19 commits devant `main`, zéro derrière, mais regroupe encore T30B et la préparation T-30 dans un même périmètre de 33 fichiers.
   - Bloquant critique : les secrets injectés dans le pré-contrôle sont hérités par les processus npm enfants ; ils doivent recevoir un environnement filtré.

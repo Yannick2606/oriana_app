@@ -6,12 +6,13 @@ fichiers modifiés ou ajoutés.
 
 ## Verdict
 
-**NO-GO pour ouvrir une PR ou activer le workflow.** Deux corrections de sécurité sont bloquantes et
-le périmètre de la future intégration doit être clarifié.
+**NO-GO pour ouvrir une PR.** Les deux corrections de sécurité sont closes ; le périmètre de la
+future intégration doit encore être clarifié.
 
 Mise à jour : les corrections REV-01 et REV-02 ont passé la contre-revue locale et les contrôles
-complets. REV-02 doit encore être exécutée sur PostgreSQL éphémère par le workflow dédié. Le No-Go
-reste inchangé tant que cette preuve et les autres prérequis externes ne sont pas disponibles.
+complets. Le workflow manuel **Vérification PostgreSQL #27** a également validé REV-02 sur une base
+éphémère au commit `9de92844c288f8c8ba155456efc261cece55a71c`. Le No-Go avant PR repose désormais
+sur REV-03 et non plus sur ces deux constats de sécurité.
 
 ## Constats bloquants
 
@@ -44,8 +45,8 @@ reste inchangé tant que cette preuve et les autres prérequis externes ne sont 
   ou divergent. Conserver le refus des connexions actives et ne jamais utiliser `--force`.
 - Preuve de correction : tests négatifs sans PostgreSQL pour nom/confirmation et test d'intégration
   sur une instance éphémère prouvant qu'une base sans marqueur n'est jamais supprimée.
-- État : **corrigé localement, preuve CI attendue** — marqueur unique requis, validations négatives
-  réussies et scénario PostgreSQL éphémère ajouté sans avoir été déclenché.
+- État : **clos** — marqueur unique requis, validations négatives réussies et scénario PostgreSQL
+  éphémère validé par le workflow manuel #27 (Success, job `postgres`, 47 secondes).
 
 ## Périmètre à clarifier avant PR
 
@@ -65,7 +66,7 @@ reste inchangé tant que cette preuve et les autres prérequis externes ne sont 
 | ID | Niveau | Constat | Recommandation |
 |---|---|---|---|
 | REV-04 | moyen | actions officielles référencées par version majeure | décider d'un épinglage par SHA immuable |
-| REV-05 | moyen | scripts shell couverts seulement par syntaxe et tests négatifs manuels | ajouter tests automatisés et intégration PostgreSQL éphémère |
+| REV-05 | clos | syntaxe et validations négatives locales complétées par PostgreSQL éphémère | preuve : workflow manuel #27 réussi |
 | REV-06 | faible | rapport local horodaté commité puis régénéré par workflow | préférer artefact généré ou préciser qu'il s'agit d'un instantané |
 | REV-07 | information | workflow absent de `main` | comportement attendu : il reste inactif |
 | REV-08 | information | environnement référencé mais protections non lisibles | vérification visuelle toujours obligatoire |

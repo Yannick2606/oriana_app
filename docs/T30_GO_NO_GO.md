@@ -4,20 +4,21 @@ Ce document prépare la recette et la décision de bascule. Il n'autorise ni mut
 ni passage de Grist en lecture seule, ni déploiement. Toute étape marquée « production » exige une
 autorisation distincte et une décision humaine explicite.
 
-La revue de branche `docs/T30_REVUE_FINALE_BRANCHE.md` conclut actuellement No-Go avant PR et doit
-être soldée avant toute activation du workflow.
+La revue de branche `docs/T30_REVUE_FINALE_BRANCHE.md` maintient un No-Go avant PR tant que le
+périmètre d'intégration n'est pas décidé. Les deux blocages de sécurité initiaux sont désormais clos.
 
 ## État de départ
 
 | Contrôle | État | Preuve actuelle |
 |---|---|---|
-| Backend | Prêt localement | lint réussi ; 96 tests réussis, 1 intégration PostgreSQL ignorée hors environnement réel |
+| Backend | Prêt techniquement | lint réussi ; 96 tests locaux réussis et intégration PostgreSQL validée par le workflow #27 |
 | Frontend | Prêt localement | lint et build réussis ; 39 tests réussis |
 | Migration initiale | Déjà validée | import idempotent de 69 lignes, zéro rejet et zéro relation orpheline documentés dans `PLAN.md` |
 | Contrats API | Couvert | tests backend des ressources, relations, montants, sessions et agents |
 | Recette réelle des cinq rôles | À exécuter | comptes de recette et environnement de répétition requis |
 | Sauvegarde hors VPS | Bloquant | copie chiffrée hors serveur à confirmer |
-| Restauration chronométrée finale | À exécuter | base temporaire exclusivement |
+| Garde-fous de restauration | Validés en CI | workflow PostgreSQL #27 réussi sur base éphémère : restauration, refus du mauvais marqueur et nettoyage autorisé |
+| Restauration chronométrée finale | À exécuter | répétition représentative sur base temporaire exclusivement |
 | Supervision et alertes | À confirmer | santé, erreurs, sauvegardes et agents doivent être observables avant le Go |
 | Décision Go/No-Go | Bloquant | validation humaine obligatoire |
 
@@ -32,6 +33,17 @@ Tant que ce workflow n'est pas présent sur la branche par défaut, il ne peut p
 l'onglet Actions ; sa création sur cette branche de préparation ne vaut donc pas activation.
 L'audit statique des prérequis et les métadonnées GitHub restant à vérifier sont consignés dans
 `docs/T30_AUDIT_GITHUB_PREREQUIS.md`.
+
+## Preuve PostgreSQL éphémère
+
+Le workflow manuel **Vérification PostgreSQL #27** a réussi le 18 juillet 2026 sur la branche
+`t30-preparation-go-no-go`, au commit `9de92844c288f8c8ba155456efc261cece55a71c` : statut Success,
+job `postgres` vert, durée totale 47 secondes. Le workflow exécuté contient le scénario T-30 qui
+restaure une archive dans une base éphémère, vérifie qu'un marqueur divergent interdit la suppression
+et conserve la base, puis vérifie que le marqueur exact autorise son nettoyage.
+
+Cette preuve clôt les garde-fous techniques REV-02. Elle ne remplace pas la répétition finale avec
+sauvegarde hors VPS, volumes représentatifs, recette des cinq rôles, supervision et retour arrière.
 
 ## Matrice des cinq rôles
 
@@ -67,7 +79,8 @@ données.
 ## Répétition de bascule
 
 Le protocole de sauvegarde/restauration et ses scripts à garde-fous sont détaillés dans
-`docs/T30_REPETITION_SAUVEGARDE_RESTAURATION.md`. Ils sont préparés mais n'ont pas été exécutés.
+`docs/T30_REPETITION_SAUVEGARDE_RESTAURATION.md`. Les garde-fous ont été exécutés avec succès en CI
+sur PostgreSQL éphémère ; la répétition complète et représentative reste à exécuter.
 
 1. Annoncer la fenêtre de répétition et confirmer qu'elle ne cible pas la production.
 2. Créer une sauvegarde PostgreSQL au format personnalisé et vérifier son catalogue.
