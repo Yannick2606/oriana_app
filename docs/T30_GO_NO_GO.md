@@ -22,6 +22,12 @@ Le pré-contrôle local se lance depuis la racine avec `node scripts/preflightT3
 `docs/T30_PREFLIGHT_REPORT.md`, ne restitue aucune valeur de configuration et conserve un résultat
 « No-Go » tant que les preuves externes ne sont pas explicitement fournies.
 
+Le workflow manuel `Pré-contrôle T-30` reprend le même contrôle, avec des confirmations externes
+désactivées par défaut. Il publie le rapport comme artefact privé pendant 14 jours, n'accorde que la
+permission de lecture du dépôt et ne contient aucune commande de déploiement, migration ou bascule.
+Tant que ce workflow n'est pas présent sur la branche par défaut, il ne peut pas être déclenché depuis
+l'onglet Actions ; sa création sur cette branche de préparation ne vaut donc pas activation.
+
 ## Matrice des cinq rôles
 
 Chaque scénario doit être exécuté avec un compte de recette distinct. Les résultats attendus se

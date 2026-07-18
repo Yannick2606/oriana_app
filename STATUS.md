@@ -16,6 +16,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-18 — T-30 : workflow manuel de pré-contrôle préparé**
+  - Le workflow `Pré-contrôle T-30` exécute le contrôle local, conserve le rapport privé 14 jours et échoue tant que le verdict n'est pas prêt pour décision humaine.
+  - Les six preuves externes sont des confirmations manuelles obligatoires, toutes désactivées par défaut ; les valeurs de configuration proviennent exclusivement des secrets GitHub et ne sont jamais écrites dans le rapport.
+  - Permissions limitées à la lecture du dépôt, concurrence sérialisée et absence totale de commande de déploiement, migration, gel Grist ou bascule.
+  - Le workflow reste inactif tant qu'il n'est pas présent sur la branche par défaut ; aucune fusion n'est autorisée dans cette étape.
 - **2026-07-18 — T-30 : pré-contrôle local automatisé**
   - `scripts/preflightT30.mjs` exécute les contrôles backend/frontend, vérifie uniquement la présence des noms de configuration et recense les preuves externes sans restituer aucune valeur sensible.
   - Le rapport `docs/T30_PREFLIGHT_REPORT.md` conclut correctement « NO-GO » : les contrôles de code sont verts, mais la configuration de l'environnement de répétition et les six preuves externes sont absentes localement.
