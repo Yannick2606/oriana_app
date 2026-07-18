@@ -65,7 +65,7 @@ function RichOfferDetail({ selected, conditions = selected.conditions || [], onE
     </Card>
 
     <nav aria-label="Vues de l’offre" className="flex gap-1 overflow-x-auto rounded-oriana border border-oriana-bordure bg-oriana-surface p-1">
-      {tabs.map(([id, label]) => <button key={id} type="button" aria-current={activeTab === id ? 'page' : undefined} onClick={() => setActiveTab(id)} className={`whitespace-nowrap rounded-md px-4 py-2 text-sm font-semibold ${activeTab === id ? 'bg-oriana-violet text-white' : 'text-oriana-discret hover:bg-oriana-surfaceAlt'}`}>{label}</button>)}
+      {tabs.map(([id, label]) => <button key={id} type="button" aria-current={activeTab === id ? 'page' : undefined} onClick={() => setActiveTab(id)} className={`min-h-11 whitespace-nowrap rounded-md px-4 py-2 text-sm font-semibold ${activeTab === id ? 'bg-oriana-violet text-white' : 'text-oriana-discret hover:bg-oriana-surfaceAlt'}`}>{label}</button>)}
     </nav>
 
     {(synthesisVisible || activeTab === 'bien') && <div className="grid gap-4 xl:grid-cols-[1.15fr_.85fr]">
