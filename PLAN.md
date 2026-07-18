@@ -248,7 +248,7 @@
   bout au clavier, à la souris et sur smartphone, lint/build/tests sont verts et la recette humaine
   autorise explicitement la préparation de T-30.
 
-### [~] T-30B : Refonte UX/UI et identité orIAna
+### [x] T-30B : Refonte UX/UI et identité orIAna
 - Aligner l'interface sur la charte aubergine, lavande et blanche ainsi que sur les écrans produit
   validés, sans introduire de couleur ou d'image externe non autorisée.
 - Afficher systématiquement l'identité complète « orIAna », y compris lorsque la navigation est
@@ -257,6 +257,8 @@
   des parcours existants sans déplacer les autorisations hors du backend.
 - **Acceptation** : captures desktop et mobile validées humainement, identité exacte, navigation
   intuitive et lint/build/tests frontend verts avant toute autorisation de commit ou publication.
+  - Recette finale validée : vente, location et vente/location couvertes séparément ; accessibilité
+    clavier et usages tactiles protégés par tests ; charte appliquée comme consigne de développement.
 
 ### [ ] T-30 : Tester et basculer en production
 - Tester les cinq rôles, les cloisonnements, tous les parcours métier et les agents asynchrones.

@@ -11,11 +11,22 @@
 ## État par phase
 - PHASE 1 : terminée — T-00 à T-22 et extensions T-22A à T-22D validées.
 - Migration PostgreSQL : T-27, T-28 et T-29 terminées ; T-30 non démarrée.
-- Reprise fonctionnelle : T-30A validée ; T-30B active localement ; toute bascule PostgreSQL reste bloquée.
+- Reprise fonctionnelle : T-30A et T-30B terminées sur la branche temporaire ; toute bascule PostgreSQL reste bloquée.
 - PHASE 2 : vision modulaire repriorisée par T-31 ; aucun développement démarré.
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-18 — T-30B terminée**
+  - Validation humaine reçue après correction de la direction graphique et consolidation de la charte comme règle du design system.
+  - Les contextes vente, location et vente/location, la navigation responsive, l’accès clavier et les cibles tactiles sont validés.
+  - Contrôles de clôture réussis : lint, build et 39 tests frontend.
+  - Clôture limitée à la branche temporaire de validation : aucune fusion et aucun déploiement.
+- **2026-07-18 — T-30B prête à validation humaine finale**
+  - Le design system applique la charte comme consigne de développement : navigation aubergine sombre, espace métier clair, cartes sobres et violet limité aux actions et états actifs.
+  - Les fiches Offre et CRM conservent leurs vues métier, leur organisation responsive et leurs actions sans reproduire graphiquement les documents sources.
+  - La recette couvre séparément vente, location et vente/location, y compris les conditions financières et libellés de négociation associés.
+  - L’accès direct clavier au contenu, l’état actif des vues et les tailles tactiles principales sont protégés par des tests de non-régression.
+  - Contrôles finaux réussis : lint, build et 39 tests frontend. Branche temporaire uniquement, sans fusion ni déploiement.
 - **2026-07-18 — T-30B techniquement finalisée localement, validation visuelle restante**
   - La fiche Offre reprend la charte orIAna et les informations des fiches Alliance : identité, photographie, surfaces, équipements, accès, conditions financières et contact.
   - Huit vues réelles sont disponibles : Synthèse, Bien & surfaces, Finances, Mandats, Actions, Visites, Documents et Transactions.
