@@ -1,0 +1,111 @@
+name: Pré-contrôle T-30
+
+on:
+  workflow_dispatch:
+    inputs:
+      offsite_backup_verified:
+        description: Copie chiffrée hors VPS vérifiée
+        required: true
+        type: boolean
+        default: false
+      restore_rehearsal_verified:
+        description: Restauration chronométrée réussie
+        required: true
+        type: boolean
+        default: false
+      five_roles_verified:
+        description: Recette réelle des cinq rôles signée
+        required: true
+        type: boolean
+        default: false
+      agents_live_verified:
+        description: Agents asynchrones réels validés
+        required: true
+        type: boolean
+        default: false
+      monitoring_verified:
+        description: Supervision et alertes testées
+        required: true
+        type: boolean
+        default: false
+      rollback_verified:
+        description: Retour arrière répété
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: t30-preflight
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    name: Rapport Go No-Go
+    runs-on: ubuntu-latest
+    environment: t30-repetition
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+
+      - name: Installer le backend
+        working-directory: backend
+        run: npm ci
+
+      - name: Installer le frontend
+        working-directory: frontend
+        run: npm ci
+
+      - name: Générer le rapport sans exposer les valeurs
+        id: preflight
+        env:
+          POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+          POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          FRONTEND_ORIGIN: ${{ secrets.FRONTEND_ORIGIN }}
+          BACKEND_PUBLIC_URL: ${{ secrets.BACKEND_PUBLIC_URL }}
+          FRONTEND_PUBLIC_URL: ${{ secrets.FRONTEND_PUBLIC_URL }}
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+          N8N_WEBHOOK_BASE_URL: ${{ secrets.N8N_WEBHOOK_BASE_URL }}
+          N8N_SHARED_SECRET: ${{ secrets.N8N_SHARED_SECRET }}
+          T30_OFFSITE_BACKUP_VERIFIED: ${{ inputs.offsite_backup_verified }}
+          T30_RESTORE_REHEARSAL_VERIFIED: ${{ inputs.restore_rehearsal_verified }}
+          T30_FIVE_ROLES_VERIFIED: ${{ inputs.five_roles_verified }}
+          T30_AGENTS_LIVE_VERIFIED: ${{ inputs.agents_live_verified }}
+          T30_MONITORING_VERIFIED: ${{ inputs.monitoring_verified }}
+          T30_ROLLBACK_VERIFIED: ${{ inputs.rollback_verified }}
+        run: |
+          set +e
+          node scripts/preflightT30.mjs
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Publier le rapport privé
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapport-preflight-t30
+          path: docs/T30_PREFLIGHT_REPORT.md
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Appliquer le verdict
+        if: always()
+        env:
+          PREFLIGHT_EXIT_CODE: ${{ steps.preflight.outputs.exit_code }}
+        run: |
+          test "$PREFLIGHT_EXIT_CODE" = "0"

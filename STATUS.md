@@ -16,6 +16,71 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-18 — T30B intégrée séparément et REV-03 close**
+  - La PR T30B #2 a été fusionnée dans `main` par un commit standard `509d37dfc2bccfd857d84f5e7634d75b47272d7f`, après réussite du workflow Captures T30B #13 et validation humaine explicite.
+  - `t30-preparation-go-no-go` a été synchronisée avec `main` au commit `a95b49638f81cf8f2d068c56454fee257f1a8466`, sans rebase ni force-push.
+  - La comparaison finale indique 16 commits devant, zéro derrière et exactement 17 fichiers T-30 ; aucun fichier frontend T30B ne subsiste dans l'écart.
+  - REV-03 est close : une PR T-30 en brouillon peut être préparée, mais toute fusion et toute bascule restent interdites sans autorisation distincte.
+- **2026-07-18 — T30B / T-30 : séparation d'intégration inventoriée**
+  - GitHub confirme 11 commits et 23 fichiers entre `main` et `t30b-validation-visuelle`, puis 14 commits et 16 fichiers audités entre T30B et `t30-preparation-go-no-go` ; le présent plan devient le dix-septième fichier T-30.
+  - Le second écart ne contient aucun fichier frontend T30B ; les seuls fichiers de suivi communs aux historiques sont `PLAN.md` et `STATUS.md`.
+  - La stratégie recommandée consiste à intégrer T30B en premier en préservant l'ascendance, puis à retargeter T-30 vers `main` après une nouvelle comparaison.
+  - Le plan est documenté sans création de PR, fusion, rebase, branche supplémentaire ni déploiement.
+- **2026-07-18 — T-30 : preuve PostgreSQL éphémère réussie**
+  - Le workflow manuel `Vérification PostgreSQL` #27 a réussi sur `t30-preparation-go-no-go` au commit distant `9de92844c288f8c8ba155456efc261cece55a71c` ; job `postgres` vert, durée totale 47 secondes.
+  - Le scénario restaure une archive dans une base éphémère, refuse le nettoyage avec un marqueur divergent, vérifie que la base subsiste, puis la supprime avec le marqueur exact.
+  - REV-02 et REV-05 sont closes ; aucune donnée réelle, fusion ou opération de production n'a été impliquée.
+  - Le verdict reste No-Go avant PR à cause du périmètre combiné T30B/T-30, et No-Go avant bascule tant que les preuves externes de répétition complète ne sont pas réunies.
+- **2026-07-18 — T-30 : deux blocages de sécurité corrigés et contre-revus localement**
+  - Le pré-contrôle transmet désormais aux processus enfants une liste blanche minimale et exclut tous les secrets, preuves externes et variables Vite ; un test sentinelle protège cette isolation.
+  - La restauration crée un marqueur unique de répétition ; le nettoyage exige le même identifiant et refuse une base sans marqueur ou avec marqueur divergent.
+  - Le workflow PostgreSQL éphémère vérifie restauration, refus d'un mauvais marqueur, conservation de la base, puis suppression avec le marqueur exact.
+  - Contrôles réussis : isolation 2/2, backend 96 réussis et 1 ignoré, frontend 39/39, lint, build, syntaxe shell et YAML.
+  - À cette étape, aucun workflow n'avait encore été déclenché ; la preuve PostgreSQL éphémère a depuis été obtenue par le workflow #27.
+- **2026-07-18 — T-30 : revue finale de branche, verdict No-Go avant PR**
+  - La branche est 19 commits devant `main`, zéro derrière, mais regroupe encore T30B et la préparation T-30 dans un même périmètre de 33 fichiers.
+  - Bloquant critique : les secrets injectés dans le pré-contrôle sont hérités par les processus npm enfants ; ils doivent recevoir un environnement filtré.
+  - Bloquant élevé : le nettoyage reconnaît la base temporaire par son nom seulement ; un marqueur de répétition vérifié est requis avant suppression.
+  - Aucun secret en clair détecté, permissions Actions en lecture seule et aucune commande de production ; aucune PR créée et aucun workflow déclenché.
+- **2026-07-18 — T-30 : workflow rattaché à `t30-repetition`, toujours inactif**
+  - Après confirmation utilisateur de la configuration de l'environnement protégé, le job référence explicitement `environment: t30-repetition`.
+  - Les approbateurs, branches autorisées et noms de secrets ne sont pas lisibles via l'accès disponible ; leur conformité reste à contrôler visuellement avant toute fusion.
+  - Le workflow demeure absent de la branche par défaut : aucun déclenchement, aucune approbation sollicitée et aucune opération d'environnement exécutée.
+- **2026-07-18 — T-30 : prérequis GitHub audités en lecture seule**
+  - Le workflow est manuel, en lecture seule, sérialisé, sans commande sensible et conserve uniquement le rapport pendant 14 jours.
+  - Écart bloquant : le job n'est rattaché à aucun environnement GitHub protégé ; le workflow reste par ailleurs inactif car absent de la branche par défaut.
+  - La présence des 12 secrets, l'existence de `t30-repetition`, les approbateurs et protections de branche ne sont pas exposés par l'accès disponible et restent explicitement non vérifiés.
+  - Aucune valeur lue, aucun workflow déclenché et aucun réglage GitHub modifié.
+- **2026-07-18 — T-30 : grille de supervision et alertes préparée**
+  - Trente-trois tests synthétiques couvrent disponibilité, CORS, sessions, sécurité, PostgreSQL, sauvegardes, restauration, agents et rapprochement.
+  - Les seuils sont initiaux et devront être confirmés pendant la répétition ; toute alerte critique non testée ou perte de visibilité impose No-Go.
+  - Les preuves excluent secrets, cookies, corps de requête et contenu métier ; les tests ne doivent jamais arrêter un service de production.
+  - Aucune supervision réelle configurée, aucun destinataire contacté et aucun signal injecté.
+- **2026-07-18 — T-30 : protocole de sauvegarde/restauration préparé, non exécuté**
+  - Deux scripts dédiés imposent un nom de base temporaire strict, refusent la base métier et les bases système, interdisent l'écrasement et séparent restauration et suppression.
+  - Le protocole exige catalogue valide, empreinte, copie chiffrée hors VPS, contrôles migrations/volumes/relations/agrégats et visa avant nettoyage.
+  - Le script générique de restauration dans `POSTGRES_DB` est explicitement exclu de la répétition T-30.
+  - Aucun script exécuté, aucune archive lue, aucune base créée ou supprimée et aucun environnement contacté.
+- **2026-07-18 — T-30 : fiche de recette des cinq rôles prête**
+  - La recette comporte des scénarios stables pour les sessions, chaque rôle hiérarchique, les refus de cloisonnement et les parcours vente/location, agents, clavier et smartphone.
+  - Chaque scénario impose un résultat attendu, une preuve minimale expurgée et un refus obligatoire ; aucun identifiant ni secret n'est stocké dans le document.
+  - Tout scénario en échec, bloqué, non exécuté ou sans preuve maintient automatiquement le verdict No-Go.
+  - La fiche reste documentaire : aucun compte résolu, aucun appel d'environnement et aucune opération de production exécutés.
+- **2026-07-18 — T-30 : workflow manuel de pré-contrôle préparé**
+  - Le workflow `Pré-contrôle T-30` exécute le contrôle local, conserve le rapport privé 14 jours et échoue tant que le verdict n'est pas prêt pour décision humaine.
+  - Les six preuves externes sont des confirmations manuelles obligatoires, toutes désactivées par défaut ; les valeurs de configuration proviennent exclusivement des secrets GitHub et ne sont jamais écrites dans le rapport.
+  - Permissions limitées à la lecture du dépôt, concurrence sérialisée et absence totale de commande de déploiement, migration, gel Grist ou bascule.
+  - Le workflow reste inactif tant qu'il n'est pas présent sur la branche par défaut ; aucune fusion n'est autorisée dans cette étape.
+- **2026-07-18 — T-30 : pré-contrôle local automatisé**
+  - `scripts/preflightT30.mjs` exécute les contrôles backend/frontend, vérifie uniquement la présence des noms de configuration et recense les preuves externes sans restituer aucune valeur sensible.
+  - Le rapport `docs/T30_PREFLIGHT_REPORT.md` conclut correctement « NO-GO » : les contrôles de code sont verts, mais la configuration de l'environnement de répétition et les six preuves externes sont absentes localement.
+  - Le script renvoie un code non nul tant qu'un bloquant subsiste et ne peut donc pas être interprété comme une autorisation de bascule.
+  - Aucun accès production, aucune sauvegarde, aucune restauration, aucun gel Grist et aucun déploiement effectués.
+- **2026-07-18 — T-30 active en préparation, production inchangée**
+  - Le dossier Go/No-Go formalise la recette des cinq rôles, les parcours métier, la répétition, les critères de décision et les déclencheurs de retour arrière.
+  - État local vérifié : backend lint réussi et 96 tests réussis sur 97, avec l'intégration PostgreSQL réelle ignorée hors environnement ; frontend lint/build réussis et 39 tests réussis.
+  - Bloquants avant tout Go : copie chiffrée hors VPS, restauration chronométrée finale, recette réelle des cinq rôles, agents réels, supervision et décision humaine explicite.
+  - Aucune sauvegarde de production, aucun gel Grist, aucune migration de delta, aucune bascule et aucun déploiement effectués.
 - **2026-07-18 — T-30B terminée**
   - Validation humaine reçue après correction de la direction graphique et consolidation de la charte comme règle du design system.
   - Les contextes vente, location et vente/location, la navigation responsive, l’accès clavier et les cibles tactiles sont validés.

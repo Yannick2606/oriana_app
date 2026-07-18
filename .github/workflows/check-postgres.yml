@@ -2,6 +2,21 @@ name: Vérification PostgreSQL
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/check-postgres.yml
+      - backend/Dockerfile
+      - backend/sql/**
+      - backend/scripts/migratePostgres.js
+      - backend/scripts/importGristPostgres.js
+      - backend/src/services/**
+      - backend/test/**
+      - deploy/docker-compose.yml
+      - deploy/backup-postgres.sh
+      - deploy/restore-postgres.sh
+      - deploy/rehearse-restore-postgres.sh
+      - deploy/drop-t30-restore-db.sh
   push:
     branches: [main]
     paths:
@@ -15,6 +30,8 @@ on:
       - deploy/docker-compose.yml
       - deploy/backup-postgres.sh
       - deploy/restore-postgres.sh
+      - deploy/rehearse-restore-postgres.sh
+      - deploy/drop-t30-restore-db.sh
 
 permissions:
   contents: read
@@ -87,3 +104,34 @@ jobs:
           pg_client createdb oriana_restore
           pg_client pg_restore --dbname=oriana_restore --no-owner /backup/oriana-ci.dump
           test "$(pg_client psql --dbname=oriana_restore -Atc 'select count(*) from schema_migrations')" = "4"
+      - name: Vérifier les garde-fous de répétition T-30
+        working-directory: .
+        run: |
+          t30_client() {
+            docker run --rm --network host \
+              -v /tmp:/backups \
+              -v "$GITHUB_WORKSPACE/deploy:/scripts:ro" \
+              -e PGPASSWORD \
+              -e POSTGRES_HOST=127.0.0.1 \
+              -e POSTGRES_USER \
+              -e POSTGRES_DB \
+              "$@"
+          }
+          t30_client -e T30_REHEARSAL_CONFIRM=YES postgres:17.10-alpine \
+            /scripts/rehearse-restore-postgres.sh \
+            /backups/oriana-ci.dump oriana_restore_t30_ci t30_20260718_ci0001
+          if t30_client -e T30_DROP_CONFIRM=YES postgres:17.10-alpine \
+            /scripts/drop-t30-restore-db.sh \
+            oriana_restore_t30_ci t30_20260718_erreur1; then
+            echo "Le nettoyage aurait dû refuser un marqueur divergent." >&2
+            exit 1
+          fi
+          test "$(docker run --rm --network host -e PGPASSWORD -e PGHOST=127.0.0.1 \
+            -e PGUSER="$POSTGRES_USER" -e PGDATABASE=postgres postgres:17.10-alpine \
+            psql -Atc "select count(*) from pg_database where datname = 'oriana_restore_t30_ci'")" = "1"
+          t30_client -e T30_DROP_CONFIRM=YES postgres:17.10-alpine \
+            /scripts/drop-t30-restore-db.sh \
+            oriana_restore_t30_ci t30_20260718_ci0001
+          test "$(docker run --rm --network host -e PGPASSWORD -e PGHOST=127.0.0.1 \
+            -e PGUSER="$POSTGRES_USER" -e PGDATABASE=postgres postgres:17.10-alpine \
+            psql -Atc "select count(*) from pg_database where datname = 'oriana_restore_t30_ci'")" = "0"
