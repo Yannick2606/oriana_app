@@ -16,6 +16,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-18 — T30B intégrée séparément et REV-03 close**
+  - La PR T30B #2 a été fusionnée dans `main` par un commit standard `509d37dfc2bccfd857d84f5e7634d75b47272d7f`, après réussite du workflow Captures T30B #13 et validation humaine explicite.
+  - `t30-preparation-go-no-go` a été synchronisée avec `main` au commit `a95b49638f81cf8f2d068c56454fee257f1a8466`, sans rebase ni force-push.
+  - La comparaison finale indique 16 commits devant, zéro derrière et exactement 17 fichiers T-30 ; aucun fichier frontend T30B ne subsiste dans l'écart.
+  - REV-03 est close : une PR T-30 en brouillon peut être préparée, mais toute fusion et toute bascule restent interdites sans autorisation distincte.
 - **2026-07-18 — T30B / T-30 : séparation d'intégration inventoriée**
   - GitHub confirme 11 commits et 23 fichiers entre `main` et `t30b-validation-visuelle`, puis 14 commits et 16 fichiers audités entre T30B et `t30-preparation-go-no-go` ; le présent plan devient le dix-septième fichier T-30.
   - Le second écart ne contient aucun fichier frontend T30B ; les seuls fichiers de suivi communs aux historiques sont `PLAN.md` et `STATUS.md`.

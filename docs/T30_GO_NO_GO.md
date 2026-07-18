@@ -4,8 +4,9 @@ Ce document prépare la recette et la décision de bascule. Il n'autorise ni mut
 ni passage de Grist en lecture seule, ni déploiement. Toute étape marquée « production » exige une
 autorisation distincte et une décision humaine explicite.
 
-La revue de branche `docs/T30_REVUE_FINALE_BRANCHE.md` maintient un No-Go avant PR tant que le
-périmètre d'intégration n'est pas décidé. Les deux blocages de sécurité initiaux sont désormais clos.
+La revue de branche `docs/T30_REVUE_FINALE_BRANCHE.md` autorise désormais l'ouverture d'une PR en
+brouillon : T30B a été intégrée séparément et les blocages de sécurité sont clos. La bascule reste
+No-Go tant que l'ensemble des preuves externes et la décision humaine finale ne sont pas réunis.
 
 ## État de départ
 

@@ -3,6 +3,13 @@
 Ce document décrit uniquement une stratégie d'intégration. Il n'autorise aucune création de PR,
 fusion, réécriture d'historique, suppression de branche ou mise en production.
 
+## Résultat
+
+La séparation est réalisée : T30B a été fusionnée dans `main` par la PR #2 avec un commit de fusion
+standard (`509d37dfc2bccfd857d84f5e7634d75b47272d7f`). La branche T-30 a ensuite été
+synchronisée par un commit de fusion (`a95b49638f81cf8f2d068c56454fee257f1a8466`). La comparaison
+finale indique 16 commits devant, zéro derrière et les 17 fichiers T-30 prévus.
+
 ## Constat distant
 
 La comparaison GitHub confirme que les branches sont déjà correctement empilées :
@@ -69,16 +76,13 @@ Avant intégration de T30B, une éventuelle PR T-30 doit cibler `t30b-validation
 - `PLAN.md`
 - `STATUS.md`
 
-## Ordre recommandé
+## Ordre appliqué
 
-1. Revoir puis intégrer T30B séparément.
-2. Préserver l'ascendance avec une fusion GitHub standard si la branche T-30 doit être réutilisée
-   telle quelle. Une fusion par squash romprait cette ascendance et imposerait de reconstruire la
-   branche T-30 depuis le nouveau `main`.
-3. Après intégration de T30B, vérifier que `main...t30-preparation-go-no-go` ne présente que les
-   17 fichiers T-30 ci-dessus.
-4. Retargeter ensuite la PR T-30 vers `main`, ou seulement alors créer cette PR.
-5. Relancer les contrôles complets sur chaque périmètre avant toute fusion.
+1. T30B a été revue puis intégrée séparément par fusion GitHub standard.
+2. L'ascendance a été préservée sans squash, rebase ni force-push.
+3. La branche T-30 a été synchronisée avec le nouveau `main`.
+4. La comparaison finale ne présente que les 17 fichiers T-30 ci-dessus.
+5. Les contrôles complets doivent être relancés avant l'ouverture de la PR brouillon T-30.
 
 ## Critères de validation de la séparation
 

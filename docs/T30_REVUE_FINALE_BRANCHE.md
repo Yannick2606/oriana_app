@@ -1,18 +1,18 @@
 # T-30 — Revue finale de la branche de préparation
 
-Revue effectuée sans PR, fusion, déclenchement de workflow ni accès à un environnement. Comparaison
-GitHub : `t30-preparation-go-no-go` est 19 commits devant `main`, zéro commit derrière, avec 33
-fichiers modifiés ou ajoutés.
+Revue initiale effectuée sans PR ni fusion T-30. Après intégration séparée de T30B, la comparaison
+GitHub confirme que `t30-preparation-go-no-go` est 16 commits devant `main`, zéro commit derrière,
+avec exactement 17 fichiers modifiés ou ajoutés, tous rattachés à la préparation T-30.
 
 ## Verdict
 
-**NO-GO pour ouvrir une PR.** Les deux corrections de sécurité sont closes ; le périmètre de la
-future intégration doit encore être clarifié.
+**GO pour ouvrir une PR en brouillon, sans fusion.** Les corrections de sécurité et la séparation de
+périmètre sont closes. Ce verdict n'autorise aucune bascule, mutation de production ou fusion.
 
 Mise à jour : les corrections REV-01 et REV-02 ont passé la contre-revue locale et les contrôles
 complets. Le workflow manuel **Vérification PostgreSQL #27** a également validé REV-02 sur une base
-éphémère au commit `9de92844c288f8c8ba155456efc261cece55a71c`. Le No-Go avant PR repose désormais
-sur REV-03 et non plus sur ces deux constats de sécurité.
+éphémère au commit `9de92844c288f8c8ba155456efc261cece55a71c`. T30B a ensuite été fusionnée
+séparément dans `main` et la branche T-30 synchronisée sans réécriture.
 
 ## Constats bloquants
 
@@ -64,7 +64,8 @@ sur REV-03 et non plus sur ces deux constats de sécurité.
   déjà empilées proprement : 11 commits T30B, puis 14 commits T-30 et 16 fichiers audités, sans
   fichier frontend dans le second écart. Le plan devient le dix-septième fichier T-30. La stratégie
   recommandée est une intégration séquentielle préservant l'ascendance.
-- État : **planifié, décision d'intégration requise** — aucune PR ni fusion créée.
+- État : **clos** — T30B fusionnée séparément par la PR #2 ; branche T-30 synchronisée au commit
+  `a95b49638f81cf8f2d068c56454fee257f1a8466`, zéro commit derrière et 17 fichiers T-30.
 
 ## Constats importants non bloquants à court terme
 
