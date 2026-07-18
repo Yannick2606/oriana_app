@@ -16,6 +16,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-18 — T-30 : grille de supervision et alertes préparée**
+  - Trente-trois tests synthétiques couvrent disponibilité, CORS, sessions, sécurité, PostgreSQL, sauvegardes, restauration, agents et rapprochement.
+  - Les seuils sont initiaux et devront être confirmés pendant la répétition ; toute alerte critique non testée ou perte de visibilité impose No-Go.
+  - Les preuves excluent secrets, cookies, corps de requête et contenu métier ; les tests ne doivent jamais arrêter un service de production.
+  - Aucune supervision réelle configurée, aucun destinataire contacté et aucun signal injecté.
 - **2026-07-18 — T-30 : protocole de sauvegarde/restauration préparé, non exécuté**
   - Deux scripts dédiés imposent un nom de base temporaire strict, refusent la base métier et les bases système, interdisent l'écrasement et séparent restauration et suppression.
   - Le protocole exige catalogue valide, empreinte, copie chiffrée hors VPS, contrôles migrations/volumes/relations/agrégats et visa avant nettoyage.

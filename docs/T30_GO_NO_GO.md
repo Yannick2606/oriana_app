@@ -79,6 +79,9 @@ Le protocole de sauvegarde/restauration et ses scripts à garde-fous sont détai
 
 ## Critères Go
 
+La grille `docs/T30_SUPERVISION_ALERTES.md` définit 33 tests synthétiques à prouver sans donnée métier.
+Ses seuils initiaux doivent être confirmés après observation de la répétition.
+
 - tous les contrôles ci-dessus sont verts et signés par un responsable identifié ;
 - sauvegarde locale vérifiée et copie chiffrée hors VPS disponible ;
 - restauration finale réussie et durée compatible avec la fenêtre annoncée ;
