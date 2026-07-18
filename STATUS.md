@@ -16,6 +16,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-18 — T-30 : prérequis GitHub audités en lecture seule**
+  - Le workflow est manuel, en lecture seule, sérialisé, sans commande sensible et conserve uniquement le rapport pendant 14 jours.
+  - Écart bloquant : le job n'est rattaché à aucun environnement GitHub protégé ; le workflow reste par ailleurs inactif car absent de la branche par défaut.
+  - La présence des 12 secrets, l'existence de `t30-repetition`, les approbateurs et protections de branche ne sont pas exposés par l'accès disponible et restent explicitement non vérifiés.
+  - Aucune valeur lue, aucun workflow déclenché et aucun réglage GitHub modifié.
 - **2026-07-18 — T-30 : grille de supervision et alertes préparée**
   - Trente-trois tests synthétiques couvrent disponibilité, CORS, sessions, sécurité, PostgreSQL, sauvegardes, restauration, agents et rapprochement.
   - Les seuils sont initiaux et devront être confirmés pendant la répétition ; toute alerte critique non testée ou perte de visibilité impose No-Go.

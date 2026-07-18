@@ -27,6 +27,8 @@ désactivées par défaut. Il publie le rapport comme artefact privé pendant 14
 permission de lecture du dépôt et ne contient aucune commande de déploiement, migration ou bascule.
 Tant que ce workflow n'est pas présent sur la branche par défaut, il ne peut pas être déclenché depuis
 l'onglet Actions ; sa création sur cette branche de préparation ne vaut donc pas activation.
+L'audit statique des prérequis et les métadonnées GitHub restant à vérifier sont consignés dans
+`docs/T30_AUDIT_GITHUB_PREREQUIS.md`.
 
 ## Matrice des cinq rôles
 
