@@ -3,6 +3,7 @@ name: Vérification PostgreSQL
 on:
   workflow_dispatch:
   push:
+    # Déclencheur temporaire T-30 à retirer après la preuve éphémère.
     branches: [main, t30-preparation-go-no-go]
     paths:
       - .github/workflows/check-postgres.yml
