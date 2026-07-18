@@ -64,6 +64,7 @@ try {
   await desktop.screenshot({ path: `${output}/t30b-offre-desktop.png`, fullPage: true });
   await desktop.getByRole('button', { name: 'CRM' }).click();
   await desktop.getByRole('heading', { name: "CAKE O'CLOCK" }).waitFor();
+  await desktop.waitForTimeout(500);
   await desktop.screenshot({ path: `${output}/t30b-crm-desktop.png`, fullPage: true });
 
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, colorScheme: 'light' });
