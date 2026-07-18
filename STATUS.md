@@ -16,6 +16,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-18 — T30B / T-30 : séparation d'intégration inventoriée**
+  - GitHub confirme 11 commits et 23 fichiers entre `main` et `t30b-validation-visuelle`, puis 14 commits et 16 fichiers audités entre T30B et `t30-preparation-go-no-go` ; le présent plan devient le dix-septième fichier T-30.
+  - Le second écart ne contient aucun fichier frontend T30B ; les seuls fichiers de suivi communs aux historiques sont `PLAN.md` et `STATUS.md`.
+  - La stratégie recommandée consiste à intégrer T30B en premier en préservant l'ascendance, puis à retargeter T-30 vers `main` après une nouvelle comparaison.
+  - Le plan est documenté sans création de PR, fusion, rebase, branche supplémentaire ni déploiement.
 - **2026-07-18 — T-30 : preuve PostgreSQL éphémère réussie**
   - Le workflow manuel `Vérification PostgreSQL` #27 a réussi sur `t30-preparation-go-no-go` au commit distant `9de92844c288f8c8ba155456efc261cece55a71c` ; job `postgres` vert, durée totale 47 secondes.
   - Le scénario restaure une archive dans une base éphémère, refuse le nettoyage avec un marqueur divergent, vérifie que la base subsiste, puis la supprime avec le marqueur exact.

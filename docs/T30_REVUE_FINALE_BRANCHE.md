@@ -60,6 +60,11 @@ sur REV-03 et non plus sur ces deux constats de sécurité.
 - Décision attendue : soit intégrer T30B séparément après autorisation, puis rebaser/recréer T-30 sur
   ce nouveau `main` ; soit assumer explicitement une seule PR combinée avec une revue adaptée. Aucune
   de ces actions n'est autorisée par cette revue.
+- Plan de résolution : `docs/T30_SEPARATION_PERIMETRES.md` confirme que les branches distantes sont
+  déjà empilées proprement : 11 commits T30B, puis 14 commits T-30 et 16 fichiers audités, sans
+  fichier frontend dans le second écart. Le plan devient le dix-septième fichier T-30. La stratégie
+  recommandée est une intégration séquentielle préservant l'ascendance.
+- État : **planifié, décision d'intégration requise** — aucune PR ni fusion créée.
 
 ## Constats importants non bloquants à court terme
 
