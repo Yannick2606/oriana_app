@@ -13,7 +13,9 @@ la production sans une autorisation distincte.
 - restauration sans `--clean`, dans une base vide créée par le script ;
 - arrêt immédiat à la première erreur de restauration ;
 - aucune suppression automatique après le contrôle ;
-- suppression séparée avec confirmation `T30_DROP_CONFIRM=YES` et même contrôle du nom.
+- marqueur de répétition unique créé dans la base restaurée ;
+- suppression séparée avec confirmation `T30_DROP_CONFIRM=YES`, contrôle du nom et correspondance
+  exacte du marqueur.
 
 Le script générique `deploy/restore-postgres.sh` restaure dans `POSTGRES_DB` et ne doit pas être
 utilisé pour cette répétition. Le protocole T-30 utilise uniquement les deux scripts dédiés.
@@ -60,7 +62,7 @@ docker compose --env-file .env -f deploy/docker-compose.yml run --rm \
   -e T30_REHEARSAL_CONFIRM=YES \
   -v "$PWD/deploy/rehearse-restore-postgres.sh:/usr/local/bin/rehearse-restore-postgres.sh:ro" \
   postgres-backup /usr/local/bin/rehearse-restore-postgres.sh \
-  /backups/oriana-TIMESTAMP.dump oriana_restore_t30_YYYYMMDD
+  /backups/oriana-TIMESTAMP.dump oriana_restore_t30_YYYYMMDD t30_YYYYMMDD_identifiant
 ```
 
 La sortie autorisée contient uniquement : empreinte, nom de la base temporaire, nombre de migrations,
@@ -90,7 +92,8 @@ Après conservation du rapport expurgé et visa du responsable :
 docker compose --env-file .env -f deploy/docker-compose.yml run --rm \
   -e T30_DROP_CONFIRM=YES \
   -v "$PWD/deploy/drop-t30-restore-db.sh:/usr/local/bin/drop-t30-restore-db.sh:ro" \
-  postgres-backup /usr/local/bin/drop-t30-restore-db.sh oriana_restore_t30_YYYYMMDD
+  postgres-backup /usr/local/bin/drop-t30-restore-db.sh \
+  oriana_restore_t30_YYYYMMDD t30_YYYYMMDD_identifiant
 ```
 
 Le script ne termine aucune connexion active et n'utilise pas `--force`. Une base occupée reste en
@@ -117,4 +120,3 @@ place jusqu'à diagnostic et nouvelle validation.
 Interrompre la répétition sans tenter de « réparer en direct » si : environnement incertain, archive
 invalide, cible inattendue, espace disque insuffisant, restauration partielle, relation orpheline,
 montant divergent, secret visible ou durée supérieure à la fenêtre.
-

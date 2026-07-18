@@ -2,6 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { buildChildEnvironment } from './preflightT30Environment.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const reportPath = resolve(root, process.argv[2] || 'docs/T30_PREFLIGHT_REPORT.md');
@@ -22,18 +23,19 @@ const externalProofs = [
 ];
 
 const checks = [
-  ['Backend — lint', 'backend', ['run', 'lint']],
-  ['Backend — tests', 'backend', ['test']],
-  ['Frontend — lint', 'frontend', ['run', 'lint']],
-  ['Frontend — tests', 'frontend', ['test', '--', '--run']],
-  ['Frontend — build', 'frontend', ['run', 'build']],
+  ['T-30 — isolation des secrets', '.', 'node', ['--test', 'scripts/preflightT30Environment.test.mjs']],
+  ['Backend — lint', 'backend', 'npm', ['run', 'lint']],
+  ['Backend — tests', 'backend', 'npm', ['test']],
+  ['Frontend — lint', 'frontend', 'npm', ['run', 'lint']],
+  ['Frontend — tests', 'frontend', 'npm', ['test', '--', '--run']],
+  ['Frontend — build', 'frontend', 'npm', ['run', 'build']],
 ];
 
-function runCheck([label, cwd, args]) {
-  const result = spawnSync('npm', args, {
+function runCheck([label, cwd, command, args]) {
+  const result = spawnSync(command, args, {
     cwd: resolve(root, cwd),
     encoding: 'utf8',
-    env: process.env,
+    env: buildChildEnvironment(process.env),
     maxBuffer: 10 * 1024 * 1024,
   });
   const output = `${result.stdout || ''}\n${result.stderr || ''}`;

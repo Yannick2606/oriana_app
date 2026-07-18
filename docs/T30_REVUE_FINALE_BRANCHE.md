@@ -9,6 +9,10 @@ fichiers modifiés ou ajoutés.
 **NO-GO pour ouvrir une PR ou activer le workflow.** Deux corrections de sécurité sont bloquantes et
 le périmètre de la future intégration doit être clarifié.
 
+Mise à jour : les corrections REV-01 et REV-02 ont passé la contre-revue locale et les contrôles
+complets. REV-02 doit encore être exécutée sur PostgreSQL éphémère par le workflow dédié. Le No-Go
+reste inchangé tant que cette preuve et les autres prérequis externes ne sont pas disponibles.
+
 ## Constats bloquants
 
 ### REV-01 — Secrets hérités par les tests enfants
@@ -25,6 +29,7 @@ le périmètre de la future intégration doit être clarifié.
   session ou n8n ne doit être accessible aux commandes frontend/backend ordinaires.
 - Preuve de correction : test automatisé démontrant qu'une variable sentinelle sensible n'est pas
   visible depuis un processus enfant, tandis que le rapport détecte sa présence dans le parent.
+- État : **clos localement** — environnement enfant sur liste blanche ; test sentinelle 2/2 réussi.
 
 ### REV-02 — Suppression fondée uniquement sur le nom
 
@@ -39,6 +44,8 @@ le périmètre de la future intégration doit être clarifié.
   ou divergent. Conserver le refus des connexions actives et ne jamais utiliser `--force`.
 - Preuve de correction : tests négatifs sans PostgreSQL pour nom/confirmation et test d'intégration
   sur une instance éphémère prouvant qu'une base sans marqueur n'est jamais supprimée.
+- État : **corrigé localement, preuve CI attendue** — marqueur unique requis, validations négatives
+  réussies et scénario PostgreSQL éphémère ajouté sans avoir été déclenché.
 
 ## Périmètre à clarifier avant PR
 
@@ -85,4 +92,3 @@ le périmètre de la future intégration doit être clarifié.
 5. statuer sur l'épinglage des actions ;
 6. relancer lint, 96 tests backend, 39 tests frontend, build et pré-contrôle ;
 7. effectuer une nouvelle revue avant toute PR.
-

@@ -16,6 +16,12 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-18 — T-30 : deux blocages de sécurité corrigés et contre-revus localement**
+  - Le pré-contrôle transmet désormais aux processus enfants une liste blanche minimale et exclut tous les secrets, preuves externes et variables Vite ; un test sentinelle protège cette isolation.
+  - La restauration crée un marqueur unique de répétition ; le nettoyage exige le même identifiant et refuse une base sans marqueur ou avec marqueur divergent.
+  - Le workflow PostgreSQL éphémère vérifie restauration, refus d'un mauvais marqueur, conservation de la base, puis suppression avec le marqueur exact.
+  - Contrôles réussis : isolation 2/2, backend 96 réussis et 1 ignoré, frontend 39/39, lint, build, syntaxe shell et YAML.
+  - Aucun workflow déclenché et aucune base réelle créée ou supprimée ; le verdict reste No-Go jusqu'à la preuve PostgreSQL éphémère et aux prérequis externes.
 - **2026-07-18 — T-30 : revue finale de branche, verdict No-Go avant PR**
   - La branche est 19 commits devant `main`, zéro derrière, mais regroupe encore T30B et la préparation T-30 dans un même périmètre de 33 fichiers.
   - Bloquant critique : les secrets injectés dans le pré-contrôle sont hérités par les processus npm enfants ; ils doivent recevoir un environnement filtré.
