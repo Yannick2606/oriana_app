@@ -11,11 +11,39 @@
 ## État par phase
 - PHASE 1 : terminée — T-00 à T-22 et extensions T-22A à T-22D validées.
 - Migration PostgreSQL : T-27, T-28 et T-29 terminées ; T-30 non démarrée.
-- Reprise fonctionnelle : T-30A est active ; toute bascule PostgreSQL reste bloquée.
+- Reprise fonctionnelle : T-30A validée ; T-30B active localement ; toute bascule PostgreSQL reste bloquée.
 - PHASE 2 : vision modulaire repriorisée par T-31 ; aucun développement démarré.
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-18 — T-30B techniquement finalisée localement, validation visuelle restante**
+  - La fiche Offre reprend la charte orIAna et les informations des fiches Alliance : identité, photographie, surfaces, équipements, accès, conditions financières et contact.
+  - Huit vues réelles sont disponibles : Synthèse, Bien & surfaces, Finances, Mandats, Actions, Visites, Documents et Transactions.
+  - La fiche s’adapte à la vente, à la location ou au double contexte : libellés, prix/loyer, conditions, mandat et négociations.
+  - La fiche CRM reprend l’organisation Critères, Offres liées, Actions, Mandats et Transactions avec un aperçu société, contact et demande.
+  - Les contrôles frontend sont verts : lint, build et 35 tests, dont les nouvelles vues liées et l’adaptation locative.
+  - La capture navigateur locale est bloquée par les restrictions du bac à sable (socket système NETLINK interdit). Aucun visuel artificiel n’est substitué à une capture réelle ; la validation humaine du rendu reste nécessaire avant clôture formelle.
+  - Aucun commit, push ou déploiement n’a été effectué.
+- **2026-07-18 — Jeu LOGI PRO reçu pour le futur bac à sable**
+  - Export analysé en lecture seule : 383 lignes, 191 colonnes et 122 offres distinctes ; une offre peut occuper plusieurs lignes en raison de ses lots.
+  - Nicolas Yalap et Denis Palais sont retenus comme profils consultants du jeu de démonstration, sans création de compte ni import à ce stade.
+  - Décision fonctionnelle : Gabriel Duman ne sera pas créé comme profil ; toutes ses attributions dans le futur bac à sable seront réaffectées à Nicolas Yalap, tout en conservant le fichier source intact.
+  - Les données couvrent vente, location, vente/location, cession de fonds, cession de bail et vente de murs occupés, avec de nombreux champs techniques, financiers, mandats, publications et lots à rapprocher du schéma cible.
+  - Avant import : dédoublonnage par identifiant d’offre et de lot, anonymisation des données personnelles et contrôle des relations Site–Bâtiment–Cellule–Lot–Offre.
+- **2026-07-17 — T-30B : compléments métier issus des fiches Alliance analysés localement**
+  - Quatre sources analysées : ancien modèle de données, dictionnaire d’aménagements/prestations et deux fiches de demande Outlook.
+  - Environ 110 caractéristiques sont à normaliser dans le modèle EAV existant, entre SITE, BÂTIMENT, ACTIVITÉ, ENTREPÔT, MESSAGERIE, BUREAUX et LOCAUX SOCIAUX ; les doublons et libellés fautifs ne seront pas importés tels quels.
+  - La fiche Demande confirme les vues liées Critères, Offres liées, Actions, Mandats et Transactions, ainsi qu’une relation dédiée Demande–Offre (proposée/envoyée, visite, dénoncée).
+  - Compléments identifiés pour Demandes : activité envisagée, délai, alerte, stade, motivation, critères structurés, logique ET/OU et exclusion du rapprochement automatique.
+  - Compléments identifiés pour les conditions : modalités locatives, honoraires, fiscalité, frais, travaux, taux d’occupation et procédure de visite.
+  - Entités futures confirmées : Actions/Interactions, Visites, Documents, Transactions, Annonces et suivi des panneaux. Aucune migration PostgreSQL engagée avant validation du schéma cible.
+- **2026-07-17 — T-30B active localement : première proposition visuelle prête à valider**
+  - La charte et les écrans produit joints ont été comparés visuellement à l'interface avant modification.
+  - Le logo conserve désormais l'identité complète « orIAna » dans la barre latérale déployée ou repliée ; le mode compact ne tronque plus « na ».
+  - Le tableau de bord présente un parcours guidé en trois étapes, une priorité explicite et une prochaine action, dans la palette aubergine, lavande et blanche de la charte.
+  - La navigation active est davantage marquée, les cibles tactiles sont renforcées et l'assistant IA porte un libellé explicite sur desktop.
+  - Les contrôles frontend sont verts : lint, build et 32 tests. Des captures locales desktop et mobile sont prêtes pour validation humaine.
+  - Aucun commit, aucune publication GitHub et aucun déploiement n'ont été effectués.
 - **2026-07-17 — T-30A active : premier audit des interactions corrigé localement**
   - Les raccourcis visibles du tableau de bord ouvrent désormais un parcours réel : patrimoine,
     qualification et création d'une nouvelle société dans le CRM.

@@ -21,6 +21,7 @@
 * { box-sizing: border-box; }
 html { font-family: Arial, sans-serif; background: rgb(var(--color-bg)); }
 body { margin: 0; min-width: 320px; min-height: 100vh; background: rgb(var(--color-bg)); color: rgb(var(--color-text)); }
+body::before { content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle at 85% 8%, rgb(156 39 176 / .06), transparent 24%); }
 button, input, textarea, select { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 2px solid #CE93D8; outline-offset: 3px; }

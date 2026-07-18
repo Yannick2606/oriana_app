@@ -237,7 +237,7 @@
     volumes identiques, zéro rejet et zéro relation orpheline ; sauvegarde et restauration
     temporaire vérifiées ; backend PostgreSQL isolé et tests backend/CI verts.
 
-### [ ] T-30A : Rendre l'application réellement utilisable avant bascule
+### [x] T-30A : Rendre l'application réellement utilisable avant bascule
 - Auditer sur desktop et smartphone chaque bouton, formulaire, navigation et retour d'erreur des
   parcours connexion, patrimoine, offres, CRM, matching, agents et administration.
 - Corriger les actions non cliquables et vérifier les parcours réels avec chacun des cinq rôles,
@@ -247,6 +247,16 @@
 - **Acceptation** : aucun bouton sans effet, les parcours prioritaires sont réalisables de bout en
   bout au clavier, à la souris et sur smartphone, lint/build/tests sont verts et la recette humaine
   autorise explicitement la préparation de T-30.
+
+### [~] T-30B : Refonte UX/UI et identité orIAna
+- Aligner l'interface sur la charte aubergine, lavande et blanche ainsi que sur les écrans produit
+  validés, sans introduire de couleur ou d'image externe non autorisée.
+- Afficher systématiquement l'identité complète « orIAna », y compris lorsque la navigation est
+  repliée, et rendre les parcours, priorités et prochaines actions immédiatement compréhensibles.
+- Vérifier le rendu desktop et smartphone, l'accessibilité des actions principales et la stabilité
+  des parcours existants sans déplacer les autorisations hors du backend.
+- **Acceptation** : captures desktop et mobile validées humainement, identité exacte, navigation
+  intuitive et lint/build/tests frontend verts avant toute autorisation de commit ou publication.
 
 ### [ ] T-30 : Tester et basculer en production
 - Tester les cinq rôles, les cloisonnements, tous les parcours métier et les agents asynchrones.

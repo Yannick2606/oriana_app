@@ -46,7 +46,7 @@ export function AppShell({ children, theme, onToggleTheme, collapsed, onToggleCo
   return <div className="min-h-screen bg-oriana-fond text-oriana-texte">
     <header className="fixed inset-x-0 top-0 z-40 flex h-16 items-center border-b border-oriana-bordure bg-oriana-fond/90 px-4 backdrop-blur-xl">
       <button className="mr-3 md:hidden" onClick={onToggleMobile} aria-label="Ouvrir la navigation"><Menu/></button>
-      <div className="w-56"><Logo compact={collapsed}/></div>
+      <div className={`${collapsed ? 'w-16' : 'w-56'} transition-all duration-oriana`}><Logo compact={collapsed}/></div>
       <SearchBar className="mx-auto hidden w-full max-w-xl md:block" placeholder="Rechercher un bien, une société, un contact…" readOnly onClick={() => setUtility('search')}/>
       <div className="ml-auto flex items-center gap-1.5">
         <Tooltip label="Recherche"><Button className="md:hidden" variant="ghost" size="sm" aria-label="Rechercher" onClick={() => setUtility('search')}><Search size={18}/></Button></Tooltip>
@@ -57,8 +57,9 @@ export function AppShell({ children, theme, onToggleTheme, collapsed, onToggleCo
     </header>
     {mobileOpen && <button className="fixed inset-0 z-40 bg-oriana-fondAlt/75 md:hidden" onClick={onToggleMobile} aria-label="Fermer la navigation"/>}
     <aside className={`fixed bottom-0 left-0 top-16 z-40 flex flex-col border-r border-oriana-bordure bg-oriana-fondAlt p-3 transition-all duration-oriana ${collapsed ? 'w-20' : 'w-64'} ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+      {!collapsed && <p className="mb-3 px-3 text-[10px] font-bold uppercase tracking-[.22em] text-oriana-lavande">Espace de travail</p>}
       <nav aria-label="Navigation principale" className="space-y-1">
-        {navigation.map(({ id, label, icon }) => { const Icon = navigationIcons[icon]; const active = activePage === id; return <button key={id} aria-current={active ? 'page' : undefined} onClick={() => { onNavigate(id); if (mobileOpen) onToggleMobile(); }} className={`flex w-full items-center gap-3 rounded-oriana px-3 py-2.5 text-sm font-semibold transition ${active ? 'bg-oriana-violet/20 text-oriana-lavandeClair' : 'text-oriana-discret hover:bg-oriana-surface hover:text-oriana-texte'}`}><Icon size={18}/>{!collapsed && <span>{label}</span>}</button>; })}
+        {navigation.map(({ id, label, icon }) => { const Icon = navigationIcons[icon]; const active = activePage === id; return <button key={id} title={collapsed ? label : undefined} aria-label={collapsed ? label : undefined} aria-current={active ? 'page' : undefined} onClick={() => { onNavigate(id); if (mobileOpen) onToggleMobile(); }} className={`flex min-h-11 w-full items-center gap-3 rounded-oriana px-3 py-2.5 text-sm font-semibold transition ${active ? 'bg-oriana-violet/25 text-oriana-lavandeClair shadow-[inset_3px_0_0_#CE93D8]' : 'text-oriana-discret hover:bg-oriana-surface hover:text-oriana-texte'}`}><Icon size={18}/>{!collapsed && <span>{label}</span>}</button>; })}
       </nav>
       <div className="mt-auto space-y-3">
         {!collapsed && <div className="rounded-oriana border border-oriana-bordure bg-oriana-surface p-3"><RoleSwitcher user={user} onRoleChange={onRoleChange}/><p className="mt-2 text-xs leading-5 text-oriana-discret">Les droits sont contrôlés côté serveur pour cette session.</p></div>}
@@ -67,10 +68,10 @@ export function AppShell({ children, theme, onToggleTheme, collapsed, onToggleCo
       </div>
     </aside>
     <div className={`flex min-h-screen flex-col pt-16 transition-all duration-oriana ${collapsed ? 'md:pl-20' : 'md:pl-64'}`}>
-      <main id="contenu" className="mx-auto w-full max-w-[1600px] flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
+      <main id="contenu" className="mx-auto w-full max-w-[1480px] flex-1 p-4 pb-24 sm:p-6 sm:pb-24 lg:p-8 lg:pb-20">{children}</main>
       <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-oriana-bordure px-6 py-4 text-xs text-oriana-discret"><span>{branding.appName} v0.1.0 · © {branding.organizationName} 2026</span><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-oriana-lavandeMoyen"/>Backend : {backendStatus}</span></footer>
     </div>
-    <button type="button" onClick={() => setUtility('assistant')} aria-label="Ouvrir l’assistant IA" className="fixed bottom-6 right-6 z-30 grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-oriana-lavandeMoyen to-oriana-violet text-white shadow-oriana-lg transition hover:scale-105"><Bot size={21}/></button>
+    <button type="button" onClick={() => setUtility('assistant')} aria-label="Ouvrir l’assistant IA" className="fixed bottom-5 right-5 z-30 flex h-12 items-center gap-2 rounded-full bg-gradient-to-br from-oriana-lavandeMoyen to-oriana-violet px-4 text-sm font-semibold text-white shadow-oriana-lg transition hover:scale-[1.02] sm:bottom-6 sm:right-6"><Bot size={20}/><span className="hidden sm:inline">Assistant IA</span></button>
     <Modal open={Boolean(utility)} onClose={() => setUtility(null)} title={utility ? utilityContent[utility][0] : ''}>
       <p className="text-sm leading-6 text-oriana-discret">{utility ? utilityContent[utility][1] : ''}</p>
       <Button className="mt-5" onClick={() => setUtility(null)}>Fermer</Button>
