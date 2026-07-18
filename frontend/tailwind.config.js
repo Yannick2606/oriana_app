@@ -20,7 +20,7 @@ export default {
           lavandeClair: '#F3E5F5',
         },
       },
-      fontFamily: { titre: ['Georgia', 'serif'], corps: ['Arial', 'sans-serif'] },
+      fontFamily: { titre: ['Arial', 'sans-serif'], corps: ['Arial', 'sans-serif'] },
       borderRadius: { oriana: 'var(--radius)' },
       boxShadow: { oriana: 'var(--shadow)', 'oriana-lg': 'var(--shadow-lg)' },
       transitionDuration: { oriana: '180ms' },
