@@ -46,10 +46,14 @@ async function openModule(page, module) {
   await page.goto(baseUrl, { waitUntil: 'networkidle' });
   if ((await page.viewportSize()).width < 768) await page.getByRole('button', { name: 'Ouvrir la navigation' }).click();
   await page.getByRole('button', { name: module }).click();
+  const mobileOverlay = page.getByRole('button', { name: 'Fermer la navigation' });
+  await page.waitForTimeout(150);
+  if (await mobileOverlay.isVisible()) await mobileOverlay.dispatchEvent('click');
+  await page.waitForTimeout(500);
 }
 
 await mkdir(output, { recursive: true });
-const server = spawn('npm', ['run', 'preview', '--', '--host', '127.0.0.1', '--port', '4173'], { cwd: root, stdio: 'inherit' });
+const server = spawn('npm', ['exec', 'vite', '--', 'preview', '--host', '127.0.0.1', '--port', '4173'], { cwd: root, stdio: 'inherit' });
 let browser;
 try {
   await waitForServer();
@@ -69,6 +73,7 @@ try {
   await mobile.getByRole('button', { name: 'Ouvrir la navigation' }).click();
   await mobile.getByRole('button', { name: 'CRM' }).click();
   await mobile.getByRole('heading', { name: "CAKE O'CLOCK" }).waitFor();
+  await mobile.waitForTimeout(500);
   await mobile.screenshot({ path: `${output}/t30b-crm-mobile.png`, fullPage: true });
 } finally {
   await browser?.close();
