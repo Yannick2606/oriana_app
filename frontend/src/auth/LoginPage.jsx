@@ -75,8 +75,8 @@ export function LoginPage({ sessionUnavailable = false }) {
           <Card className="p-6 sm:p-8">
             {forgotten ? <>
               <div className="mb-7"><div className="mb-5 grid h-11 w-11 place-items-center rounded-oriana bg-oriana-violet/15 text-oriana-lavande"><KeyRound size={20}/></div><h2 className="font-titre text-3xl">Mot de passe oublié</h2><p className="mt-2 text-sm leading-6 text-oriana-discret">Saisissez votre adresse. Si un compte actif correspond, un lien valable 30 minutes sera envoyé.</p></div>
-              {resetSent ? <p className="rounded-oriana border border-oriana-lavande/40 bg-oriana-violet/10 px-3 py-3 text-sm text-oriana-lavandeClair">La demande est enregistrée. Consultez votre messagerie et vos courriers indésirables.</p> : <Field label="Adresse email"><Input autoComplete="email" inputMode="email" value={email} onChange={(event) => setEmail(event.target.value)} disabled={pending}/></Field>}
-              {error && <p role="alert" className="mt-4 text-sm text-oriana-lavandeClair">{error}</p>}
+              {resetSent ? <p className="rounded-oriana border border-oriana-violet/25 bg-oriana-violet/10 px-3 py-3 text-sm font-medium text-oriana-violet">La demande est enregistrée. Consultez votre messagerie et vos courriers indésirables.</p> : <Field label="Adresse email"><Input autoComplete="email" inputMode="email" value={email} onChange={(event) => setEmail(event.target.value)} disabled={pending}/></Field>}
+              {error && <p role="alert" className="mt-4 text-sm font-medium text-oriana-violet">{error}</p>}
               {!resetSent && <Button className="mt-6 w-full" onClick={requestReset} disabled={pending}>{pending ? 'Envoi…' : 'Envoyer le lien'}</Button>}
               <Button className="mt-4 w-full" variant="ghost" onClick={() => { setForgotten(false); setResetSent(false); setError(''); }}>Retour à la connexion</Button>
             </> : roles.length === 0 ? <>
@@ -85,13 +85,13 @@ export function LoginPage({ sessionUnavailable = false }) {
                 <Field label="Adresse email"><Input autoComplete="username" inputMode="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="prenom@entreprise.fr" disabled={pending}/></Field>
                 <Field label="Mot de passe"><div className="relative"><Input className="pr-11" autoComplete="current-password" type={showPassword ? 'text' : 'password'} value={motDePasse} onChange={(event) => setMotDePasse(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') submit(); }} disabled={pending}/><button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-oriana-discret hover:text-oriana-texte" onClick={() => setShowPassword((value) => !value)} aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}>{showPassword ? <EyeOff size={18}/> : <Eye size={18}/>}</button></div></Field>
               </div>
-              {error && <p role="alert" className="mt-4 rounded-oriana border border-oriana-lavande/40 bg-oriana-violet/10 px-3 py-2 text-sm text-oriana-lavandeClair">{error}</p>}
+              {error && <p role="alert" className="mt-4 rounded-oriana border border-oriana-violet/25 bg-oriana-violet/10 px-3 py-2 text-sm font-medium text-oriana-violet">{error}</p>}
               <Button className="mt-6 w-full" disabled={pending} onClick={() => submit()}>{pending ? 'Connexion…' : <>Se connecter<ArrowRight size={17}/></>}</Button>
               <button type="button" className="mt-4 w-full text-center text-sm text-oriana-lavande hover:underline" onClick={() => { setForgotten(true); setError(''); }}>Mot de passe oublié ?</button>
             </> : <>
               <div className="mb-6"><div className="mb-5 grid h-11 w-11 place-items-center rounded-oriana bg-oriana-violet/15 text-oriana-lavande"><Building2 size={20}/></div><p className="text-xs font-bold uppercase tracking-[.18em] text-oriana-lavande">Rôle actif</p><h2 className="mt-2 font-titre text-3xl">Comment souhaitez-vous travailler ?</h2><p className="mt-2 text-sm leading-6 text-oriana-discret">Vos droits seront appliqués par le serveur selon le rôle choisi pour cette session.</p></div>
               <div className="grid gap-3">{roles.map((role) => <button key={role} disabled={pending} onClick={() => submit(role)} className="group flex items-center justify-between rounded-oriana border border-oriana-bordure bg-oriana-fond px-4 py-4 text-left transition hover:border-oriana-lavande hover:bg-oriana-surfaceAlt"><span><span className="block text-sm font-semibold">{roleLabels[role] || role}</span><span className="mt-1 block text-xs text-oriana-discret">Ouvrir orIAna avec ce périmètre</span></span><ArrowRight size={18} className="text-oriana-discret transition group-hover:translate-x-1 group-hover:text-oriana-lavande"/></button>)}</div>
-              {error && <p role="alert" className="mt-4 text-sm text-oriana-lavandeClair">{error}</p>}
+              {error && <p role="alert" className="mt-4 text-sm font-medium text-oriana-violet">{error}</p>}
               <Button className="mt-5" variant="ghost" size="sm" onClick={() => setRoles([])}>Retour</Button>
             </>}
           </Card>
