@@ -32,6 +32,7 @@ l'onglet Actions ; sa création sur cette branche de préparation ne vaut donc p
 
 Chaque scénario doit être exécuté avec un compte de recette distinct. Les résultats attendus se
 contrôlent dans l'interface puis par appel API direct lorsque le cloisonnement est en jeu.
+La fiche d'exécution détaillée et expurgée est disponible dans `docs/T30_RECETTE_5_ROLES.md`.
 
 | Rôle | Lecture attendue | Écriture attendue | Refus obligatoire |
 |---|---|---|---|

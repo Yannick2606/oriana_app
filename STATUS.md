@@ -16,6 +16,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-18 — T-30 : fiche de recette des cinq rôles prête**
+  - La recette comporte des scénarios stables pour les sessions, chaque rôle hiérarchique, les refus de cloisonnement et les parcours vente/location, agents, clavier et smartphone.
+  - Chaque scénario impose un résultat attendu, une preuve minimale expurgée et un refus obligatoire ; aucun identifiant ni secret n'est stocké dans le document.
+  - Tout scénario en échec, bloqué, non exécuté ou sans preuve maintient automatiquement le verdict No-Go.
+  - La fiche reste documentaire : aucun compte résolu, aucun appel d'environnement et aucune opération de production exécutés.
 - **2026-07-18 — T-30 : workflow manuel de pré-contrôle préparé**
   - Le workflow `Pré-contrôle T-30` exécute le contrôle local, conserve le rapport privé 14 jours et échoue tant que le verdict n'est pas prêt pour décision humaine.
   - Les six preuves externes sont des confirmations manuelles obligatoires, toutes désactivées par défaut ; les valeurs de configuration proviennent exclusivement des secrets GitHub et ne sont jamais écrites dans le rapport.
