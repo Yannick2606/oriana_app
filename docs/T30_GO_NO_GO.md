@@ -61,6 +61,9 @@ données.
 
 ## Répétition de bascule
 
+Le protocole de sauvegarde/restauration et ses scripts à garde-fous sont détaillés dans
+`docs/T30_REPETITION_SAUVEGARDE_RESTAURATION.md`. Ils sont préparés mais n'ont pas été exécutés.
+
 1. Annoncer la fenêtre de répétition et confirmer qu'elle ne cible pas la production.
 2. Créer une sauvegarde PostgreSQL au format personnalisé et vérifier son catalogue.
 3. Copier la sauvegarde chiffrée hors VPS et consigner emplacement, date, empreinte et responsable.

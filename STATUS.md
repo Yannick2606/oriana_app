@@ -16,6 +16,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-18 — T-30 : protocole de sauvegarde/restauration préparé, non exécuté**
+  - Deux scripts dédiés imposent un nom de base temporaire strict, refusent la base métier et les bases système, interdisent l'écrasement et séparent restauration et suppression.
+  - Le protocole exige catalogue valide, empreinte, copie chiffrée hors VPS, contrôles migrations/volumes/relations/agrégats et visa avant nettoyage.
+  - Le script générique de restauration dans `POSTGRES_DB` est explicitement exclu de la répétition T-30.
+  - Aucun script exécuté, aucune archive lue, aucune base créée ou supprimée et aucun environnement contacté.
 - **2026-07-18 — T-30 : fiche de recette des cinq rôles prête**
   - La recette comporte des scénarios stables pour les sessions, chaque rôle hiérarchique, les refus de cloisonnement et les parcours vente/location, agents, clavier et smartphone.
   - Chaque scénario impose un résultat attendu, une preuve minimale expurgée et un refus obligatoire ; aucun identifiant ni secret n'est stocké dans le document.
