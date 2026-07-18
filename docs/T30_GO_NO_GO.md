@@ -18,6 +18,10 @@ autorisation distincte et une décision humaine explicite.
 | Supervision et alertes | À confirmer | santé, erreurs, sauvegardes et agents doivent être observables avant le Go |
 | Décision Go/No-Go | Bloquant | validation humaine obligatoire |
 
+Le pré-contrôle local se lance depuis la racine avec `node scripts/preflightT30.mjs`. Il écrit
+`docs/T30_PREFLIGHT_REPORT.md`, ne restitue aucune valeur de configuration et conserve un résultat
+« No-Go » tant que les preuves externes ne sont pas explicitement fournies.
+
 ## Matrice des cinq rôles
 
 Chaque scénario doit être exécuté avec un compte de recette distinct. Les résultats attendus se
@@ -100,4 +104,3 @@ ouverture des écritures, le delta doit être exporté, contrôlé et réconcili
 - Risques acceptés :
 - Décision : **GO / NO-GO**
 - Décideur et visa :
-

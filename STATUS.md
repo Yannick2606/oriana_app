@@ -16,6 +16,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-18 — T-30 : pré-contrôle local automatisé**
+  - `scripts/preflightT30.mjs` exécute les contrôles backend/frontend, vérifie uniquement la présence des noms de configuration et recense les preuves externes sans restituer aucune valeur sensible.
+  - Le rapport `docs/T30_PREFLIGHT_REPORT.md` conclut correctement « NO-GO » : les contrôles de code sont verts, mais la configuration de l'environnement de répétition et les six preuves externes sont absentes localement.
+  - Le script renvoie un code non nul tant qu'un bloquant subsiste et ne peut donc pas être interprété comme une autorisation de bascule.
+  - Aucun accès production, aucune sauvegarde, aucune restauration, aucun gel Grist et aucun déploiement effectués.
 - **2026-07-18 — T-30 active en préparation, production inchangée**
   - Le dossier Go/No-Go formalise la recette des cinq rôles, les parcours métier, la répétition, les critères de décision et les déclencheurs de retour arrière.
   - État local vérifié : backend lint réussi et 96 tests réussis sur 97, avec l'intégration PostgreSQL réelle ignorée hors environnement ; frontend lint/build réussis et 39 tests réussis.
