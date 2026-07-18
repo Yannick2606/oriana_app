@@ -16,6 +16,10 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-18 — T-30 : workflow rattaché à `t30-repetition`, toujours inactif**
+  - Après confirmation utilisateur de la configuration de l'environnement protégé, le job référence explicitement `environment: t30-repetition`.
+  - Les approbateurs, branches autorisées et noms de secrets ne sont pas lisibles via l'accès disponible ; leur conformité reste à contrôler visuellement avant toute fusion.
+  - Le workflow demeure absent de la branche par défaut : aucun déclenchement, aucune approbation sollicitée et aucune opération d'environnement exécutée.
 - **2026-07-18 — T-30 : prérequis GitHub audités en lecture seule**
   - Le workflow est manuel, en lecture seule, sérialisé, sans commande sensible et conserve uniquement le rapport pendant 14 jours.
   - Écart bloquant : le job n'est rattaché à aucun environnement GitHub protégé ; le workflow reste par ailleurs inactif car absent de la branche par défaut.

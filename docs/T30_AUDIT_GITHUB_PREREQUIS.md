@@ -6,9 +6,11 @@ n'a été modifié.
 
 ## Verdict
 
-**NO-GO pour l'activation du pré-contrôle.** Le workflow est correctement borné dans son contenu,
-mais il n'est pas encore rattaché à un environnement GitHub protégé. Son fichier n'est pas présent
-sur la branche par défaut, ce qui le rend volontairement inactif dans l'onglet Actions.
+**NO-GO pour l'activation du pré-contrôle.** Le workflow est correctement borné dans son contenu et
+référence désormais l'environnement `t30-repetition` après confirmation utilisateur de sa
+configuration. Son fichier n'est pas présent sur la branche par défaut, ce qui le rend volontairement
+inactif dans l'onglet Actions. Les protections de l'environnement restent non lisibles via l'accès
+disponible et devront être contrôlées visuellement avant toute fusion.
 
 ## Résultats vérifiables dans le dépôt
 
@@ -21,7 +23,7 @@ sur la branche par défaut, ce qui le rend volontairement inactif dans l'onglet 
 | GH-05 | verdict | étape finale en échec si le pré-contrôle n'est pas vert | conforme |
 | GH-06 | confirmations | six booléens obligatoires, `false` par défaut | conforme |
 | GH-07 | commandes sensibles | aucune commande de déploiement, migration, sauvegarde, restauration ou bascule | conforme |
-| GH-08 | environnement GitHub | aucune clé `environment:` dans le job | **bloquant** |
+| GH-08 | environnement GitHub | job rattaché à `t30-repetition` après confirmation utilisateur | référence conforme ; protections à vérifier visuellement |
 | GH-09 | branche par défaut | workflow absent de `main`, présent seulement sur la branche de préparation | inactif, conforme à l'absence d'autorisation de fusion |
 | GH-10 | actions tierces | actions officielles référencées par version majeure, pas par SHA immuable | avertissement chaîne d'approvisionnement |
 
@@ -76,12 +78,10 @@ ouvrir la vue d'une valeur de secret.
 
 ## Corrections à autoriser séparément
 
-1. créer ou confirmer l'environnement GitHub `t30-repetition` avec approbateurs et branches limitées ;
-2. rattacher le job `preflight` à cet environnement par `environment: t30-repetition` ;
-3. confirmer les 12 noms de secrets sans lire ni copier leurs valeurs ;
-4. décider si les actions officielles doivent être épinglées par SHA immuable ;
-5. seulement après revue, autoriser une fusion qui rendrait le workflow déclenchable ;
-6. déclencher le workflow avec les six preuves externes laissées à `false` tant qu'elles ne sont pas signées.
+1. vérifier visuellement les approbateurs et branches limitées de `t30-repetition` ;
+2. confirmer les 12 noms de secrets sans lire ni copier leurs valeurs ;
+3. décider si les actions officielles doivent être épinglées par SHA immuable ;
+4. seulement après revue, autoriser une fusion qui rendrait le workflow déclenchable ;
+5. déclencher le workflow avec les six preuves externes laissées à `false` tant qu'elles ne sont pas signées.
 
 Aucune de ces corrections n'est effectuée par cet audit.
-

@@ -45,6 +45,7 @@ jobs:
   preflight:
     name: Rapport Go No-Go
     runs-on: ubuntu-latest
+    environment: t30-repetition
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
@@ -108,4 +109,3 @@ jobs:
           PREFLIGHT_EXIT_CODE: ${{ steps.preflight.outputs.exit_code }}
         run: |
           test "$PREFLIGHT_EXIT_CODE" = "0"
-
