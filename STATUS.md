@@ -16,6 +16,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-18 — T-30 active en préparation, production inchangée**
+  - Le dossier Go/No-Go formalise la recette des cinq rôles, les parcours métier, la répétition, les critères de décision et les déclencheurs de retour arrière.
+  - État local vérifié : backend lint réussi et 96 tests réussis sur 97, avec l'intégration PostgreSQL réelle ignorée hors environnement ; frontend lint/build réussis et 39 tests réussis.
+  - Bloquants avant tout Go : copie chiffrée hors VPS, restauration chronométrée finale, recette réelle des cinq rôles, agents réels, supervision et décision humaine explicite.
+  - Aucune sauvegarde de production, aucun gel Grist, aucune migration de delta, aucune bascule et aucun déploiement effectués.
 - **2026-07-18 — T-30B terminée**
   - Validation humaine reçue après correction de la direction graphique et consolidation de la charte comme règle du design system.
   - Les contextes vente, location et vente/location, la navigation responsive, l’accès clavier et les cibles tactiles sont validés.

@@ -260,12 +260,14 @@
   - Recette finale validée : vente, location et vente/location couvertes séparément ; accessibilité
     clavier et usages tactiles protégés par tests ; charte appliquée comme consigne de développement.
 
-### [ ] T-30 : Tester et basculer en production
+### [~] T-30 : Tester et basculer en production
 - Tester les cinq rôles, les cloisonnements, tous les parcours métier et les agents asynchrones.
 - Effectuer une répétition de bascule, une sauvegarde finale et un test de retour arrière.
 - Passer Grist en lecture seule, migrer le delta final puis basculer le backend.
 - **Acceptation** : rapprochement complet, tests verts, supervision active et décision Go/No-Go
   explicitement validée avant la bascule réelle.
+  - Préparation uniquement : dossier `docs/T30_GO_NO_GO.md` créé ; aucune répétition réelle, aucun
+    gel des écritures, aucune bascule et aucun déploiement autorisés à ce stade.
 
 ## Jalon 6 — Socle modulaire et bac à sable
 
