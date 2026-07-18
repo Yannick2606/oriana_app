@@ -96,3 +96,10 @@ test('la navigation mobile s’ouvre, navigue puis se referme', async () => {
   expect(await screen.findByRole('heading', { name: 'CRM' })).toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Fermer la navigation' })).not.toBeInTheDocument();
 });
+
+test('le clavier peut accéder directement au contenu principal', async () => {
+  renderApp('consultant');
+  const shortcut = await screen.findByRole('link', { name: 'Aller au contenu principal' });
+  expect(shortcut).toHaveAttribute('href', '#contenu');
+  expect(document.querySelector('main#contenu')).toHaveAttribute('tabindex', '-1');
+});

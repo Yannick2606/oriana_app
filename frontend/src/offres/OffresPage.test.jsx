@@ -64,6 +64,16 @@ test('les onglets ouvrent de nouvelles vues métier', async () => {
   expect(screen.getByRole('heading', { name: 'Transactions et négociations' })).toBeInTheDocument();
 });
 
+test('la vue active de l’offre reste identifiable et tactile', async () => {
+  render(<OffresPage/>);
+  await screen.findByRole('heading', { name: 'Horizon flexible' });
+  const synthesis = screen.getByRole('button', { name: 'Synthèse' });
+  expect(synthesis).toHaveAttribute('aria-current', 'page');
+  expect(synthesis).toHaveClass('min-h-11');
+  fireEvent.click(screen.getByRole('button', { name: 'Actions' }));
+  expect(screen.getByRole('button', { name: 'Actions' })).toHaveAttribute('aria-current', 'page');
+});
+
 test('une offre locative masque les conditions de vente', async () => {
   offresApi.listAll.mockResolvedValue({
     ...data,
