@@ -16,6 +16,11 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-18 — T-30 : revue finale de branche, verdict No-Go avant PR**
+  - La branche est 19 commits devant `main`, zéro derrière, mais regroupe encore T30B et la préparation T-30 dans un même périmètre de 33 fichiers.
+  - Bloquant critique : les secrets injectés dans le pré-contrôle sont hérités par les processus npm enfants ; ils doivent recevoir un environnement filtré.
+  - Bloquant élevé : le nettoyage reconnaît la base temporaire par son nom seulement ; un marqueur de répétition vérifié est requis avant suppression.
+  - Aucun secret en clair détecté, permissions Actions en lecture seule et aucune commande de production ; aucune PR créée et aucun workflow déclenché.
 - **2026-07-18 — T-30 : workflow rattaché à `t30-repetition`, toujours inactif**
   - Après confirmation utilisateur de la configuration de l'environnement protégé, le job référence explicitement `environment: t30-repetition`.
   - Les approbateurs, branches autorisées et noms de secrets ne sont pas lisibles via l'accès disponible ; leur conformité reste à contrôler visuellement avant toute fusion.

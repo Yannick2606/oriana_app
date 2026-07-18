@@ -4,6 +4,9 @@ Ce document prépare la recette et la décision de bascule. Il n'autorise ni mut
 ni passage de Grist en lecture seule, ni déploiement. Toute étape marquée « production » exige une
 autorisation distincte et une décision humaine explicite.
 
+La revue de branche `docs/T30_REVUE_FINALE_BRANCHE.md` conclut actuellement No-Go avant PR et doit
+être soldée avant toute activation du workflow.
+
 ## État de départ
 
 | Contrôle | État | Preuve actuelle |
