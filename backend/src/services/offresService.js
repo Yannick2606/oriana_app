@@ -24,7 +24,7 @@ export class OffresError extends Error {
   }
 }
 
-function filtersForGrist(scope) {
+function persistenceFilters(scope) {
   return Object.fromEntries(Object.entries(scope).map(([field, value]) => [field, Array.isArray(value) ? value : [value]]));
 }
 
@@ -134,7 +134,7 @@ export function createOffresService(client) {
 
   return {
     async listOffers(accessScope) {
-      return client.list('Offres', filtersForGrist(accessScope));
+      return client.list('Offres', persistenceFilters(accessScope));
     },
     getOffer: scopedOffer,
     async createOffer(input, user, accessScope) {
@@ -177,7 +177,7 @@ export function createOffresService(client) {
       await client.delete('Offres', offer.id);
     },
     async listConditions(accessScope) {
-      const offers = await client.list('Offres', filtersForGrist(accessScope));
+      const offers = await client.list('Offres', persistenceFilters(accessScope));
       if (offers.length === 0) {
         return [];
       }

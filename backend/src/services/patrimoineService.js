@@ -18,7 +18,7 @@ function configFor(resource) {
   return config;
 }
 
-function filtersForGrist(accessScope) {
+function persistenceFilters(accessScope) {
   return Object.fromEntries(
     Object.entries(accessScope).map(([field, value]) => [field, Array.isArray(value) ? value : [value]]),
   );
@@ -95,7 +95,7 @@ export function createPatrimoineService(client) {
 
   return {
     async list(resource, accessScope) {
-      return client.list(configFor(resource).table, filtersForGrist(accessScope));
+      return client.list(configFor(resource).table, persistenceFilters(accessScope));
     },
 
     getScoped,

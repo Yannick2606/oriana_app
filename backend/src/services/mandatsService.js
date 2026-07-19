@@ -17,7 +17,7 @@ export class MandatsError extends Error {
   }
 }
 
-function filtersForGrist(scope) {
+function persistenceFilters(scope) {
   return Object.fromEntries(Object.entries(scope).map(([field, value]) => [field, [value]]));
 }
 
@@ -108,7 +108,7 @@ export function createMandatsService(client) {
 
   return {
     async list(user) {
-      const records = await client.list('Mandats', filtersForGrist({ agence_id: user.agence_id }));
+      const records = await client.list('Mandats', persistenceFilters({ agence_id: user.agence_id }));
       return records.filter((record) => peutLire(record, user));
     },
     get: scopedMandate,

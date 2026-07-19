@@ -36,7 +36,7 @@ function publicRecord(record, administrable = true) {
   return { id: record.id, ...fields, roles, administrable };
 }
 
-function toGrist(data) {
+function persistenceFields(data) {
   if (!('roles' in data)) return data;
   const { roles, ...fields } = data;
   return { ...fields, role: roles };
@@ -141,7 +141,7 @@ export function createUtilisateursService(client, passwordHasher = (password) =>
       await ensureUniqueEmail(data.email);
       const passwordHash = await passwordHasher(validatePassword(input.mot_de_passe));
       let record = await client.create('Utilisateurs', {
-        ...toGrist(data), actif: data.actif ?? true, mot_de_passe_hash: passwordHash,
+        ...persistenceFields(data), actif: data.actif ?? true, mot_de_passe_hash: passwordHash,
         doit_changer_mot_de_passe: true,
       });
       if (!record?.fields) {
@@ -162,7 +162,7 @@ export function createUtilisateursService(client, passwordHasher = (password) =>
       if ('agence_id' in data) data.agence_id = await validateAgency(data.agence_id);
       await validateMaster(data, current);
       await ensureUniqueEmail(data.email, current.id);
-      return publicRecord(await client.update('Utilisateurs', current.id, toGrist(data)));
+      return publicRecord(await client.update('Utilisateurs', current.id, persistenceFields(data)));
     },
     async resetPassword(recordId, password, actor) {
       if (!['admin_agence', 'super_admin'].includes(actorRole(actor))) throw new UtilisateursError('Réinitialisation interdite', 403, 'FORBIDDEN');

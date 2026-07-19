@@ -41,7 +41,7 @@ frontend ni par une donnée métier.
 | Identité | service d’authentification et référentiel des rôles | compte, rôle actif, rattachement d’agence et session publique | le référentiel d’identité est injecté sans valeur de repli fournisseur ; le connecteur SMTP relève encore de T-33D |
 | Autorisations | référentiel des rôles, middlewares et politiques de périmètre | normaliser les rôles et contrôler lecture/écriture côté serveur | consolidé par T-33B ; référentiel d’identité injecté et groupes de rôles centralisés |
 | Sessions | magasin de session et invalidation | conserver et invalider les sessions sans exposer de secret | PostgreSQL en exploitation normale, mémoire dans le bac à sable |
-| Persistance métier | port de dépôt générique de transition | lire et écrire les objets pris en charge | adaptateurs Grist, PostgreSQL et bac à sable présents |
+| Persistance métier | port de dépôt générique de transition | lire et écrire les objets pris en charge | T-33C close ; modules découplés et adaptateurs Grist, PostgreSQL et bac à sable sélectionnés à la composition |
 | Connecteurs | adaptateurs externes | email et orchestration asynchrone | SMTP et n8n présents, frontières à extraire |
 | Objets transverses futurs | socle | Audit, Notification, Préférence, Consentement, Fichier, Tâche et Capture | à spécifier ; aucune création de table autorisée par T-33A |
 
@@ -55,7 +55,7 @@ fournisseur ou un protocole externe.
 | Référentiel d’identité | rechercher un compte, relire ses rôles et rattachements, mettre à jour ses attributs autorisés | actuellement fourni par le client de persistance métier ; séparation prévue en T-33B |
 | Politique d’autorisation | construire le périmètre du rôle actif, décider lecture/écriture, charger une équipe par le référentiel d’identité | logique présente dans les middlewares et services ; consolidation prévue en T-33B |
 | Magasin de sessions | lire, enregistrer, expirer et invalider une session | `connect-pg-simple` en mode normal ; magasin mémoire Express dans la prévisualisation |
-| Persistance métier | `list`, `getById`, `create`, `update`, `delete` sur une ressource autorisée | Grist actuel, PostgreSQL cible, adaptateur mémoire en lecture seule ; découplage prévu en T-33C |
+| Persistance métier | `list`, `getById`, `create`, `update`, `delete` sur une ressource autorisée | T-33C implémentée ; Grist actuel, PostgreSQL cible et adaptateur mémoire en lecture seule satisfont le même port |
 | Envoi de message transactionnel | envoyer un message à un destinataire à partir d’un contenu validé, avec erreur explicite | SMTP via Nodemailer ; extraction prévue en T-33D |
 | Orchestration asynchrone | déclencher un traitement borné, recevoir un accusé, suivre son état et authentifier le callback | n8n pour le démonstrateur ; extraction prévue en T-33D |
 | Audit, notification, préférence, consentement, fichier, tâche et capture | aucun contrat exécutable avant arbitrage de l’autorité, du cycle de vie, des droits et de la conservation | spécification prévue en T-33E |

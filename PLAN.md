@@ -328,12 +328,14 @@
 - **État** : référentiel d'identité injecté, groupes de rôles centralisés et politiques de lecture,
   écriture, gestion d'agence et administration vérifiées le 19 juillet 2026.
 
-#### [ ] T-33C : Découpler la persistance métier de Grist
+#### [x] T-33C : Découpler la persistance métier de Grist
 - Faire dépendre les modules d'un port de persistance injecté par la composition applicative ;
   conserver Grist comme fournisseur opérationnel actuel et PostgreSQL comme cible non basculée.
 - Retirer les valeurs de repli vers Grist des services et middlewares exécutés par les modules.
 - **Acceptation** : mêmes contrats exercés avec les doubles de test, le bac à sable et les
   fournisseurs existants, sans bascule T-30 ni régression fonctionnelle.
+- **État** : port injecté explicitement, sélection du fournisseur limitée à la composition et
+  vocabulaire interne neutralisé le 19 juillet 2026 ; Grist reste le fournisseur opérationnel.
 
 #### [ ] T-33D : Encapsuler les connecteurs externes
 - Placer SMTP, n8n et les futurs fournisseurs derrière des ports internes configurés au démarrage,

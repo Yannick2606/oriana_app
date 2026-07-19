@@ -17,6 +17,16 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-19 — T-33C : persistance métier découplée et tâche close**
+  - L’audit de clôture confirme qu’aucun service métier, contrôleur ou middleware n’importe un
+    adaptateur Grist, PostgreSQL ou bac à sable. Les modules dépendent uniquement du port injecté.
+  - Les helpers de filtres et de champs utilisent désormais un vocabulaire neutre. Les codes
+    historiques `GRIST_READBACK_FAILED` restent inchangés afin de préserver le contrat d’erreur.
+  - La composition choisit explicitement Grist dans l’état opérationnel actuel, PostgreSQL reste
+    la cible non basculée et le bac à sable conserve son adaptateur mémoire en lecture seule.
+  - Aucune bascule T-30, route publique, donnée ou capacité n’est modifiée. Vérifications du lot de
+    clôture réussies : lint backend, 120 tests backend réussis sur 121 avec l’intégration
+    PostgreSQL ignorée, et `git diff --check`.
 - **2026-07-19 — T-33C : premier lot de persistance explicitement composée**
   - L’application et le service d’authentification n’importent plus le client Grist et refusent
     désormais une composition privée du port de persistance ou du référentiel d’identité requis.
