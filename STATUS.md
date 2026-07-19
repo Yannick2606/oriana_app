@@ -17,6 +17,165 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-19 — T-30A : correctifs frontend publiés sur la branche de travail**
+  - Les commits `86c97e1` (interactions et charte frontend) et `bb39638` (rôles et administration)
+    ont été poussés sur `agent/t30a-interactions`, désormais synchronisée avec sa branche distante.
+  - Aucun workflow GitHub Actions n’a été déclenché : les contrôles présents sont manuels ou
+    limités aux pushes sur `main`. Cette absence de contrôle n’est donc pas un échec de CI.
+  - Aucune fusion dans `main`, pull request, relance de workflow ou mise en production n’a été
+    effectuée. La version publique reste inchangée.
+- **2026-07-19 — T-30A : initialisation sombre garantie avant React**
+  - Le thème sombre était déjà la valeur par défaut du hook, mais le document HTML ne portait pas
+    d’attribut initial explicite. `data-theme="dark"` est maintenant posé directement sur la racine
+    afin d’éviter un premier affichage clair et de garantir le sombre après rechargement complet.
+  - Vérifications réussies : `git diff --check`, 49 tests frontend et build de production.
+  - La version publique ne reçoit pas cette correction tant qu’aucun commit, push et déploiement
+    n’ont été séparément autorisés et réalisés.
+- **2026-07-19 — T-30A : thème sombre confirmé comme présentation par défaut**
+  - La recette humaine confirme que le mode sombre correspond mieux à l’identité visuelle attendue ;
+    il remplace donc le choix local précédent du thème clair par défaut. Le thème clair reste
+    disponible depuis la commande existante.
+  - La sidebar passe à 92 % d’opacité avec un léger flou d’arrière-plan et des libellés plus clairs,
+    afin de mieux distinguer le menu sans perdre l’aubergine presque noir validé.
+  - La charte et le test de thème sont réalignés sur cette décision. Vérifications réussies :
+    `git diff --check`, lint frontend, 49 tests frontend et build de production. Aucun commit,
+    déploiement ou publication GitHub n’a été effectué.
+- **2026-07-19 — T-30A : cohérence visuelle du shell finalisée localement**
+  - En l’absence de préférence explicite, le thème clair devient la présentation initiale conforme
+    à la charte : sidebar aubergine sombre et espace métier clair. Le thème sombre et son bouton
+    restent disponibles.
+  - Le bouton de l’assistant futur conserve son explication mais adopte une surface secondaire,
+    sans dégradé violet ni élévation d’action principale.
+  - Un test de non-régression vérifie le thème clair par défaut et la présence du changement de
+    thème.
+  - Vérifications réussies : `git diff --check`, lint frontend, 49 tests frontend et build de
+    production. La recette visuelle humaine à 320/375 px reste nécessaire ; aucun commit,
+    déploiement ou publication GitHub n’a été effectué.
+- **2026-07-19 — T-30A : navigation clavier et primitives de fiches renforcées**
+  - Le sélecteur de rôle place le focus sur le rôle actif, gère flèches, début, fin et `Échap`, se
+    ferme au clic extérieur et restitue le focus à son déclencheur.
+  - Les actions de `PageHeader` peuvent revenir à la ligne afin de limiter les débordements sur
+    petite largeur et avec zoom.
+  - `Tabs` fournit désormais les relations onglet–panneau, un seul arrêt de tabulation, les flèches
+    horizontales, début et fin. Ce contrat est prêt pour les huit vues Offre et cinq vues CRM.
+  - Trois tests supplémentaires couvrent le focus du sélecteur, les onglets et les actions
+    adaptatives d’en-tête.
+  - Vérifications réussies : `git diff --check`, lint frontend, 48 tests frontend et build de
+    production. Aucun commit, déploiement ou publication GitHub n’a été effectué.
+- **2026-07-19 — T-30A : second lot du shell accessible et factuel**
+  - Le footer ne déclare plus le backend « Opérationnel » par défaut. Il appelle réellement
+    `GET /health` via le client API centralisé et affiche seulement vérification, disponibilité ou
+    indisponibilité de l’API ; il ne prétend pas mesurer PostgreSQL ou les connecteurs externes.
+  - Le champ de recherche factice est remplacé par un bouton sémantique utilisable au clavier qui
+    ouvre l’explication de disponibilité déjà prévue.
+  - Un lien d’évitement « Aller au contenu » est placé avant le shell et cible le contenu principal.
+  - Trois tests couvrent le statut mesuré, la commande de recherche et le lien d’évitement.
+  - Vérifications réussies : `git diff --check`, lint frontend, 45 tests frontend et build de
+    production. Aucun commit, déploiement ou publication GitHub n’a été effectué.
+- **2026-07-19 — T-30A : premier lot du shell aligné sur la charte**
+  - La marque complète `orIAna` reste visible dans la sidebar ouverte et repliée ainsi que dans
+    l’en-tête mobile ; le mode compact ne tronque plus le nom.
+  - La navigation latérale utilise désormais des tokens aubergine très sombre indépendants du
+    thème clair ou sombre, avec textes et bordures dédiés.
+  - L’en-tête mobile abandonne la largeur fixe du logo au profit d’une composition fluide ; le
+    tiroir smartphone conserve sa largeur et ses libellés même si la sidebar desktop était repliée.
+  - Les entrées repliées gardent un nom accessible et une infobulle au survol ou au focus. Deux
+    tests de non-régression couvrent la marque complète et le fond de navigation dédié.
+  - Vérifications réussies : `git diff --check`, lint frontend, 42 tests frontend et build de
+    production. La géométrie à 320/375 px reste à confirmer par recette visuelle humaine.
+  - Le statut backend non mesuré, la recherche clavier, le lien d’évitement et les autres écarts du
+    rapport restent à traiter ; aucun commit, déploiement ou publication GitHub n’a été effectué.
+- **2026-07-19 — T-30A : audit de l’interface contre la charte**
+  - La navigation et la structure générale ont été comparées à la charte consolidée sans modifier
+    le code applicatif. Tokens, typographies, structure du shell, navigation par rôle, états
+    explicites et primitives de dialogue sont déjà présents.
+  - Six écarts prioritaires sont confirmés dans le code : identité tronquée en mode replié, sidebar
+    claire dans le thème clair, statut backend affirmé sans mesure, risque de débordement de
+    l’en-tête à 320 px, boutons repliés sans nom accessible et recherche non activable correctement
+    au clavier.
+  - Les écarts secondaires couvrent le thème sombre face à l’espace métier clair, les actions
+    d’en-tête, le repli mobile, le sélecteur de rôle, le lien d’évitement, les futurs onglets et
+    l’emphase de l’assistant indisponible.
+  - Le contrôle navigateur automatisé reste bloqué par l’incompatibilité connue de son environnement
+    au démarrage. Les constats géométriques et visuels exigent donc encore une recette humaine.
+  - Aucun correctif applicatif, donnée, secret, commit, déploiement ou publication GitHub n’a été
+    engagé pendant cet audit.
+- **2026-07-19 — Patrimoine complété : architecture documentaire et sources métier**
+  - Les exigences absentes de stockage, formats, volumétrie, brouillons multi-appareil, reprise
+    d’envoi, antivirus, empreinte, analyse asynchrone et validation humaine sont consolidées comme
+    cible, sans prétendre qu’elles sont implémentées.
+  - T-34 est détaillée en T-34A à T-34E : socle documentaire, brouillons, envoi résilient, analyse
+    asynchrone puis validation et expérience mobile. La recette de capacité cible 30 utilisateurs
+    simultanés.
+  - La décision d’un stockage objet privé compatible S3, distinct du serveur applicatif et derrière
+    le backend, est enregistrée ; fournisseur et contrats techniques restent à spécifier.
+  - Les analyses historiques LOGI PRO, prestations et dossiers commerciaux sont inventoriées avec
+    leurs règles de déduplication, anonymisation, rapprochement et réversibilité. Les chiffres
+    restent à revérifier car les sources ne sont pas présentes dans le dépôt.
+  - Le conflit entre les noms réels de l’ancien prompt et le bac à sable fictif actuel est tranché
+    selon le plan en vigueur : les réaffectations servent au mapping autorisé, mais T-32 ne crée
+    aucune identité réelle.
+  - Aucun stockage, import, donnée, code applicatif, secret, déploiement ou publication GitHub n’a
+    été engagé.
+- **2026-07-19 — Patrimoine complété : charte d’interface et fiches métier cibles**
+  - Un ancien prompt de reprise validé a été comparé à la documentation v2.0 et à l’état actuel ;
+    les décisions déjà présentes ou remplacées n’ont pas été dupliquées.
+  - La direction visuelle manquante est consolidée : marque orIAna complète, navigation aubergine
+    sombre, espace métier clair, cartes compactes, violet réservé aux actions et états, densité
+    lisible, responsive et accessibilité.
+  - Les fiches Offre, Terrain et CRM à développer disposent désormais de vues et contenus cibles
+    explicites. Elles restent planifiées et ne sont pas déclarées implémentées.
+  - Le terrain autonome, la relation Demande–Offre et les objets Actions, Visites, Transactions,
+    Documents, Annonces, Publications et Panneaux nécessitent encore un arbitrage de modèle et des
+    contrats dans `SPEC.md` avant code.
+  - Aucun schéma, code applicatif, donnée, secret, déploiement ou publication GitHub n’a été modifié
+    par cette consolidation documentaire.
+- **2026-07-19 — T-30A : Administration refondue localement selon la charte**
+  - L’écran Administration présente désormais uniquement des indicateurs calculés depuis les
+    comptes réellement renvoyés par le backend, avec recherche, filtres par rôle et état, tableau
+    desktop et cartes smartphone.
+  - Un panneau latéral permet de gérer les rôles autorisés, le rattachement Consultant → Master
+    consultant et l’état actif du compte ; les actions disponibles suivent le rôle actif et restent
+    systématiquement validées par le serveur.
+  - Les états de chargement, absence de résultat, erreur récupérable et succès sont explicites ;
+    aucun compte, volume ou rattachement n’est simulé.
+  - La recette a révélé qu’un libellé libre `Master consultant` stocké dans Grist provoque un écran
+    blanc, tandis que le code canonique `master_consultant` fonctionne. L’authentification refuse
+    désormais toute valeur hors référentiel et le frontend affiche une issue explicite au lieu de
+    planter si une ancienne session contient encore un rôle inconnu.
+  - Le rôle Master consultant est validé pour la connexion, le libellé, la navigation métier et
+    l’absence d’Administration. Son périmètre d’équipe reste à recetter. Un compte administratif
+    courant portant aussi le rôle Master consultant est maintenant renvoyé comme candidat de
+    rattachement de sa propre agence avec `administrable: false` : il peut recevoir des consultants
+    sans permettre la modification de son compte protégé.
+  - Vérifications réussies : lint et build frontend, 40 tests frontend, lint backend et 100 tests
+    backend dont 99 réussis et l’intégration PostgreSQL ignorée faute de serveur local.
+- **2026-07-19 — T-30A poursuivie : build réparé et simulations visibles retirées**
+  - T-30A est rattachée à l’Epic Plateforme & Infrastructure et aux Epics transverses Identité &
+    Sécurité, CRM, Immobilier d’affaires, Administration et API & Intégrations.
+  - Le build de production résout désormais explicitement `SessionContext.jsx` ; l’ambiguïté avec
+    `sessionContext.js` ne peut plus casser la compilation selon l’ordre de résolution des modules.
+  - Le tableau de bord ne présente plus de volumes, actifs, alertes ou taux fictifs comme des faits
+    métier ; il propose uniquement des raccourcis réels vers les modules autorisés pour le rôle.
+  - Un échec d’enregistrement des conditions financières reste visible dans la fiche et permet de
+    réessayer. Les dialogues et tiroirs prennent le focus, se ferment avec Échap et restaurent le
+    focus précédent.
+  - Vérifications locales réussies : lint et build frontend, 34 tests frontend, lint backend,
+    97 tests backend dont 96 réussis et l’intégration PostgreSQL ignorée faute de serveur local ;
+    le frontend local répond HTTP 200.
+  - Le contrôle automatisé du navigateur intégré reste indisponible à cause d’une incompatibilité
+    de son runtime lors de l’initialisation. La recette humaine desktop/smartphone et cinq rôles
+    reste obligatoire avant clôture de T-30A ; T-30 et toute bascule restent bloquées.
+  - Recette humaine partielle : le rôle Consultant est validé sur l’application publique pour la
+    connexion, la navigation autorisée, l’absence d’Administration, les utilitaires visibles, la
+    fermeture des dialogues avec Échap et la déconnexion.
+  - Le workflow manuel « Vérification utilisateurs Grist » #10 a réussi sur `main` en 22 secondes :
+    la promotion initiale configurée par `SUPER_ADMIN_EMAIL` a été appliquée et l’artefact privé de
+    sauvegarde de structure a été produit, sans exposer la valeur du secret.
+  - Après déconnexion et nouvelle authentification, le rôle Super administrateur, son libellé de
+    profil et l’accès au module Administration ont été validés humainement. Consultant et
+    Super administrateur sont donc validés ; Master consultant, Directeur d’agence et
+    Administrateur d’agence restent à recetter. T-30 et la bascule PostgreSQL restent bloquées.
 - **2026-07-19 — T-31A terminée : Documentation v2.0 validée**
   - L’ensemble des Markdown du dépôt et les trois historiques PDF `ORIANA1`, `ORIANA2` et
     `ORIANA3` fournis ont été lus avant modification. Les répertoires `docs/vision`,

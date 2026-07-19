@@ -65,7 +65,12 @@ Une contradiction est enregistrée dans STATUS et résolue dans le document qui 
 - [Référentiel des modules](../referentiels/REFERENTIEL_MODULES.md)
 - [Référentiel des objets métier](../referentiels/REFERENTIEL_OBJETS_METIER.md)
 - [Guide UX/UI](../ux/GUIDE_UX_UI.md)
+- [Charte d’interface](../ux/CHARTE_INTERFACE_ORIANA.md)
+- [Fiches métier à développer](../referentiels/FICHES_METIER_A_DEVELOPPER.md)
+- [Architecture documentaire](../architecture/ARCHITECTURE_DOCUMENTAIRE.md)
+- [Sources métier et règles d’import](../referentiels/SOURCES_METIER_ET_IMPORT.md)
 - [Audit stratégique du patrimoine](../audit/AUDIT_STRATEGIQUE_PATRIMOINE_ORIANA.md)
+- [Audit interface / charte du 19 juillet 2026](../audit/AUDIT_INTERFACE_CHARTE_2026-07-19.md)
 - [Audit PostgreSQL](../POSTGRESQL_AUDIT.md)
 - [Revue de sécurité phase 1](../../SECURITY_REVIEW.md) — preuve historique au 14 juillet 2026
 - [Guide de déploiement](../../deploy/README.md) — procédure d’exploitation, sans autorisation de déployer

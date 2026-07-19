@@ -3,7 +3,9 @@
 > Référence d’expérience — version 2.0 — 19 juillet 2026.
 
 Le [Design System](../../DESIGN_SYSTEM.md) porte les tokens et composants implémentés. Ce guide
-porte les règles d’expérience à appliquer à tous les modules.
+porte les règles d’expérience à appliquer à tous les modules. La
+[charte d’interface](CHARTE_INTERFACE_ORIANA.md) précise la direction visuelle et la composition
+attendue des écrans métier.
 
 ## Principes
 

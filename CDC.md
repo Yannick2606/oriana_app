@@ -127,6 +127,11 @@ Monolithe modulaire, contrats internes stables, connecteurs remplaçables, migra
 sauvegardes et restaurations testées, observabilité proportionnée, absence de dépendance
 fonctionnelle directe à Grist, n8n ou un LLM.
 
+Le futur socle documentaire suit
+[`docs/architecture/ARCHITECTURE_DOCUMENTAIRE.md`](docs/architecture/ARCHITECTURE_DOCUMENTAIRE.md) :
+stockage objet privé, métadonnées et droits dans PostgreSQL, brouillons multi-appareil, envoi
+résilient, analyse asynchrone et validation humaine avant écriture définitive ou publication.
+
 ### 6.5 Qualité documentaire
 
 Toute évolution significative met à jour la décision et les documents d’autorité avant ou avec le

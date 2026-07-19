@@ -24,6 +24,7 @@ historique : elle est remplacée par une nouvelle entrée qui la référence. St
 | DEC-014 | La traçabilité est bidirectionnelle de la Vision au code | acceptée | SRC-HIST-2026-07-19-01 | référentiels et IDs de décision |
 | DEC-015 | Un Expert de veille et d’évolution continue consolide les signaux sans agir seul | cible validée | SRC-HIST-2026-07-19-01 | propositions structurées, arbitrage humain |
 | DEC-016 | La maturité patrimoniale doit être mesurée | à spécifier | SRC-HIST-2026-07-19-01 | nom, formule et seuils restent ouverts |
+| DEC-017 | Les documents sont stockés hors du serveur applicatif dans un stockage objet privé | cible validée | architecture documentaire, 2026-07-19 | PostgreSQL conserve métadonnées et droits ; fournisseurs remplaçables |
 
 Les identifiants `SRC-HIST-*` sont décrits dans
 [l’audit stratégique](../audit/AUDIT_STRATEGIQUE_PATRIMOINE_ORIANA.md).
@@ -51,6 +52,15 @@ Il surveille les évolutions technologiques, IA, cybersécurité, réglementaire
 coûts, usages, difficultés UX et incohérences documentaires. Il produit une proposition sourcée :
 signal, confiance, impact, populations concernées, alignement, bénéfices, risques, coûts, documents
 et composants touchés, arbitrages et priorité proposée. Il ne modifie rien automatiquement.
+
+### DEC-017 — Stockage documentaire privé et découplé
+
+**Contexte.** Les parcours mobiles doivent supporter des fichiers durables, des interruptions de
+réseau et des analyses asynchrones sans saturer le serveur applicatif. **Décision.** Les originaux
+et versions optimisées sont conservés dans un stockage objet privé compatible S3 ; PostgreSQL
+porte métadonnées, droits, versions, états et audit. Le frontend passe toujours par le backend.
+**Ouvert.** Fournisseur, contrats d’envoi résilient, chiffrement, antivirus, rétention,
+restauration, quotas et observabilité restent à spécifier avant code.
 
 ## Modèle pour une nouvelle décision
 

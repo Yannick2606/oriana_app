@@ -239,7 +239,10 @@
     volumes identiques, zéro rejet et zéro relation orpheline ; sauvegarde et restauration
     temporaire vérifiées ; backend PostgreSQL isolé et tests backend/CI verts.
 
-### [ ] T-30A : Rendre l'application réellement utilisable avant bascule
+### [~] T-30A : Rendre l'application réellement utilisable avant bascule
+- **Epics** : EPIC 1 — Plateforme & Infrastructure, avec EPIC 2 — Identité & Sécurité,
+  EPIC 3 — CRM, EPIC 4 — Immobilier d'affaires, EPIC 10 — Administration et
+  EPIC 11 — API & Intégrations.
 - Auditer sur desktop et smartphone chaque bouton, formulaire, navigation et retour d'erreur des
   parcours connexion, patrimoine, offres, CRM, matching, agents et administration.
 - Corriger les actions non cliquables et vérifier les parcours réels avec chacun des cinq rôles,
@@ -285,6 +288,9 @@
 - Ajouter des photographies d'immeubles utilisables légalement et stockées par orIAna, sans URL
   externe fragile ni donnée personnelle réelle.
 - Fournir un chargement idempotent, réinitialisable et strictement séparé de la production.
+- Reproduire uniquement sous identités fictives les distributions et réaffectations utiles des
+  sources décrites dans `docs/referentiels/SOURCES_METIER_ET_IMPORT.md` ; aucun profil réel n’est
+  créé dans le bac à sable.
 - **Acceptation** : démonstration réaliste de bout en bout, relations cohérentes, médias visibles,
   aucune donnée réelle et réinitialisation documentée.
 
@@ -306,6 +312,36 @@
   à un territoire, client, opportunité, tâche ou idée éditoriale.
 - **Acceptation** : aucune donnée extraite n'est publiée ou versée définitivement sans validation ;
   les erreurs de faible confiance sont signalées et la source reste traçable.
+
+#### [ ] T-34A : Socle documentaire
+- Définir métadonnées, droits, versions, empreintes, quarantaine et stockage objet privé compatible
+  S3 selon `docs/architecture/ARCHITECTURE_DOCUMENTAIRE.md`.
+- **Acceptation** : originaux hors disque applicatif permanent, accès backend contrôlé, formats et
+  limite de 20 Mo testés, restauration documentée.
+
+#### [ ] T-34B : Brouillons multi-appareil
+- Synchroniser les brouillons smartphone et bureau avec versions et conflits explicites, sans
+  écrasement silencieux ; géolocalisation désactivée par défaut.
+- **Acceptation** : un dossier commencé sur smartphone est repris sur ordinateur et un conflit
+  concurrent est détecté puis résolu explicitement.
+
+#### [ ] T-34C : Envoi résilient
+- Permettre interruption, reprise et contrôle d’intégrité des envois sans retransmettre les parties
+  déjà reçues ; isoler tout fichier incomplet ou refusé.
+- **Acceptation** : coupure réseau simulée, reprise réussie, empreinte vérifiée et aucun fichier
+  partiel exposé comme document valide.
+
+#### [ ] T-34D : Analyse asynchrone
+- Orchestrer antivirus, OCR et IA en arrière-plan avec états visibles, provenance, confiance,
+  erreurs récupérables et contenu traité comme donnée non fiable.
+- **Acceptation** : interface non bloquante, reprise après échec et aucune instruction issue d’un
+  document exécutée comme consigne système.
+
+#### [ ] T-34E : Validation et expérience mobile
+- Présenter les propositions extraites, leurs sources et différences, puis exiger une validation
+  humaine avant écriture métier ou publication.
+- **Acceptation** : parcours tactile et clavier validé ; refus, correction et validation sont
+  tracés ; test de capacité réalisé avec 30 utilisateurs simultanés.
 
 ### [ ] T-35 : CRM par tunnels configurables
 - Permettre plusieurs tunnels de vente, leurs étapes, règles de passage, motifs de perte et KPI.
@@ -395,7 +431,16 @@
 ### [ ] T-44 : Immobilier d'entreprise
 - Reprendre panneaux d'affichage, baux, diagnostics, documents, annonces, transactions,
   interactions et historique des négociations sur le socle commun.
-- **Acceptation** : critères métier détaillés et validés avant code, parcours réels testés.
+- Développer les fiches Offre, Terrain et CRM selon les vues, adaptations vente/location,
+  relations et champs consolidés dans
+  `docs/referentiels/FICHES_METIER_A_DEVELOPPER.md`.
+- Arbitrer avant code l'objet Terrain autonome, la relation Demande–Offre et les contrats des
+  Actions, Visites, Transactions, Documents, Annonces, Publications et Panneaux.
+- Appliquer `docs/ux/CHARTE_INTERFACE_ORIANA.md` sans reproduire le graphisme des sources
+  historiques utilisées pour le contenu.
+- **Acceptation** : critères métier et contrats techniques validés avant code ; huit vues Offre,
+  cinq vues CRM et parcours Terrain testés avec données réelles autorisées, droits serveur,
+  responsive et accessibilité.
 
 ### [ ] T-45 : Fonds de commerce
 - Spécifier le vocabulaire, les données, documents, valorisations, mandats, confidentialité et
