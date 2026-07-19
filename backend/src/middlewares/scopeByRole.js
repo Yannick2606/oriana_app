@@ -1,4 +1,3 @@
-import { gristClient } from '../services/gristClient.js';
 import { normalizeRoleNames } from '../services/roleModel.js';
 
 function sameReference(left, right) {
@@ -38,8 +37,11 @@ export async function scopeByRole(request, response, next) {
   let teamIds = [];
   try {
     if (role === 'master_consultant') {
-      const client = request.app.locals.utilisateursClient || gristClient;
-      const members = await client.list('Utilisateurs', { agence_id: [user.agence_id], master_consultant_id: [user.id], actif: [true] });
+      const identityRepository = request.app.locals.identityRepository;
+      if (!identityRepository?.list) {
+        throw new Error('Référentiel d’identité non configuré');
+      }
+      const members = await identityRepository.list('Utilisateurs', { agence_id: [user.agence_id], master_consultant_id: [user.id], actif: [true] });
       teamIds = members.map((member) => member.id);
     }
   } catch (error) { return next(error); }

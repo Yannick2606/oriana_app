@@ -17,6 +17,16 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-19 — T-33B : premier lot d'injection du référentiel d'identité**
+  - Le middleware de périmètre n'importe plus Grist et ne possède plus de fournisseur implicite
+    pour charger l'équipe d'un master consultant.
+  - La composition fournit explicitement le référentiel d'identité. Une absence de configuration
+    échoue sans construire de périmètre et sans élargir les droits.
+  - Un test direct couvre désormais les périmètres de lecture et d'écriture des cinq rôles ; un
+    second vérifie l'échec sûr lorsque le référentiel requis n'est pas injecté.
+  - Ce lot ne bascule aucune persistance et ne modifie ni route publique, ni session, ni donnée.
+    Vérifications réussies : lint backend, 117 tests backend réussis sur 118 avec l'intégration
+    PostgreSQL ignorée, et `git diff --check`.
 - **2026-07-19 — T-33A : frontières du socle cartographiées**
   - Une architecture de transition décrit la chaîne frontend, couches backend, ports internes,
     adaptateurs et composition sans transformer le monolithe en services séparés.

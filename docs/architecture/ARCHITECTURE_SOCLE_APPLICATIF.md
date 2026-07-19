@@ -39,7 +39,7 @@ frontend ni par une donnée métier.
 |---|---|---|---|
 | Composition | `backend/src/server.js`, `backend/src/app.js` | choisir et assembler services, persistance et connecteurs | partiel ; des valeurs de repli fournisseur subsistent dans `app.js` |
 | Identité | service d’authentification et référentiel des rôles | compte, rôle actif, rattachement d’agence et session publique | implémenté, mais l’authentification possède encore des dépendances par défaut |
-| Autorisations | middlewares et politiques de périmètre | calculer et contrôler lecture/écriture côté serveur | implémenté, mais l’accès aux rattachements peut encore retomber sur Grist |
+| Autorisations | middlewares et politiques de périmètre | calculer et contrôler lecture/écriture côté serveur | implémenté ; le référentiel d’identité est injecté par la composition depuis T-33B |
 | Sessions | magasin de session et invalidation | conserver et invalider les sessions sans exposer de secret | PostgreSQL en exploitation normale, mémoire dans le bac à sable |
 | Persistance métier | port de dépôt générique de transition | lire et écrire les objets pris en charge | adaptateurs Grist, PostgreSQL et bac à sable présents |
 | Connecteurs | adaptateurs externes | email et orchestration asynchrone | SMTP et n8n présents, frontières à extraire |
@@ -92,7 +92,7 @@ modèle à reproduire dans les services métier.
 | Écart | Risque | Tâche propriétaire |
 |---|---|---|
 | `app.js` et le service d’authentification proposent Grist comme valeur de repli | fournisseur implicite dans le cœur applicatif | T-33B/T-33C |
-| le calcul du périmètre peut importer et utiliser directement Grist | autorisation couplée au fournisseur | T-33B/T-33C |
+| le calcul du périmètre importait et utilisait directement Grist | autorisation couplée au fournisseur | traité par le premier lot T-33B |
 | le service Agents construit l’URL n8n et effectue lui-même l’appel réseau | orchestration confondue avec la règle métier | T-33D |
 | l’authentification dépend directement du transport SMTP | identité couplée au fournisseur de message | T-33D |
 | les objets transverses futurs ne possèdent pas encore de contrat | risque d’inventer tables et comportements | T-33E |

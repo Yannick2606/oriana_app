@@ -325,6 +325,8 @@
 - Injecter l'accès aux utilisateurs et rattachements au lieu de prévoir un fournisseur implicite.
 - **Acceptation** : appels directs testés pour les cinq rôles, absence d'accès métier implicite du
   super administrateur et comportement de session existant conservé.
+- **État** : premier lot en cours — le calcul des périmètres reçoit désormais son référentiel
+  d'identité depuis la composition ; la consolidation complète des politiques reste à réaliser.
 
 #### [ ] T-33C : Découpler la persistance métier de Grist
 - Faire dépendre les modules d'un port de persistance injecté par la composition applicative ;

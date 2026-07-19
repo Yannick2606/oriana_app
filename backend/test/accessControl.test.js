@@ -6,13 +6,15 @@ import request from 'supertest';
 
 import { requireAuth } from '../src/middlewares/requireAuth.js';
 import {
+  buildAccessScope,
+  buildWriteScope,
   requireResourceAccess,
   scopeByRole,
 } from '../src/middlewares/scopeByRole.js';
 
 function securedOfferApp({ user, offer, users = [] }) {
   const app = express();
-  app.locals.utilisateursClient = {
+  app.locals.identityRepository = {
     async list(_table, filters) {
       return users.filter(({ fields }) => Object.entries(filters).every(
         ([field, values]) => values.map(String).includes(String(fields[field])),
@@ -40,6 +42,44 @@ const consultantA = {
   role_actif: 'consultant',
   agence_id: 3,
 };
+
+test('les périmètres de lecture et écriture sont explicites pour les cinq rôles', () => {
+  const teamIds = [8, 9];
+  const cases = [
+    {
+      role: 'consultant',
+      access: { agence_id: 3, gestionnaire: 7 },
+      write: { agence_id: 3, gestionnaire: 7 },
+    },
+    {
+      role: 'master_consultant',
+      access: { agence_id: 3, gestionnaire: [7, 8, 9] },
+      write: { agence_id: 3, gestionnaire: 7 },
+    },
+    { role: 'directeur_agence', access: { agence_id: 3 }, write: { agence_id: 3 } },
+    { role: 'admin_agence', access: { agence_id: 3 }, write: { agence_id: 3 } },
+    { role: 'super_admin', access: null, write: null },
+  ];
+
+  for (const { role, access, write } of cases) {
+    const user = { id: 7, agence_id: 3, role_actif: role };
+    assert.deepEqual(buildAccessScope(user, teamIds), access, `lecture ${role}`);
+    assert.deepEqual(buildWriteScope(user), write, `écriture ${role}`);
+  }
+});
+
+test('le calcul du périmètre master échoue sans référentiel d’identité injecté', async () => {
+  const incomingRequest = {
+    session: { user: { id: 2, role_actif: 'master_consultant', agence_id: 3 } },
+    app: { locals: {} },
+  };
+  let forwardedError;
+
+  await scopeByRole(incomingRequest, {}, (error) => { forwardedError = error; });
+
+  assert.match(forwardedError?.message ?? '', /Référentiel d’identité non configuré/);
+  assert.equal(incomingRequest.accessScope, undefined);
+});
 
 test('GET /offres/:id refuse directement l’offre d’un autre consultant', async () => {
   const offerConsultantB = {

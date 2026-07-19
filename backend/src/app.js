@@ -69,7 +69,7 @@ export function createApp({
   const app = express();
 
   app.disable('x-powered-by');
-  app.locals.utilisateursClient = utilisateursClient;
+  app.locals.identityRepository = utilisateursClient;
   if (secureCookies) app.set('trust proxy', 1);
   app.use(frontendCors(frontendOrigin));
   app.use(express.json());
