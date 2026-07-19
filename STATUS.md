@@ -17,7 +17,7 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
-- **2026-07-19 — T-32 : vue CRM maître–détail prête localement**
+- **2026-07-19 — T-32 : vue CRM maître–détail déployée et validée**
   - La vue en trois colonnes, jugée peu ergonomique en recette, est remplacée par un répertoire de
     sociétés et une fiche contextualisée présentant successivement contacts, demandes, critères et
     rapprochements.
@@ -27,8 +27,10 @@
     aucun nouveau contrat métier, tunnel ou objet non spécifié n’est introduit.
   - Un libellé accessible complet distingue chaque demande. Vérifications réussies :
     `git diff --check`, lint frontend, 52 tests frontend et build de production.
-  - Cette correction reste à committer, pousser, redéployer sur le frontend de prévisualisation et
-    valider visuellement.
+  - Le commit `121cab2` a été poussé puis le frontend de prévisualisation seul a été reconstruit et
+    redémarré. Frontend et backend ont été contrôlés sains.
+  - Après actualisation forcée et parcours de la fiche, cette nouvelle ergonomie a été validée
+    humainement comme nettement meilleure que la vue en trois colonnes.
 - **2026-07-19 — T-32 : premier lot CRM fictif déployé, ergonomie à reprendre**
   - Le générateur déterministe ajoute 4 sociétés, 6 contacts, 5 demandes et 6 résultats de matching
     reliés aux lots fictifs déjà présents, sans identité ni adresse de messagerie réelle.
