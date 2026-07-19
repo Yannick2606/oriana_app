@@ -13,10 +13,25 @@
 - PHASE 1 : terminée — T-00 à T-22 et extensions T-22A à T-22D validées.
 - Migration PostgreSQL : T-27, T-28 et T-29 terminées ; T-30 non démarrée.
 - Reprise fonctionnelle : T-30A est active ; toute bascule PostgreSQL reste bloquée.
-- PHASE 2 : vision modulaire repriorisée par T-31 ; T-32 est terminée et T-33 est la prochaine tâche.
+- PHASE 2 : vision modulaire repriorisée par T-31 ; T-32 est terminée et T-33 est active.
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-19 — T-33 : audit du socle et découpage opératoire**
+  - Le socle possède déjà authentification, rôles, agences, sessions, autorisations, client API et
+    sélection de persistance, mais ces responsabilités restent dispersées dans la composition,
+    les services et les middlewares.
+  - Des dépendances implicites à Grist subsistent dans l'application, l'authentification et le
+    calcul du périmètre. Le service Agents construit directement son appel n8n et le service
+    d'authentification dépend directement du transport SMTP.
+  - Audit, notifications, préférences, consentements, fichiers, tâches et capture ne disposent pas
+    encore de contrats complets ni de tables autorisées. Ils doivent être spécifiés avant code et
+    ne seront pas simulés pour satisfaire artificiellement T-33.
+  - T-33 est découpée en six lots : frontières, identité/autorisations, persistance, connecteurs,
+    spécification des objets transverses et contrôles automatisés. Grist demeure la source
+    opérationnelle actuelle et aucune bascule T-30 n'est engagée.
+  - Audit réalisé en lecture seule : aucun code, environnement, commit, push ou déploiement n'a été
+    modifié ou déclenché.
 - **2026-07-19 — T-32 : périmètre clarifié et tâche close**
   - L’audit de séquencement a confirmé que les tunnels, interactions, tâches et alertes de veille ne
     peuvent pas être ajoutés honnêtement au bac à sable avant la définition de leurs contrats.

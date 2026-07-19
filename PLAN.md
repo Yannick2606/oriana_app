@@ -303,12 +303,54 @@
 - **État** : prévisualisation déployée, contrôlée et validée humainement le 19 juillet 2026 ; tâche
   close après clarification de la répartition des capacités futures.
 
-### [ ] T-33 : Extraire le socle applicatif réutilisable
+### [~] T-33 : Extraire le socle applicatif réutilisable
 - Isoler identité, rôles, agences, fichiers, notifications, audit, préférences, consentements,
   tâches, capture et connecteurs externes derrière des contrats stables.
 - Préserver un monolithe modulaire déployable simplement ; aucune multiplication prématurée des
   services ni dépendance directe d'un module métier à un fournisseur externe.
 - **Acceptation** : frontières documentées, dépendances contrôlées et tests existants conservés.
+
+#### [ ] T-33A : Cartographier et fixer les frontières du socle
+- Inventorier les dépendances entre composition applicative, modules métier, persistance et
+  connecteurs ; attribuer à chaque contrat une autorité et un propriétaire uniques.
+- Documenter les ports internes sans créer de service autonome ni de nouvel objet métier.
+- **Acceptation** : cartographie vérifiable, dépendances autorisées explicites et aucun changement
+  de comportement applicatif.
+
+#### [ ] T-33B : Consolider identité, rôles et autorisations
+- Regrouper normalisation des rôles, périmètres agence/équipe/utilisateur et politiques de lecture
+  ou d'écriture derrière le socle, sans faire du frontend une autorité.
+- Injecter l'accès aux utilisateurs et rattachements au lieu de prévoir un fournisseur implicite.
+- **Acceptation** : appels directs testés pour les cinq rôles, absence d'accès métier implicite du
+  super administrateur et comportement de session existant conservé.
+
+#### [ ] T-33C : Découpler la persistance métier de Grist
+- Faire dépendre les modules d'un port de persistance injecté par la composition applicative ;
+  conserver Grist comme fournisseur opérationnel actuel et PostgreSQL comme cible non basculée.
+- Retirer les valeurs de repli vers Grist des services et middlewares exécutés par les modules.
+- **Acceptation** : mêmes contrats exercés avec les doubles de test, le bac à sable et les
+  fournisseurs existants, sans bascule T-30 ni régression fonctionnelle.
+
+#### [ ] T-33D : Encapsuler les connecteurs externes
+- Placer SMTP, n8n et les futurs fournisseurs derrière des ports internes configurés au démarrage,
+  avec délais, erreurs explicites et secrets maintenus hors des données métier.
+- Ne pas intégrer de fournisseur IA dans ce lot ; préparer seulement la frontière utilisée plus
+  tard par T-34D, T-36 et T-42.
+- **Acceptation** : aucun service métier ne construit directement une URL fournisseur ou un client
+  réseau ; les indisponibilités restent testables sans appel externe.
+
+#### [ ] T-33E : Spécifier les objets transverses encore absents
+- Définir avant code l'autorité, le cycle de vie, les droits, la conservation et les contrats API
+  d'Audit, Notification, Préférence, Consentement, Fichier, Tâche et Capture.
+- Reporter leurs tables et interfaces tant que chaque contrat n'a pas été validé.
+- **Acceptation** : arbitrages consignés dans les documents d'autorité, sans table, donnée ou
+  capacité simulée créée prématurément.
+
+#### [ ] T-33F : Protéger et vérifier les frontières
+- Ajouter des contrôles automatisés empêchant les imports interdits entre modules, persistance et
+  connecteurs, puis exécuter l'ensemble des vérifications backend et frontend.
+- **Acceptation** : contrôles de frontières reproductibles, lint, tests et build existants verts,
+  avec limites restantes consignées.
 
 ## Jalon 7 — Usage mobile, CRM et pilotage commercial
 
