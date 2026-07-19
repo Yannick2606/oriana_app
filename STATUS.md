@@ -17,7 +17,19 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
-- **2026-07-19 — T-32 : premier lot CRM fictif prêt localement**
+- **2026-07-19 — T-32 : vue CRM maître–détail prête localement**
+  - La vue en trois colonnes, jugée peu ergonomique en recette, est remplacée par un répertoire de
+    sociétés et une fiche contextualisée présentant successivement contacts, demandes, critères et
+    rapprochements.
+  - La société, le contact et la demande actifs disposent d’un état visuel et accessible explicite.
+    La recherche locale filtre le répertoire et les demandes restent bornées à la société choisie.
+  - Sur smartphone, la liste et la fiche constituent deux étapes avec un retour vers les sociétés ;
+    aucun nouveau contrat métier, tunnel ou objet non spécifié n’est introduit.
+  - Un libellé accessible complet distingue chaque demande. Vérifications réussies :
+    `git diff --check`, lint frontend, 52 tests frontend et build de production.
+  - Cette correction reste à committer, pousser, redéployer sur le frontend de prévisualisation et
+    valider visuellement.
+- **2026-07-19 — T-32 : premier lot CRM fictif déployé, ergonomie à reprendre**
   - Le générateur déterministe ajoute 4 sociétés, 6 contacts, 5 demandes et 6 résultats de matching
     reliés aux lots fictifs déjà présents, sans identité ni adresse de messagerie réelle.
   - Le serveur de prévisualisation branche explicitement les routes CRM et Matching sur la
@@ -27,7 +39,9 @@
   - Les tunnels, actions et transactions ne sont pas simulés : leurs contrats restent à arbitrer
     avant code. Vérifications réussies : lint backend, 115 tests backend sur 116 avec 1 test
     PostgreSQL ignoré, lint frontend, 52 tests frontend et build de production.
-  - Ce lot reste à committer, pousser, déployer sur la prévisualisation et valider visuellement.
+  - Le commit `57f1ab1` a été poussé puis les deux conteneurs de prévisualisation ont été reconstruits
+    et contrôlés sains. Les données ont été validées humainement ; la présentation en trois colonnes
+    a été refusée en recette ergonomique et fait l’objet du correctif ci-dessus.
 - **2026-07-19 — T-32 : adaptation responsive de l’en-tête déployée et validée**
   - L’en-tête de page conserve une composition verticale jusqu’aux écrans réellement larges afin
     que les actions ne compriment plus le titre et sa description avec un zoom élevé.
