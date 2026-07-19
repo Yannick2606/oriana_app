@@ -83,6 +83,15 @@ test('login refuse un rôle actif non attribué', async () => {
   );
 });
 
+test('login refuse une valeur de rôle hors du référentiel canonique', async () => {
+  const { motDePasse, service } = await fixture({ roles: ['consultant', 'Master consultant'] });
+
+  await assert.rejects(
+    service.login({ email: 'test@example.invalid', motDePasse }),
+    (error) => error instanceof AuthError && error.status === 403 && error.code === 'INVALID_ROLE_CONFIGURATION',
+  );
+});
+
 test('changeRole relit les rôles courants avant de modifier la session', async () => {
   const { service } = await fixture({ roles: ['consultant', 'manager'] });
   const user = await service.changeRole({ userId: 7, roleActif: 'manager' });
@@ -102,6 +111,15 @@ test('changeRole refuse un rôle retiré ou un compte désactivé', async () => 
   await assert.rejects(
     inactiveService.changeRole({ userId: 7, roleActif: 'manager' }),
     (error) => error instanceof AuthError && error.status === 401,
+  );
+});
+
+test('changeRole refuse un compte dont les rôles persistés sont invalides', async () => {
+  const { service } = await fixture({ roles: ['consultant', 'Master consultant'] });
+
+  await assert.rejects(
+    service.changeRole({ userId: 7, roleActif: 'consultant' }),
+    (error) => error instanceof AuthError && error.code === 'INVALID_ROLE_CONFIGURATION',
   );
 });
 

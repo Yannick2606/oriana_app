@@ -3,7 +3,7 @@ import { expect, test, vi } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { ApiError } from '../api';
 import { ProtectedRoute } from './ProtectedRoute';
-import { SessionProvider } from './SessionContext';
+import { SessionProvider } from './SessionContext.jsx';
 
 Object.defineProperty(window, 'matchMedia', { writable: true, value: vi.fn().mockImplementation(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() })) });
 

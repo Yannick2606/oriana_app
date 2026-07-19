@@ -18,6 +18,7 @@ function errorMessage(error) {
   if (code === 'INVALID_CREDENTIALS') return 'Adresse email ou mot de passe incorrect.';
   if (code === 'NO_ROLE') return 'Aucun rôle actif n’est attribué à ce compte.';
   if (code === 'INVALID_ROLE') return 'Ce rôle n’est pas autorisé pour votre compte.';
+  if (code === 'INVALID_ROLE_CONFIGURATION') return 'Un rôle attribué à ce compte n’est pas reconnu. Contactez un administrateur.';
   return 'Connexion impossible pour le moment. Vérifiez votre accès au service.';
 }
 

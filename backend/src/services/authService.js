@@ -3,7 +3,7 @@ import { createHash, randomBytes } from 'node:crypto';
 
 import { gristClient } from './gristClient.js';
 import { mailService } from './mailService.js';
-import { normalizeRoleNames } from './roleModel.js';
+import { normalizeRoleNames, ROLES } from './roleModel.js';
 
 export class AuthError extends Error {
   constructor(message, status, code, details) {
@@ -16,7 +16,11 @@ export class AuthError extends Error {
 }
 
 function normalizeRoles(value) {
-  return normalizeRoleNames(value);
+  const roles = normalizeRoleNames(value);
+  if (roles.some((role) => !ROLES.includes(role))) {
+    throw new AuthError('Configuration de rôle invalide', 403, 'INVALID_ROLE_CONFIGURATION');
+  }
+  return roles;
 }
 
 function publicUser(record, roles, roleActif) {

@@ -26,14 +26,14 @@ function normalizeRoles(value) {
   return ['L', ...roles];
 }
 
-function publicRecord(record) {
+function publicRecord(record, administrable = true) {
   const {
     mot_de_passe_hash: omitted, role, roles: legacyRoles, ...fields
   } = record.fields;
   void omitted;
   const storedRoles = role ?? legacyRoles;
   const roles = normalizeRoleNames(storedRoles);
-  return { id: record.id, ...fields, roles };
+  return { id: record.id, ...fields, roles, administrable };
 }
 
 function toGrist(data) {
@@ -81,11 +81,12 @@ function validatePassword(value) {
 export function createUtilisateursService(client, passwordHasher = (password) => bcrypt.hash(password, 12), invalidateUserSessions = async () => {}) {
   function actorRole(actor) { return normalizeRoleNames(actor?.role_actif)[0]; }
   function recordRoles(record) { return normalizeRoleNames(record?.fields?.role ?? record?.fields?.roles); }
+  function recordLevel(record) { return Math.max(...recordRoles(record).map((item) => niveaux[item] ?? 99)); }
   function sameAgency(record, actor) { return String(record?.fields?.agence_id) === String(actor?.agence_id); }
   function assertLowerTarget(record, actor) {
     const role = actorRole(actor);
     if (role !== 'super_admin' && !sameAgency(record, actor)) throw new UtilisateursError('Hors agence', 403, 'FORBIDDEN');
-    const maximum = Math.max(...recordRoles(record).map((item) => niveaux[item] ?? 99));
+    const maximum = recordLevel(record);
     if (!niveaux[role] || maximum >= niveaux[role]) throw new UtilisateursError('Niveau protégé', 403, 'FORBIDDEN');
   }
   function assertAssignableRoles(data, actor) {
@@ -123,7 +124,11 @@ export function createUtilisateursService(client, passwordHasher = (password) =>
     async list(actor) {
       const role = actorRole(actor);
       const records = await client.list('Utilisateurs', role === 'super_admin' ? {} : { agence_id: [actor.agence_id] });
-      return records.filter((record) => Math.max(...recordRoles(record).map((item) => niveaux[item] ?? 99)) < niveaux[role]).map(publicRecord);
+      return records.flatMap((record) => {
+        const administrable = recordLevel(record) < niveaux[role];
+        const currentMaster = Number(record.id) === Number(actor.id) && recordRoles(record).includes('master_consultant');
+        return administrable || currentMaster ? [publicRecord(record, administrable)] : [];
+      });
     },
     async create(input, actor) {
       const role = actorRole(actor);

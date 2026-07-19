@@ -127,6 +127,25 @@ test('seul le super admin agit entre agences et attribue super admin', async () 
   assert.deepEqual(promoted.body.data.roles, ['super_admin']);
 });
 
+test('le compte courant multirôle est proposé comme master mais reste protégé', async () => {
+  const dataClient = client();
+  dataClient.tables.get('Utilisateurs').push({ id: 15, fields: {
+    nom: 'Plateforme', prenom: 'Master', email: 'plateforme@example.invalid',
+    role: ['L', 'master_consultant', 'super_admin'], agence_id: 3, actif: true,
+    mot_de_passe_hash: 'hash-non-public',
+  } });
+  const actor = { id: 15, roles: ['master_consultant', 'super_admin'], role_actif: 'super_admin', agence_id: 3 };
+  const agent = await agentFor(dataClient, actor);
+
+  const listing = await agent.get('/utilisateurs').expect(200);
+  const current = listing.body.data.find((item) => item.id === 15);
+  assert.equal(current.administrable, false);
+  assert.deepEqual(current.roles, ['master_consultant', 'super_admin']);
+  await agent.put('/utilisateurs/15').send({ actif: false }).expect(403, { error: 'FORBIDDEN' });
+  const consultant = await agent.put('/utilisateurs/12').send({ master_consultant_id: 15 }).expect(200);
+  assert.equal(consultant.body.data.master_consultant_id, 15);
+});
+
 test('rattache un consultant uniquement à un master consultant de son agence', async () => {
   const dataClient = client(); const agent = await agentFor(dataClient, admin);
   const base = { nom: 'Equipe', prenom: 'Consultant', email: 'team@example.invalid', roles: ['consultant'],
