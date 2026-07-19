@@ -282,9 +282,9 @@
   règles sans conversation historique ; rapport présenté et commit documentaire unique autorisé.
 - **État** : contenu contrôlé et validation humaine reçue le 19 juillet 2026.
 
-### [~] T-32 : Enrichir le bac à sable
-- Créer un jeu fictif cohérent couvrant les cinq rôles, tunnels CRM, sociétés, contacts, demandes,
-  bâtiments, lots, offres, tâches, interactions et alertes de veille.
+### [x] T-32 : Enrichir le bac à sable
+- Créer un jeu fictif cohérent couvrant les cinq rôles et les contrats existants de phase 1 :
+  sociétés, contacts, demandes, bâtiments, lots, offres et rapprochements.
 - Ajouter des photographies d'immeubles utilisables légalement et stockées par orIAna, sans URL
   externe fragile ni donnée personnelle réelle.
 - Fournir un chargement idempotent, réinitialisable et strictement séparé de la production.
@@ -293,8 +293,15 @@
 - Reproduire uniquement sous identités fictives les distributions et réaffectations utiles des
   sources décrites dans `docs/referentiels/SOURCES_METIER_ET_IMPORT.md` ; aucun profil réel n’est
   créé dans le bac à sable.
-- **Acceptation** : démonstration réaliste de bout en bout, relations cohérentes, médias visibles,
-  aucune donnée réelle et réinitialisation documentée.
+- Ne pas simuler les capacités dont les contrats restent à spécifier. Le socle des tâches relève de
+  T-33, les tunnels de T-35, les interactions de T-36, la todolist de T-38 et les alertes de veille
+  de T-41 ; leurs données fictives seront ajoutées avec leur implémentation respective.
+- **Acceptation** : prévisualisation isolée et réaliste des contrats disponibles, cinq rôles
+  accessibles sous identité fictive, relations cohérentes, médias visibles, aucune donnée réelle,
+  écritures refusées et régénération documentée. Toute capacité non implémentée est signalée comme
+  indisponible sans résultat simulé.
+- **État** : prévisualisation déployée, contrôlée et validée humainement le 19 juillet 2026 ; tâche
+  close après clarification de la répartition des capacités futures.
 
 ### [ ] T-33 : Extraire le socle applicatif réutilisable
 - Isoler identité, rôles, agences, fichiers, notifications, audit, préférences, consentements,

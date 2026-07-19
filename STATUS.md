@@ -13,10 +13,22 @@
 - PHASE 1 : terminée — T-00 à T-22 et extensions T-22A à T-22D validées.
 - Migration PostgreSQL : T-27, T-28 et T-29 terminées ; T-30 non démarrée.
 - Reprise fonctionnelle : T-30A est active ; toute bascule PostgreSQL reste bloquée.
-- PHASE 2 : vision modulaire repriorisée par T-31 ; T-32 est en cours.
+- PHASE 2 : vision modulaire repriorisée par T-31 ; T-32 est terminée et T-33 est la prochaine tâche.
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-19 — T-32 : périmètre clarifié et tâche close**
+  - L’audit de séquencement a confirmé que les tunnels, interactions, tâches et alertes de veille ne
+    peuvent pas être ajoutés honnêtement au bac à sable avant la définition de leurs contrats.
+  - Le plan rattache désormais le socle des tâches à T-33, les tunnels à T-35, les interactions à
+    T-36, la todolist à T-38 et les alertes de veille à T-41. Les données fictives correspondantes
+    seront développées avec ces capacités, sans simulation anticipée.
+  - T-32 est close sur le périmètre validé : cinq rôles fictifs, profil isolé en lecture seule,
+    offres, patrimoine, sociétés, contacts, demandes, rapprochements et photographies locales.
+    La génération est déterministe et documentée ; les relations et l’ergonomie CRM ont été
+    validées humainement dans la prévisualisation.
+  - Cette clarification documentaire ne modifie aucun code, contrat métier ou environnement et ne
+    déclenche aucun commit, push ou déploiement.
 - **2026-07-19 — T-32 : vue CRM maître–détail déployée et validée**
   - La vue en trois colonnes, jugée peu ergonomique en recette, est remplacée par un répertoire de
     sociétés et une fiche contextualisée présentant successivement contacts, demandes, critères et
