@@ -67,6 +67,7 @@ Une contradiction est enregistrée dans STATUS et résolue dans le document qui 
 - [Guide UX/UI](../ux/GUIDE_UX_UI.md)
 - [Charte d’interface](../ux/CHARTE_INTERFACE_ORIANA.md)
 - [Fiches métier à développer](../referentiels/FICHES_METIER_A_DEVELOPPER.md)
+- [Architecture du socle applicatif](../architecture/ARCHITECTURE_SOCLE_APPLICATIF.md)
 - [Architecture documentaire](../architecture/ARCHITECTURE_DOCUMENTAIRE.md)
 - [Sources métier et règles d’import](../referentiels/SOURCES_METIER_ET_IMPORT.md)
 - [Audit stratégique du patrimoine](../audit/AUDIT_STRATEGIQUE_PATRIMOINE_ORIANA.md)

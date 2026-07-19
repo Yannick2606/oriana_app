@@ -17,6 +17,17 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-19 — T-33A : frontières du socle cartographiées**
+  - Une architecture de transition décrit la chaîne frontend, couches backend, ports internes,
+    adaptateurs et composition sans transformer le monolithe en services séparés.
+  - Les responsabilités de l'identité, des autorisations, des sessions, de la persistance et des
+    connecteurs reçoivent un propriétaire explicite. Les objets transverses non spécifiés restent
+    exclus du code et des migrations.
+  - Les dépendances autorisées et interdites sont consignées avec six écarts observés, chacun
+    rattaché à T-33B, T-33C, T-33D, T-33E ou T-33F.
+  - T-33A ne change aucun comportement : Grist reste la source opérationnelle, PostgreSQL la cible
+    non basculée et le bac à sable demeure isolé en lecture seule.
+  - Aucun code, environnement, commit, push ou déploiement n'a été modifié ou déclenché.
 - **2026-07-19 — T-33 : audit du socle et découpage opératoire**
   - Le socle possède déjà authentification, rôles, agences, sessions, autorisations, client API et
     sélection de persistance, mais ces responsabilités restent dispersées dans la composition,

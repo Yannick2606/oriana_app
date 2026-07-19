@@ -4,7 +4,7 @@
 
 | Module | Responsabilité | État au 19/07/2026 | Prochaine référence |
 |---|---|---|---|
-| Socle plateforme | identité, rôles, agences, sessions, autorisations, audit, connecteurs | partiel | T-33 |
+| Socle plateforme | identité, rôles, agences, sessions, autorisations, audit, connecteurs | partiel | [architecture du socle](../architecture/ARCHITECTURE_SOCLE_APPLICATIF.md), T-33 |
 | Patrimoine immobilier | sites, bâtiments, cellules, lots, qualification | implémenté phase 1 | T-30A, T-44 |
 | Offres et mandats | commercialisation et conditions financières | implémenté phase 1 | T-30A, T-44 |
 | CRM | sociétés, contacts, demandes, matching | implémenté de base | T-30A, T-35/T-36 |

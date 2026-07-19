@@ -310,12 +310,14 @@
   services ni dépendance directe d'un module métier à un fournisseur externe.
 - **Acceptation** : frontières documentées, dépendances contrôlées et tests existants conservés.
 
-#### [ ] T-33A : Cartographier et fixer les frontières du socle
+#### [x] T-33A : Cartographier et fixer les frontières du socle
 - Inventorier les dépendances entre composition applicative, modules métier, persistance et
   connecteurs ; attribuer à chaque contrat une autorité et un propriétaire uniques.
 - Documenter les ports internes sans créer de service autonome ni de nouvel objet métier.
 - **Acceptation** : cartographie vérifiable, dépendances autorisées explicites et aucun changement
   de comportement applicatif.
+- **État** : cartographie, ports internes, responsabilités, règles de dépendance et écarts consignés
+  le 19 juillet 2026 sans modification du code.
 
 #### [ ] T-33B : Consolider identité, rôles et autorisations
 - Regrouper normalisation des rôles, périmètres agence/équipe/utilisateur et politiques de lecture
