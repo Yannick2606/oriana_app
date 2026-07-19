@@ -17,12 +17,15 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
-- **2026-07-19 — T-32 : adaptation responsive de l’en-tête prête localement**
+- **2026-07-19 — T-32 : adaptation responsive de l’en-tête déployée et validée**
   - L’en-tête de page conserve une composition verticale jusqu’aux écrans réellement larges afin
     que les actions ne compriment plus le titre et sa description avec un zoom élevé.
   - Sur l’accueil, le prénom et l’emoji de bienvenue restent solidaires pour éviter un emoji isolé.
   - Vérifications locales réussies : `git diff --check`, lint frontend, 51 tests frontend et build
-    de production. Aucun commit, push ou déploiement n’a été effectué pour cette correction.
+    de production. Le commit `2ef2b33` a été poussé puis le frontend de prévisualisation seul a été
+    reconstruit et redémarré ; frontend et backend sont sains.
+  - Le rendu a été validé humainement après actualisation forcée : titre et emoji restent groupés,
+    tandis que les actions disposent de leur propre espace sans comprimer le contenu.
 - **2026-07-19 — T-32 : prévisualisation HTTPS ouverte et onboarding lecture seule corrigé**
   - Le profil isolé est déployé sur `oriana-preview.boreal.immo` et
     `api-oriana-preview.boreal.immo`. Les deux endpoints répondent en HTTPS avec un statut 200 et
