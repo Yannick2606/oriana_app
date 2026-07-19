@@ -58,6 +58,7 @@ export default function App() {
   const [backendStatus, setBackendStatus] = useState('checking');
   const [activePage, setActivePage] = useState('accueil');
   const [crmCreateRequest, setCrmCreateRequest] = useState(0);
+  const sandbox = new URLSearchParams(window.location.search).get('sandbox') === '1';
   const navigation = navigationForRole(user.role_actif);
   const safeActivePage = canNavigateTo(user.role_actif, activePage) ? activePage : navigation[0]?.id;
 
@@ -73,7 +74,7 @@ export default function App() {
 
   return <AppShell theme={theme} onToggleTheme={toggleTheme} collapsed={collapsed} onToggleCollapsed={() => setCollapsed((value) => !value)} mobileOpen={mobileOpen} onToggleMobile={() => setMobileOpen((value) => !value)} backendStatus={backendStatus} user={user} onLogout={logout} onRoleChange={changeRole} navigation={navigation} activePage={safeActivePage} onNavigate={setActivePage}>
     {safeActivePage === 'accueil' ? <Dashboard user={user} onHelp={() => setHelpOpen(true)} onNavigate={setActivePage} onCreateOpportunity={() => { setCrmCreateRequest((value) => value + 1); setActivePage('crm'); }}/> : safeActivePage === 'patrimoine' ? <PatrimoinePage/> : safeActivePage === 'offres' ? <OffresPage/> : safeActivePage === 'crm' || safeActivePage === 'matching' ? <CrmPage createSocieteRequest={crmCreateRequest}/> : safeActivePage === 'agents' ? <AgentsPage/> : safeActivePage === 'administration' ? <AdministrationPage user={user}/> : safeActivePage === 'autoformation' ? null : <ModuleOrientation page={safeActivePage} onBack={() => setActivePage('accueil')}/>}
-    <FormationExperience user={user} pageVisible={safeActivePage === 'autoformation'}/>
+    <FormationExperience user={user} pageVisible={safeActivePage === 'autoformation'} readOnly={sandbox}/>
     <Modal open={helpOpen} onClose={() => setHelpOpen(false)} title="Votre vue d’ensemble"><p className="text-sm leading-6 text-oriana-discret">Cette page rassemble les informations de votre périmètre actif. Les menus visibles facilitent l’accès ; les autorisations restent systématiquement contrôlées par le backend.</p><Button className="mt-5" onClick={() => setHelpOpen(false)}>J’ai compris</Button></Modal>
   </AppShell>;
 }

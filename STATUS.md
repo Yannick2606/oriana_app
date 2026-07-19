@@ -17,6 +17,17 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-19 — T-32 : prévisualisation HTTPS ouverte et onboarding lecture seule corrigé**
+  - Le profil isolé du commit `2c9f785` est déployé sur `oriana-preview.boreal.immo` et
+    `api-oriana-preview.boreal.immo`. Les deux endpoints répondent en HTTPS avec un statut 200 et
+    les conteneurs de production n’ont pas été redémarrés.
+  - La connexion au compte fictif multirôle et l’ouverture du rôle administrateur d’agence sont
+    validées humainement. La recette a révélé que l’onboarding tentait encore d’écrire sa progression
+    malgré le mode lecture seule.
+  - Le frontend détecte désormais `?sandbox=1`, fait avancer ce parcours uniquement en mémoire et
+    affiche « Prévisualisation : progression non enregistrée. » sans appeler le serveur.
+  - Vérifications locales réussies : lint frontend, 51 tests frontend et build de production. Cette
+    correction reste à committer, pousser et redéployer séparément avant sa recette visuelle.
 - **2026-07-19 — T-32 : profil de prévisualisation isolé préparé, non déployé**
   - Un profil Compose distinct assemble le frontend et le backend fictif sans conteneur PostgreSQL,
     sans Grist et sans n8n. Il n’utilise ni les noms de conteneurs ni les volumes de production.

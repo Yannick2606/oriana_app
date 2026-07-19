@@ -30,3 +30,19 @@ test('un parcours déjà passé ne s’ouvre pas automatiquement mais peut recom
   fireEvent.click(screen.getByRole('button', { name: /Recommencer/ }));
   expect(await screen.findByText('Bienvenue dans votre espace')).toBeInTheDocument();
 });
+
+test('fait progresser localement le parcours de prévisualisation sans écriture serveur', async () => {
+  const client = {
+    get: vi.fn().mockResolvedValue({ data: { progression: { etape: 0, statut: 'a_faire' } } }),
+    update: vi.fn(),
+  };
+  render(<FormationExperience user={{ role_actif: 'consultant' }} pageVisible readOnly client={client}/>);
+
+  expect(await screen.findByText('Bienvenue dans votre espace')).toBeInTheDocument();
+  expect(screen.getByText('Prévisualisation : progression non enregistrée.')).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Suivant' }));
+
+  expect(await screen.findByText('Vos modules métier')).toBeInTheDocument();
+  expect(client.update).not.toHaveBeenCalled();
+  expect(screen.queryByText('La progression n’a pas pu être enregistrée.')).not.toBeInTheDocument();
+});
