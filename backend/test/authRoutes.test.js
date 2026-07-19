@@ -5,6 +5,7 @@ import test from 'node:test';
 import request from 'supertest';
 
 import { createApp } from '../src/app.js';
+import { createPersistenceDouble } from '../test-helpers/persistenceDouble.js';
 
 function testApp() {
   const user = {
@@ -17,6 +18,7 @@ function testApp() {
   };
 
   return createApp({
+    persistenceClient: createPersistenceDouble(),
     sessionSecret: randomBytes(32).toString('hex'),
     authService: {
       async login() { return { selectionRequise: false, user }; },
@@ -59,6 +61,7 @@ test('un mot de passe provisoire bloque les routes hors authentification jusquâ€
     agence_id: 3, doit_changer_mot_de_passe: true,
   };
   const app = createApp({
+    persistenceClient: createPersistenceDouble(),
     sessionSecret: randomBytes(32).toString('hex'),
     authService: {
       async login() { return { selectionRequise: false, user: forcedUser }; },
@@ -81,6 +84,7 @@ test('un mot de passe provisoire bloque les routes hors authentification jusquâ€
 test('les routes publiques demandent puis appliquent une rÃ©initialisation', async () => {
   const calls = [];
   const app = createApp({
+    persistenceClient: createPersistenceDouble(),
     sessionSecret: randomBytes(32).toString('hex'),
     authService: {
       async requestPasswordReset(payload) { calls.push(['request', payload]); },

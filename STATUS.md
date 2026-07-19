@@ -17,6 +17,16 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-19 — T-33C : premier lot de persistance explicitement composée**
+  - L’application et le service d’authentification n’importent plus le client Grist et refusent
+    désormais une composition privée du port de persistance ou du référentiel d’identité requis.
+  - Le choix opérationnel actuel de Grist est conservé, mais il est effectué explicitement dans
+    `server.js`. La fabrique de persistance ne suppose plus silencieusement un fournisseur absent.
+  - Les routes HTTP utilisent un double commun injecté dans les tests qui n’exercent pas la
+    persistance. Le bac à sable conserve son adaptateur mémoire isolé et lecture seule.
+  - Aucune bascule PostgreSQL, route publique, donnée, variable d’environnement ou capacité n’est
+    modifiée. Vérifications réussies : lint backend, 120 tests backend réussis sur 121 avec
+    l’intégration PostgreSQL ignorée, et `git diff --check`.
 - **2026-07-19 — T-33B : politiques de rôles consolidées**
   - Le référentiel canonique porte désormais les décisions communes de gestion des données
     d'agence et d'administration des utilisateurs. Les middlewares et règles d'exclusivité les

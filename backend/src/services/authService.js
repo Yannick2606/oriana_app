@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt';
 import { createHash, randomBytes } from 'node:crypto';
 
-import { gristClient } from './gristClient.js';
 import { mailService } from './mailService.js';
 import { normalizeRoleNames, ROLES } from './roleModel.js';
 
@@ -43,7 +42,7 @@ function tokenHash(token) {
 }
 
 export function createAuthService({
-  usersClient = gristClient,
+  usersClient,
   passwordComparer = bcrypt.compare,
   passwordHasher = (password) => bcrypt.hash(password, 12),
   mailer = mailService,
@@ -51,6 +50,10 @@ export function createAuthService({
   now = () => new Date(),
   invalidateUserSessions = async () => {},
 } = {}) {
+  if (!usersClient) {
+    throw new Error('Configuration d’authentification incomplète : usersClient');
+  }
+
   return {
     async login({ email, motDePasse, roleActif }) {
       const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
@@ -176,5 +179,3 @@ export function createAuthService({
     },
   };
 }
-
-export const authService = createAuthService();

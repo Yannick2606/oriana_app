@@ -5,8 +5,9 @@ import { createPersistenceClient } from '../src/services/persistence.js';
 import { testing as postgresClientTesting } from '../src/services/postgresClient.js';
 import { createSessionInvalidator } from '../src/services/sessionInvalidator.js';
 
-test('la persistance Grist reste le choix par défaut et un fournisseur inconnu est refusé', () => {
+test('sélectionne explicitement Grist et refuse un fournisseur absent ou inconnu', () => {
   assert.ok(createPersistenceClient({ provider: 'grist' }));
+  assert.throws(() => createPersistenceClient(), /Fournisseur de persistance requis/);
   assert.throws(() => createPersistenceClient({ provider: 'inconnu' }), /PERSISTENCE_PROVIDER invalide/);
 });
 

@@ -5,11 +5,13 @@ import test from 'node:test';
 import request from 'supertest';
 
 import { createApp } from '../src/app.js';
+import { createPersistenceDouble } from '../test-helpers/persistenceDouble.js';
 
 const frontendOrigin = 'https://oriana.example.invalid';
 
 function testApp() {
   return createApp({
+    persistenceClient: createPersistenceDouble(),
     sessionSecret: randomBytes(32).toString('hex'),
     frontendOrigin,
   });

@@ -6,6 +6,10 @@ import bcrypt from 'bcrypt';
 
 import { AuthError, createAuthService } from '../src/services/authService.js';
 
+test('refuse de créer le service sans référentiel d’identité injecté', () => {
+  assert.throws(() => createAuthService(), /usersClient/);
+});
+
 async function fixture({ actif = true, roles = ['consultant'], mustChange = false } = {}) {
   const motDePasse = randomBytes(24).toString('hex');
   const hash = await bcrypt.hash(motDePasse, 4);

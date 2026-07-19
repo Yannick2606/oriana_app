@@ -27,7 +27,6 @@ import { createSandboxRoutes } from './routes/sandboxRoutes.js';
 import { requirePasswordChanged } from './middlewares/requirePasswordChanged.js';
 import { frontendCors } from './middlewares/frontendCors.js';
 import { createAuthService } from './services/authService.js';
-import { gristClient } from './services/gristClient.js';
 import { patrimoineResources } from './services/patrimoineConfig.js';
 import { createPatrimoineService } from './services/patrimoineService.js';
 import { createQualificationService } from './services/qualificationService.js';
@@ -42,7 +41,8 @@ import { createSandboxService } from './services/sandboxService.js';
 
 export function createApp({
   authService,
-  patrimoineClient = gristClient,
+  persistenceClient,
+  patrimoineClient = persistenceClient,
   qualificationClient = patrimoineClient,
   offresClient = patrimoineClient,
   mandatsClient = patrimoineClient,
@@ -61,6 +61,9 @@ export function createApp({
 } = {}) {
   if (!sessionSecret) {
     throw new Error('Configuration de session incomplète : SESSION_SECRET');
+  }
+  if (!patrimoineClient) {
+    throw new Error('Configuration de persistance incomplète : persistenceClient');
   }
   if (sandboxData && process.env.NODE_ENV === 'production') {
     throw new Error('Le jeu de démonstration est interdit en production');

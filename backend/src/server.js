@@ -23,7 +23,7 @@ const sandboxData = sandboxEnabled
 const persistenceClient = sandboxEnabled
   ? createSandboxClient(sandboxData, { authEmail: process.env.SANDBOX_USER_EMAIL })
   : createPersistenceClient({
-    provider: process.env.PERSISTENCE_PROVIDER,
+    provider: process.env.PERSISTENCE_PROVIDER ?? 'grist',
     pool: postgresPool,
   });
 const sandboxAuthService = sandboxEnabled
@@ -35,10 +35,7 @@ const sandboxAuthService = sandboxEnabled
 const app = createApp({
   authService: sandboxAuthService,
   sessionStore: sandboxEnabled ? undefined : createPostgresSessionStore(postgresPool),
-  patrimoineClient: persistenceClient,
-  crmClient: persistenceClient,
-  matchingClient: persistenceClient,
-  utilisateursClient: persistenceClient,
+  persistenceClient,
   invalidateUserSessions: sandboxEnabled ? undefined : createSessionInvalidator(postgresPool),
   sandboxData,
   agentsOptions: {
