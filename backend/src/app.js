@@ -56,6 +56,8 @@ export function createApp({
   sessionStore,
   invalidateUserSessions = async () => {},
   sandboxData,
+  secureCookies = process.env.NODE_ENV === 'production'
+    || process.env.SESSION_COOKIE_SECURE === '1',
 } = {}) {
   if (!sessionSecret) {
     throw new Error('Configuration de session incomplète : SESSION_SECRET');
@@ -68,7 +70,7 @@ export function createApp({
 
   app.disable('x-powered-by');
   app.locals.utilisateursClient = utilisateursClient;
-  if (process.env.NODE_ENV === 'production') app.set('trust proxy', 1);
+  if (secureCookies) app.set('trust proxy', 1);
   app.use(frontendCors(frontendOrigin));
   app.use(express.json());
   app.use(session({
@@ -80,7 +82,7 @@ export function createApp({
     cookie: {
       httpOnly: true,
       sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
+      secure: secureCookies,
       maxAge: 8 * 60 * 60 * 1000,
     },
   }));
@@ -91,6 +93,12 @@ export function createApp({
   });
   app.use('/auth', createAuthRoutes(createAuthController(resolvedAuthService)));
   app.use(requirePasswordChanged);
+  if (sandboxData) {
+    app.use((request, response, next) => {
+      if (['GET', 'HEAD', 'OPTIONS'].includes(request.method)) return next();
+      return response.status(403).json({ error: 'SANDBOX_READ_ONLY' });
+    });
+  }
   app.use(createFormationRoutes(createFormationController(createFormationService(utilisateursClient))));
   if (sandboxData) {
     app.use('/sandbox', createSandboxRoutes(createSandboxController(createSandboxService(sandboxData))));

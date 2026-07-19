@@ -7,6 +7,8 @@ import { createApp } from './app.js';
 import { createPostgresPool } from './services/postgres.js';
 import { createPostgresSessionStore } from './services/sessionStore.js';
 import { createPersistenceClient } from './services/persistence.js';
+import { createSandboxAuthService } from './services/sandboxAuthService.js';
+import { createSandboxClient } from './services/sandboxClient.js';
 import { createSessionInvalidator } from './services/sessionInvalidator.js';
 
 const port = Number.parseInt(process.env.PORT ?? '3000', 10);
@@ -15,14 +17,23 @@ if (sandboxEnabled && process.env.NODE_ENV === 'production') {
   throw new Error('ORIANA_SANDBOX_MODE est interdit en production');
 }
 const postgresPool = sandboxEnabled ? undefined : createPostgresPool();
-const persistenceClient = createPersistenceClient({
-  provider: sandboxEnabled ? 'grist' : process.env.PERSISTENCE_PROVIDER,
-  pool: postgresPool,
-});
 const sandboxData = sandboxEnabled
   ? JSON.parse(await readFile(new URL('../fixtures/sandbox/data.json', import.meta.url), 'utf8'))
   : undefined;
+const persistenceClient = sandboxEnabled
+  ? createSandboxClient(sandboxData, { authEmail: process.env.SANDBOX_USER_EMAIL })
+  : createPersistenceClient({
+    provider: process.env.PERSISTENCE_PROVIDER,
+    pool: postgresPool,
+  });
+const sandboxAuthService = sandboxEnabled
+  ? createSandboxAuthService({
+    email: process.env.SANDBOX_USER_EMAIL,
+    passwordHash: process.env.SANDBOX_PASSWORD_HASH,
+  })
+  : undefined;
 const app = createApp({
+  authService: sandboxAuthService,
   sessionStore: sandboxEnabled ? undefined : createPostgresSessionStore(postgresPool),
   patrimoineClient: persistenceClient,
   utilisateursClient: persistenceClient,

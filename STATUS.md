@@ -17,6 +17,20 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-19 — T-32 : profil de prévisualisation isolé préparé, non déployé**
+  - Un profil Compose distinct assemble le frontend et le backend fictif sans conteneur PostgreSQL,
+    sans Grist et sans n8n. Il n’utilise ni les noms de conteneurs ni les volumes de production.
+  - Le backend embarque les fixtures, les clone en mémoire et exige un compte fictif multirôle dont
+    l’adresse et le hash bcrypt sont fournis uniquement par `.env.preview`, exclu de Git.
+  - L’authentification, la sélection des cinq rôles, la session HTTPS et les périmètres serveur sont
+    conservés. Toute écriture métier ou modification du compte répond `SANDBOX_READ_ONLY`.
+  - Le mode opératoire est documenté dans `deploy/PREVIEW.md`. Aucun profil n’a été lancé, aucun DNS
+    modifié et aucun déploiement effectué ; ces actions restent soumises à une validation distincte.
+  - Vérifications réussies : lint backend, 113 tests backend réussis et 1 intégration PostgreSQL
+    ignorée, lint frontend, 50 tests frontend, build frontend et `git diff --check`.
+  - Limite de contrôle : Docker est absent du poste, donc la résolution statique par
+    `docker compose config` devra être réalisée sur un hôte équipé avant tout lancement.
+  - T-32 reste en cours : les tunnels CRM, tâches et alertes de veille restent à enrichir.
 - **2026-07-19 — T-32 : premier jeu d’offres fictives et photographies locales**
   - Un générateur déterministe prépare cinq offres reliées à leur agence, utilisateurs fictifs,
     adresses non précises, sites, bâtiments, cellules, lots, conditions financières, mandats et

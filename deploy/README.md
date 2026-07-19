@@ -1,5 +1,8 @@
 # Déploiement orIAna
 
+La prévisualisation fictive utilise un profil entièrement séparé, décrit dans
+[`PREVIEW.md`](PREVIEW.md). Elle ne doit jamais être lancée avec ce fichier de production.
+
 Pré-requis : `api.boreal.immo` et `oriana.boreal.immo` pointent vers l'adresse IPv4 du VPS,
 le réseau Docker `root_default` existe et Traefik utilise le résolveur de certificats
 `mytlschallenge`.

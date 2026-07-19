@@ -11,6 +11,7 @@ COPY backend/package.json ./package.json
 COPY backend/src ./src
 COPY backend/scripts ./scripts
 COPY backend/sql ./sql
+COPY backend/fixtures ./fixtures
 USER node
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \

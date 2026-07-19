@@ -1,0 +1,60 @@
+services:
+  frontend:
+    build:
+      context: ..
+      dockerfile: frontend/Dockerfile
+      args:
+        VITE_API_BASE_URL: https://${PREVIEW_API_HOST:?PREVIEW_API_HOST requis}
+        VITE_ORGANIZATION_NAME: ${VITE_ORGANIZATION_NAME:-orIAna — Prévisualisation}
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=root_default
+      - traefik.http.routers.oriana-preview.rule=Host(`${PREVIEW_FRONTEND_HOST:?PREVIEW_FRONTEND_HOST requis}`)
+      - traefik.http.routers.oriana-preview.entrypoints=websecure
+      - traefik.http.routers.oriana-preview.tls=true
+      - traefik.http.routers.oriana-preview.tls.certresolver=mytlschallenge
+      - traefik.http.services.oriana-preview.loadbalancer.server.port=8080
+    networks:
+      - traefik
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx:uid=101,gid=101,mode=0755
+      - /var/run:uid=101,gid=101,mode=0755
+    security_opt:
+      - no-new-privileges:true
+
+  backend:
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ../.env.preview
+    environment:
+      NODE_ENV: preview
+      ORIANA_SANDBOX_MODE: "1"
+      SESSION_COOKIE_SECURE: "1"
+      PORT: 3000
+      FRONTEND_ORIGIN: https://${PREVIEW_FRONTEND_HOST:?PREVIEW_FRONTEND_HOST requis}
+      BACKEND_PUBLIC_URL: https://${PREVIEW_API_HOST:?PREVIEW_API_HOST requis}
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=root_default
+      - traefik.http.routers.oriana-preview-api.rule=Host(`${PREVIEW_API_HOST:?PREVIEW_API_HOST requis}`)
+      - traefik.http.routers.oriana-preview-api.entrypoints=websecure
+      - traefik.http.routers.oriana-preview-api.tls=true
+      - traefik.http.routers.oriana-preview-api.tls.certresolver=mytlschallenge
+      - traefik.http.services.oriana-preview-api.loadbalancer.server.port=3000
+    networks:
+      - traefik
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  traefik:
+    external: true
+    name: root_default

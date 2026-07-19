@@ -225,8 +225,12 @@ Ressources PHASE 1 : `sites`, `batiments`, `cellules`, `lots`, `offres`,
 ### Bac à sable Offre
 - `GET /sandbox/offres` — jeu fictif en lecture seule, disponible uniquement lorsque
   `ORIANA_SANDBOX_MODE=1`, après authentification et calcul d’un périmètre métier valide.
-- Le mode est refusé avec `NODE_ENV=production`. Il ne remplace ni l’authentification ni la
-  persistance métier et ne contacte jamais Grist ou PostgreSQL.
+- Le mode est refusé avec `NODE_ENV=production`. Il remplace les connecteurs externes par une copie
+  en mémoire du jeu fictif et exige `SANDBOX_USER_EMAIL` ainsi qu’un `SANDBOX_PASSWORD_HASH`
+  bcrypt fournis hors dépôt. Il ne contacte jamais Grist, PostgreSQL ou n8n.
+- Le compte fictif propose les cinq rôles métier. Les contrôles d’authentification, de rôle et de
+  périmètre restent appliqués côté serveur ; toute écriture métier ou opération sur son mot de
+  passe répond `403 SANDBOX_READ_ONLY`.
 - Le frontend l’utilise uniquement avec le paramètre local `?sandbox=1`. Sans ce paramètre, les
   routes métier habituelles restent la seule source de données.
 

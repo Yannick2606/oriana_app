@@ -288,6 +288,8 @@
 - Ajouter des photographies d'immeubles utilisables légalement et stockées par orIAna, sans URL
   externe fragile ni donnée personnelle réelle.
 - Fournir un chargement idempotent, réinitialisable et strictement séparé de la production.
+- Fournir un profil de prévisualisation isolé, sans connecteur externe ni écriture métier, dont les
+  identifiants restent exclusivement dans l’environnement de l’hôte.
 - Reproduire uniquement sous identités fictives les distributions et réaffectations utiles des
   sources décrites dans `docs/referentiels/SOURCES_METIER_ET_IMPORT.md` ; aucun profil réel n’est
   créé dans le bac à sable.

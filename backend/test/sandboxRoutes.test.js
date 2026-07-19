@@ -62,3 +62,35 @@ test('refuse le rôle super administrateur sans périmètre métier actif', asyn
   await login(agent);
   await agent.get('/sandbox/offres').expect(403);
 });
+
+test('bloque toute écriture métier dans la prévisualisation', async () => {
+  const agent = fixture();
+  await login(agent);
+  const response = await agent.post('/offres').send({ statut: 'brouillon' }).expect(403);
+
+  assert.equal(response.body.error, 'SANDBOX_READ_ONLY');
+});
+
+test('marque le cookie de session comme sécurisé derrière le proxy de prévisualisation', async () => {
+  const persistence = client();
+  const app = createApp({
+    patrimoineClient: persistence,
+    utilisateursClient: persistence,
+    sandboxData: createSandboxData(),
+    sessionSecret: randomBytes(32).toString('hex'),
+    secureCookies: true,
+    authService: {
+      async login() { return { selectionRequise: false, user: consultant }; },
+    },
+  });
+  const response = await request(app)
+    .post('/auth/login')
+    .set('X-Forwarded-Proto', 'https')
+    .send({
+      email: 'consultant.demo@example.invalid',
+      mot_de_passe: randomBytes(24).toString('hex'),
+    })
+    .expect(200);
+
+  assert.match(response.headers['set-cookie'][0], /; Secure;/);
+});
