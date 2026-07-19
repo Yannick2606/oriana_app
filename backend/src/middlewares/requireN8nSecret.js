@@ -1,7 +1,7 @@
 import { timingSafeEqual } from 'node:crypto';
 import { Buffer } from 'node:buffer';
 
-export function createRequireN8nSecret(resolveExpected = () => process.env.N8N_SHARED_SECRET) {
+export function createRequireN8nSecret(resolveExpected) {
   return function requireN8nSecret(request, response, next) {
     const expected = typeof resolveExpected === 'function' ? resolveExpected() : resolveExpected;
     const received = request.get('X-Oriana-Secret');

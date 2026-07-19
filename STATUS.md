@@ -17,6 +17,15 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-20 — T-33D : second lot du connecteur d’orchestration n8n**
+  - Le service Agents dépend désormais d’un port d’orchestration injecté. Il ne lit plus de
+    variable d’environnement, ne construit plus d’URL fournisseur et n’appelle plus `fetch`.
+  - L’adaptateur n8n est composé par `server.js`, conserve le délai de cinq secondes, le secret
+    dédié au webhook et l’URL de callback. Les codes API n8n historiques restent inchangés.
+  - Le callback conserve sa comparaison temporelle sûre et reçoit explicitement son secret depuis
+    la composition. Le suivi en persistance reste la boîte aux lettres asynchrone du résultat.
+  - Aucune IA, route publique ou donnée n’est ajoutée. Vérifications réussies : lint backend,
+    126 tests backend réussis sur 127 avec l’intégration PostgreSQL ignorée, et `git diff --check`.
 - **2026-07-19 — T-33D : premier lot du connecteur de messagerie**
   - Le service d’authentification dépend désormais d’un port de messagerie injecté et n’importe
     plus directement Nodemailer ni un adaptateur SMTP.

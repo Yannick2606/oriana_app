@@ -51,7 +51,8 @@ export function createApp({
   matchingClient = patrimoineClient,
   utilisateursClient = patrimoineClient,
   agentsClient = patrimoineClient,
-  agentsOptions,
+  agentOrchestrator,
+  agentsCallbackSecret,
   sessionSecret = process.env.SESSION_SECRET,
   frontendOrigin = process.env.FRONTEND_ORIGIN,
   sessionStore,
@@ -108,15 +109,9 @@ export function createApp({
   if (sandboxData) {
     app.use('/sandbox', createSandboxRoutes(createSandboxController(createSandboxService(sandboxData))));
   }
-  const resolvedAgentsOptions = {
-    webhookBaseUrl: agentsOptions?.webhookBaseUrl ?? process.env.N8N_WEBHOOK_BASE_URL,
-    sharedSecret: agentsOptions?.sharedSecret ?? process.env.N8N_SHARED_SECRET,
-    backendPublicUrl: agentsOptions?.backendPublicUrl ?? process.env.BACKEND_PUBLIC_URL,
-    fetchImplementation: agentsOptions?.fetchImplementation ?? fetch,
-  };
   app.use(createAgentsRoutes(
-    createAgentsController(createAgentsService(agentsClient, resolvedAgentsOptions)),
-    () => resolvedAgentsOptions.sharedSecret,
+    createAgentsController(createAgentsService(agentsClient, agentOrchestrator)),
+    () => agentsCallbackSecret,
   ));
   const patrimoineService = createPatrimoineService(patrimoineClient);
   for (const resource of patrimoineResources) {

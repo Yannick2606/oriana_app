@@ -4,6 +4,7 @@ import test from 'node:test';
 import request from 'supertest';
 import { createApp } from '../src/app.js';
 import { createRequireN8nSecret } from '../src/middlewares/requireN8nSecret.js';
+import { createN8nConnector } from '../src/services/n8nConnector.js';
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
 function client() {
@@ -24,8 +25,9 @@ function client() {
 const user = { id: 7, roles: ['consultant'], role_actif: 'consultant', agence_id: 3 };
 async function agentFor(dataClient, fetchImplementation = async () => ({ ok: true })) {
   const agent = request.agent(createApp({ patrimoineClient: dataClient, agentsClient: dataClient,
-    agentsOptions: { webhookBaseUrl: 'https://n8n.example.invalid', sharedSecret: 'test-shared-secret',
-      backendPublicUrl: 'https://api.example.invalid', fetchImplementation },
+    agentOrchestrator: createN8nConnector({ webhookBaseUrl: 'https://n8n.example.invalid',
+      sharedSecret: 'test-shared-secret', backendPublicUrl: 'https://api.example.invalid', fetchImplementation }),
+    agentsCallbackSecret: 'test-shared-secret',
     sessionSecret: randomBytes(32).toString('hex'), authService: { async login() { return { selectionRequise: false, user }; } } }));
   await agent.post('/auth/login').send({ email: 'test@example.invalid', mot_de_passe: randomBytes(20).toString('hex') }).expect(200);
   return agent;
@@ -63,11 +65,9 @@ test('le callback n8n reste accessible sans session utilisateur', async () => {
     patrimoineClient: dataClient,
     agentsClient: dataClient,
     mailer: { async sendPasswordReset() {} },
-    agentsOptions: {
-      webhookBaseUrl: 'https://n8n.example.invalid',
-      sharedSecret: 'test-shared-secret',
-      backendPublicUrl: 'https://api.example.invalid',
-    },
+    agentOrchestrator: createN8nConnector({ webhookBaseUrl: 'https://n8n.example.invalid',
+      sharedSecret: 'test-shared-secret', backendPublicUrl: 'https://api.example.invalid' }),
+    agentsCallbackSecret: 'test-shared-secret',
     sessionSecret: randomBytes(32).toString('hex'),
   });
 

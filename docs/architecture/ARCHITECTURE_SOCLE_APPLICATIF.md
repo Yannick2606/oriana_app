@@ -42,7 +42,7 @@ frontend ni par une donnée métier.
 | Autorisations | référentiel des rôles, middlewares et politiques de périmètre | normaliser les rôles et contrôler lecture/écriture côté serveur | consolidé par T-33B ; référentiel d’identité injecté et groupes de rôles centralisés |
 | Sessions | magasin de session et invalidation | conserver et invalider les sessions sans exposer de secret | PostgreSQL en exploitation normale, mémoire dans le bac à sable |
 | Persistance métier | port de dépôt générique de transition | lire et écrire les objets pris en charge | T-33C close ; modules découplés et adaptateurs Grist, PostgreSQL et bac à sable sélectionnés à la composition |
-| Connecteurs | adaptateurs externes | email et orchestration asynchrone | SMTP et n8n présents, frontières à extraire |
+| Connecteurs | adaptateurs externes | email et orchestration asynchrone | ports SMTP et n8n injectés par T-33D ; adaptateurs composés au démarrage |
 | Objets transverses futurs | socle | Audit, Notification, Préférence, Consentement, Fichier, Tâche et Capture | à spécifier ; aucune création de table autorisée par T-33A |
 
 ## Ports internes
@@ -57,7 +57,7 @@ fournisseur ou un protocole externe.
 | Magasin de sessions | lire, enregistrer, expirer et invalider une session | `connect-pg-simple` en mode normal ; magasin mémoire Express dans la prévisualisation |
 | Persistance métier | `list`, `getById`, `create`, `update`, `delete` sur une ressource autorisée | T-33C implémentée ; Grist actuel, PostgreSQL cible et adaptateur mémoire en lecture seule satisfont le même port |
 | Envoi de message transactionnel | envoyer un message à un destinataire à partir d’un contenu validé, avec erreur explicite | port injecté par T-33D ; adaptateur SMTP via Nodemailer composé au démarrage avec délais bornés |
-| Orchestration asynchrone | déclencher un traitement borné, recevoir un accusé, suivre son état et authentifier le callback | n8n pour le démonstrateur ; extraction prévue en T-33D |
+| Orchestration asynchrone | déclencher un traitement borné, recevoir un accusé, suivre son état et authentifier le callback | port injecté par T-33D ; adaptateur n8n composé au démarrage avec délai de cinq secondes |
 | Audit, notification, préférence, consentement, fichier, tâche et capture | aucun contrat exécutable avant arbitrage de l’autorité, du cycle de vie, des droits et de la conservation | spécification prévue en T-33E |
 
 Le port de persistance générique est une compatibilité de transition avec les contrats de phase 1.
@@ -93,7 +93,7 @@ modèle à reproduire dans les services métier.
 |---|---|---|
 | `app.js` et le service d’authentification proposaient Grist comme valeur de repli | fournisseur implicite dans le cœur applicatif | traité par le premier lot T-33C |
 | le calcul du périmètre importait directement Grist et les groupes de rôles étaient dupliqués | autorisation couplée au fournisseur et politiques divergentes | traité par T-33B |
-| le service Agents construit l’URL n8n et effectue lui-même l’appel réseau | orchestration confondue avec la règle métier | T-33D |
+| le service Agents construisait l’URL n8n et effectuait lui-même l’appel réseau | orchestration confondue avec la règle métier | traité par le second lot T-33D |
 | l’authentification dépendait directement du transport SMTP | identité couplée au fournisseur de message | traité par le premier lot T-33D |
 | les objets transverses futurs ne possèdent pas encore de contrat | risque d’inventer tables et comportements | T-33E |
 | aucune règle automatisée ne bloque les imports interdits | dérive architecturale silencieuse | T-33F |

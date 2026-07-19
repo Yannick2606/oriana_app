@@ -11,6 +11,7 @@ import { createSandboxAuthService } from './services/sandboxAuthService.js';
 import { createSandboxClient } from './services/sandboxClient.js';
 import { createSessionInvalidator } from './services/sessionInvalidator.js';
 import { createMailService } from './services/mailService.js';
+import { createN8nConnector } from './services/n8nConnector.js';
 
 const port = Number.parseInt(process.env.PORT ?? '3000', 10);
 const sandboxEnabled = process.env.ORIANA_SANDBOX_MODE === '1';
@@ -41,18 +42,20 @@ const mailer = sandboxEnabled ? undefined : createMailService({
   from: process.env.MAIL_FROM,
   frontendUrl: process.env.FRONTEND_PUBLIC_URL ?? process.env.FRONTEND_ORIGIN,
 });
+const agentOrchestrator = createN8nConnector({
+  webhookBaseUrl: process.env.N8N_WEBHOOK_BASE_URL,
+  sharedSecret: process.env.N8N_SHARED_SECRET,
+  backendPublicUrl: process.env.BACKEND_PUBLIC_URL,
+});
 const app = createApp({
   authService: sandboxAuthService,
   mailer,
   sessionStore: sandboxEnabled ? undefined : createPostgresSessionStore(postgresPool),
   persistenceClient,
+  agentOrchestrator,
+  agentsCallbackSecret: process.env.N8N_SHARED_SECRET,
   invalidateUserSessions: sandboxEnabled ? undefined : createSessionInvalidator(postgresPool),
   sandboxData,
-  agentsOptions: {
-    webhookBaseUrl: process.env.N8N_WEBHOOK_BASE_URL,
-    sharedSecret: process.env.N8N_SHARED_SECRET,
-    backendPublicUrl: process.env.BACKEND_PUBLIC_URL,
-  },
 });
 
 app.listen(port, () => {
