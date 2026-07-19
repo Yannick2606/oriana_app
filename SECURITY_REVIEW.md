@@ -1,5 +1,8 @@
 # Revue de sécurité PHASE 1
 
+> Preuve historique au 14 juillet 2026. Les invariants actuels sont définis dans
+> [`docs/vision/CONSTITUTION_ORIANA.md`](docs/vision/CONSTITUTION_ORIANA.md) et `AGENTS.md`.
+
 Revue exécutée le 14 juillet 2026 sur T-00 à T-20.
 
 | Règle | Contrôle | Résultat |

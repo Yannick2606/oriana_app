@@ -9,6 +9,7 @@
 - [x] Fournir les valeurs réelles dans un `.env` local (jamais commité) : clés Grist, secret n8n, etc.
 
 ## État par phase
+- Documentation v2.0 : T-31A terminée et validée le 19 juillet 2026.
 - PHASE 1 : terminée — T-00 à T-22 et extensions T-22A à T-22D validées.
 - Migration PostgreSQL : T-27, T-28 et T-29 terminées ; T-30 non démarrée.
 - Reprise fonctionnelle : T-30A est active ; toute bascule PostgreSQL reste bloquée.
@@ -16,6 +17,27 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-19 — T-31A terminée : Documentation v2.0 validée**
+  - L’ensemble des Markdown du dépôt et les trois historiques PDF `ORIANA1`, `ORIANA2` et
+    `ORIANA3` fournis ont été lus avant modification. Les répertoires `docs/vision`,
+    `docs/methode` et `docs/audit` attendus n’existaient ni dans la branche ni dans son historique.
+  - La hiérarchie Vision → Méthode BORÉAL → ORMO → Plateforme → Patrimoine, les familles de
+    documents, niveaux de validation et règles de traçabilité sont consolidés.
+  - orIAna est défini comme plateforme d’organisation augmentée. Knowledge Center, Organisation
+    Virtuelle, Experts Virtuels, Chief Agent, agents spécialisés et AI Gateway sont des cibles
+    validées mais leurs contrats détaillés restent à spécifier.
+  - PostgreSQL est la source de vérité métier cible ; Grist reste la source opérationnelle de
+    production jusqu’au Go humain de T-30. Aucun déploiement ni changement de source n’a eu lieu.
+  - Le registre des décisions, ORMO minimal, le Glossaire et les référentiels modules/objets ainsi
+    que les guides UX/UI et de gouvernance ont été ajoutés sans inventer les détails absents.
+  - Le commit `499ce8300ce86fdd710fe26c04ac62eb362fe0a4` et le grand document d’audit évoqués dans un
+    historique PDF ne sont pas présents dans le clone local ; leur contenu non fourni n’est pas
+    traité comme acquis.
+  - Arbitrages ouverts : contrats Knowledge Center/Organisation Virtuelle/Chief Agent, inventaire
+    canonique des Experts, maturité patrimoniale, usage résiduel de Grist, confrontation des
+    méthodes marketing externes à leurs documents sources.
+  - Les contrôles finaux sont conformes et la validation humaine du commit documentaire unique a
+    été reçue. T-30A demeure la prochaine tâche de développement active.
 - **2026-07-17 — T-30A active : premier audit des interactions corrigé localement**
   - Les raccourcis visibles du tableau de bord ouvrent désormais un parcours réel : patrimoine,
     qualification et création d'une nouvelle société dans le CRM.

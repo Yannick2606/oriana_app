@@ -129,3 +129,12 @@ Constats structurants :
 
 Conclusion : le modèle PostgreSQL cible et la stratégie d'import sont validés. Le faible volume
 réduit le risque technique, mais ne dispense pas des contrôles de relations et de droits.
+
+## Rectification issue de l’import réel du 16 juillet 2026
+
+L’inventaire initial comptait 20 tables et 75 lignes en incluant six rôles attendus dans
+`Ref_Roles`. Le contrôle d’import a établi que cette table n’existe pas dans Grist : les rôles sont
+portés par `Utilisateurs` puis normalisés vers PostgreSQL. Le périmètre réellement accessible est
+donc de **19 tables et 69 lignes**. Deux imports successifs ont produit les mêmes volumes, zéro
+rejet et zéro relation orpheline. Cette rectification remplace le total initial sans altérer la
+cartographie cible ni les preuves historiques de l’audit du 15 juillet.

@@ -1,20 +1,21 @@
-# SPEC.md — Spécification orIAna
+# SPEC.md — Spécification exécutable orIAna
 
-> Ce fichier décrit **quoi** construire. Il fait foi sur les exigences, le schéma de données et
-> les contrats d'API. `AGENTS.md` = comment opérer. `PLAN.md` = dans quel ordre. En cas de doute
-> sur une exigence, ce fichier tranche ; ne pas inventer de comportement non spécifié — le
-> signaler dans STATUS.md.
+> Version 2.0 — 19 juillet 2026. Ce fichier fait foi sur les contrats techniques, le schéma de
+> données et les API. Le [CDC](CDC.md) fait foi sur les capacités métier ; la
+> [Constitution](docs/vision/CONSTITUTION_ORIANA.md) sur les invariants ; `STATUS.md` sur l’état
+> observé. Ne pas implémenter un comportement non spécifié.
 
 ---
 
 ## 1. Objectif et périmètre
 
-Application d'intelligence pour l'immobilier d'entreprise de l'agence BORÉAL. Trois briques :
+orIAna est une plateforme d’organisation augmentée dont l’immobilier d’affaires constitue le
+premier module. L’implémentation actuelle comporte :
 
-1. **Backend-proxy** (Node.js/Express) — détient les secrets, authentifie, applique les droits,
-   sert de pont unique vers Grist et n8n.
+1. **Backend** (Node.js/Express) — détient les secrets, authentifie, applique les droits et expose
+   les contrats internes vers la persistance et les connecteurs.
 2. **Frontend** (React + Vite + Tailwind) — interface, vues par rôle.
-3. **PostgreSQL** — base métier cible et future source de vérité, accessible uniquement par le backend.
+3. **PostgreSQL** — source de vérité métier cible, accessible uniquement par le backend.
 4. **n8n** (externe, existant) — agents d'intelligence, appelés par webhook.
 
 Pendant la transition, Grist reste la source de vérité de production. La bascule vers PostgreSQL
@@ -22,51 +23,56 @@ n'intervient qu'après migration contrôlée, rapprochement complet et validatio
 Après la bascule, Grist est réservé au pilotage marketing et éditorial ; il ne porte plus les
 données métier de référence.
 
-Périmètre de code de la PHASE 1 (voir §7 pour le découpage phases) :
-authentification, gestion des rôles/droits, CRUD du patrimoine et des offres, CRM de base,
-affichage du matching. Les baux, diagnostics, documents, historique CRM, POI et fonds de
-commerce sont **hors périmètre de code PHASE 1** (modélisés mais non développés maintenant).
+La phase 1 est implémentée. T-30A audite actuellement son utilisabilité ; T-30 n’autorise pas encore
+la bascule. Les piliers Knowledge Center, ORMO, Organisation Virtuelle, Chief Agent et AI Gateway
+sont des cibles validées dont les contrats détaillés restent à spécifier avant code.
 
 ## 2. Contraintes techniques imposées
 
-- Backend : Node.js (LTS), Express. Structure en couches (routes → contrôleurs → services →
-  client Grist). Tests avec le runner au choix (Jest ou node:test), lint ESLint.
+- Backend : Node.js 20+, Express. Structure en couches (routes → contrôleurs → services →
+  persistance/connecteurs). Tests `node:test`, lint ESLint.
 - Frontend : React (fonctionnel + hooks), Vite, Tailwind CSS. Pas de state manager externe en
   PHASE 1.
-- Communication : le frontend appelle exclusivement le backend en HTTPS/JSON. Le backend appelle
-  Grist (API REST) et n8n (webhooks). Le frontend n'appelle jamais Grist ni n8n.
+- Communication : le frontend appelle exclusivement le backend en HTTPS/JSON. Le backend utilise
+  la couche de persistance et les connecteurs n8n/IA. Le frontend n’appelle jamais directement une
+  base, Grist, n8n ou un fournisseur IA.
 - Secrets : variables d'environnement uniquement (voir `.env.example`). Rien dans le dépôt.
+- Architecture : monolithe modulaire ; connecteurs externes derrière des contrats internes.
 
 ## 3. Rôles et droits (exigence centrale)
 
-Quatre rôles. Trois actifs en PHASE 1 (client = PHASE ultérieure).
+Les cinq rôles canoniques actuels sont :
 
 | Rôle | Type | Périmètre de visibilité |
 |------|------|-------------------------|
-| consultant | interne | Uniquement SES données (offres, demandes, mandats, contacts dont il est gestionnaire) |
-| manager | interne | Toute l'agence (tous les consultants de son `agence_id`) |
-| admin | interne | Toute l'agence + gestion des utilisateurs et données de référence |
-| client | externe | (PHASE ultérieure) annonces publiques + ses demandes |
+| consultant | interne | ses données métier |
+| master_consultant | interne | ses données et lecture de son équipe active |
+| directeur_agence | interne | données métier et organisation de son agence |
+| admin_agence | interne | comptes et habilitations des niveaux inférieurs de son agence |
+| super_admin | interne | administration globale, sans accès métier implicite |
 
 **Règle d'or** : le filtrage s'applique **côté serveur**, à chaque requête. Un `consultant`
 n'obtient jamais, via l'API, une donnée dont il n'est pas gestionnaire, même s'il forge la requête.
-Le `agence_id` de l'utilisateur connecté filtre systématiquement toutes les requêtes.
+Le `agence_id`, les rattachements et le rôle actif sont relus/appliqués côté serveur. Les alias
+historiques `manager` et `admin` ne sont conservés que pour la migration. Le futur rôle externe du
+portail T-40 sera spécifié séparément.
 
 ## 4. Modèle de données (PHASE 1)
 
-> Modèle métier à transposer dans PostgreSQL. Durant la migration, les tables Grist existantes
-> restent la référence de production. PostgreSQL est déployé comme service privé et versionné par
-> migrations ; aucune double écriture durable ne doit être introduite sans stratégie explicite.
+> Modèle métier canonique de la phase 1. Les migrations `backend/sql` en portent l’implémentation
+> PostgreSQL et `legacy_grist_id` conserve le rapprochement. Durant la transition, les tables Grist
+> restent la référence de production ; aucune double écriture durable ne doit être introduite sans
+> stratégie explicite.
 > Convention : `PK` identifiant · `FK→` référence · `[]FK→` liste de références.
 > **Toutes les tables métier portent `agence_id`.**
 
 ### Utilisateurs
-`id` PK · `nom` · `prenom` · `email` (unique) · `mot_de_passe_hash` (bcrypt) · `roles` enum
-multiple (consultant|manager|admin|client) · `agence_id` FK→Agences · `actif` bool ·
+`id` PK · `nom` · `prenom` · `email` (unique) · `mot_de_passe_hash` (bcrypt) · `roles` multiple
+(consultant|master_consultant|directeur_agence|admin_agence|super_admin) · `agence_id` FK→Agences ·
+`master_consultant_id` FK→Utilisateurs · `actif` bool · `progression_formation` ·
 `derniere_connexion` · `doit_changer_mot_de_passe` bool · `reset_mot_de_passe_hash` texte
 (SHA-256) · `reset_mot_de_passe_expiration` texte (ISO 8601).
 > L'API expose `roles` ; la colonne technique existante dans Grist reste `role` (ChoiceList).
-> **Action Grist requise** : ajouter `mot_de_passe_hash` (absent aujourd'hui). Voir PLAN T-01.
 > Un utilisateur peut cumuler plusieurs rôles. S'il en possède plusieurs, il choisit un
 > `role_actif` autorisé lors de la connexion. La session conserve ce rôle actif et le backend
 > applique uniquement son périmètre jusqu'à la déconnexion ou au changement de session.
@@ -153,20 +159,23 @@ multiple (consultant|manager|admin|client) · `agence_id` FK→Agences · `actif
 `surface_min` · `surface_max` · `budget_min` · `budget_max` · `secteur_geo` ·
 `criteres_specifiques` · `gestionnaire` FK→Utilisateurs · `donnee_exclusive` bool · `agence_id`.
 
-> Sociétés, Contacts, Demandes et Mandats sont exclusifs à la création. Le gestionnaire et le
-> manager de l'agence peuvent lever l'exclusivité. Une donnée non exclusive est lisible par les
-> consultants de la même agence, mais reste modifiable uniquement par son gestionnaire ou le
-> manager. Seul le manager peut réactiver l'exclusivité. Aucun partage inter-agences en PHASE 1.
+> Sociétés, Contacts, Demandes et Mandats sont exclusifs à la création. Le gestionnaire peut lever
+> l’exclusivité ; directeur et administrateur d’agence peuvent la lever ou la réactiver dans leur
+> agence. Une donnée non exclusive est lisible dans l’agence, mais reste modifiable par son
+> gestionnaire ou ces deux rôles. Le master consultant n’obtient qu’une lecture de son équipe.
 
-### Matching  (table Grist existante `Matching_demandes_lots`, formules Grist)
+### Matching
 `id` PK · `demande_id` FK→Demandes · `lot_id` FK→Lots · `score_global` · `scores_detail`.
-> Le score est calculé par Grist (formules, pondération 35/30/20/15). Le backend le **lit**,
-> ne le recalcule pas.
+> Les quatre scores Grist existants sont des valeurs historiques. L’audit réel n’a trouvé aucune
+> formule active à traduire. Le backend les **lit** sans recalcul ; tout futur moteur de matching
+> doit être spécifié et validé sur un oracle métier avant remplacement.
 
 ## 5. Contrats d'API (backend-proxy)
 
-Toutes les routes (sauf `/auth/login`) exigent une session valide. Le backend déduit
-`user`, `role`, `agence_id` du jeton, et filtre en conséquence. Réponses en JSON.
+Toutes les routes métier exigent une session valide. Exceptions : `/health`, connexion, demande et
+réalisation d’une réinitialisation de mot de passe, et callback n8n protégé par son secret dédié. Le
+backend déduit `user`, `role_actif` et `agence_id` de la session puis filtre en conséquence.
+Réponses en JSON.
 Codes : 200 OK · 201 créé · 400 requête invalide · 401 non authentifié · 403 interdit ·
 404 introuvable · 500 erreur serveur.
 
@@ -182,7 +191,7 @@ les appels serveur sans en-tête `Origin` restent possibles pour n8n et les cont
   Réponse authentifiée `{ user: {id, nom, prenom, roles, role_actif} }`.
 - `POST /auth/logout` — invalide la session.
 - `GET /auth/me` — renvoie l'utilisateur courant (ou 401).
-- `POST /auth/role` — body `{ role_actif }` ; relit le compte dans Grist, vérifie qu'il est
+- `POST /auth/role` — body `{ role_actif }` ; relit le compte dans la persistance, vérifie qu'il est
   toujours actif et que le rôle est toujours attribué, puis met à jour la session. Aucun nouveau
   mot de passe n'est demandé tant que la session est valide.
 - `POST /auth/mot-de-passe/premiere-connexion` — body `{ nouveau_mot_de_passe }` ; uniquement
@@ -190,15 +199,16 @@ les appels serveur sans en-tête `Origin` restent possibles pour n8n et les cont
   bcrypt, désactive le drapeau puis met à jour la session.
 - `POST /auth/mot-de-passe/demande` — body `{ email }` ; répond toujours de façon générique,
   crée un jeton aléatoire valable 30 minutes pour un compte actif et envoie le lien par SMTP.
-  Grist ne conserve que le hash SHA-256 du jeton.
+  La persistance ne conserve que le hash SHA-256 du jeton.
 - `POST /auth/mot-de-passe/reinitialisation` — body `{ token, nouveau_mot_de_passe }` ; vérifie
   le hash et l'expiration, remplace le hash bcrypt puis invalide immédiatement le jeton.
 
 ### Middleware (à appliquer sur toutes les routes protégées)
 - `requireAuth` — rejette 401 si pas de session valide.
-- `scopeByRole` — utilise exclusivement le `role_actif` validé côté serveur et injecte le filtre :
-  `consultant` → `gestionnaire = user.id` ; `manager`/`admin` →
-  `agence_id = user.agence_id`. Ce filtre est appliqué à CHAQUE lecture/écriture.
+- `scopeByRole` — utilise exclusivement le `role_actif` validé côté serveur : consultant → ses
+  données ; master consultant → ses données et lecture de son équipe ; directeur/admin d’agence →
+  leur agence ; super admin → aucun accès métier implicite. Ce périmètre s’applique à chaque
+  lecture/écriture.
 - `requirePasswordChanged` — bloque avec `PASSWORD_CHANGE_REQUIRED` toutes les routes métier
   d'une session utilisant encore un mot de passe provisoire. Les routes de changement et de
   déconnexion restent accessibles.
@@ -207,7 +217,7 @@ les appels serveur sans en-tête `Origin` restent possibles pour n8n et les cont
 Pour chaque ressource ci-dessous : `GET /{ressource}` (liste filtrée par rôle),
 `GET /{ressource}/:id` (403 si hors périmètre), `POST /{ressource}` (crée avec `agence_id` de
 l'utilisateur), `PUT /{ressource}/:id` (403 si hors périmètre), `DELETE /{ressource}/:id`
-(admin/manager selon règle).
+(directeur ou administrateur d’agence selon la ressource).
 
 Ressources PHASE 1 : `sites`, `batiments`, `cellules`, `lots`, `offres`,
 `conditions-financieres`, `mandats`, `societes`, `contacts`, `demandes`.
@@ -219,25 +229,26 @@ Ressources PHASE 1 : `sites`, `batiments`, `cellules`, `lots`, `offres`,
 - `POST /caracteristiques-bien` — enregistre une valeur (un `*_id` selon `niveau`).
 
 ### Matching
-- `GET /matching?demande_id=` — renvoie les lots scorés pour une demande (lecture des scores
-  Grist), triés par `score_global` décroissant.
+- `GET /matching?demande_id=` — renvoie les lots scorés pour une demande (lecture des valeurs
+  historiques de la persistance), triés par `score_global` décroissant.
 
-### Administration (admin uniquement)
-- `GET|POST|PUT /utilisateurs` — gestion des comptes. `POST` hache le mot de passe (bcrypt)
+### Administration hiérarchique
+- `GET|POST|PUT /utilisateurs` — réservé à `directeur_agence`, `admin_agence` et `super_admin`,
+  avec leurs limites hiérarchiques respectives. `POST` hache le mot de passe (bcrypt)
   avant écriture et impose son remplacement initial. `PUT` peut désactiver (`actif=false`).
-- `PUT /utilisateurs/:id/mot-de-passe` — réinitialisation admin ; hache la nouvelle valeur et
+- `PUT /utilisateurs/:id/mot-de-passe` — réinitialisation administrative ; hache la nouvelle valeur et
   repositionne obligatoirement `doit_changer_mot_de_passe=true`.
 
 ### Intégration n8n (contrat asynchrone — voir §6)
 - `POST /agents/:agent/declencher` — body `{ objet_type, objet_id }`. Le backend appelle le
   webhook n8n correspondant (secret partagé), renvoie `202 Accepted` + un identifiant de suivi.
   Le résultat n'est PAS attendu de façon synchrone.
-- `GET /agents/statut?objet_type=&objet_id=` — renvoie l'état du traitement (lu dans Grist :
+- `GET /agents/statut?objet_type=&objet_id=` — renvoie l'état du traitement (lu dans la persistance :
   en_attente|en_cours|termine|erreur) et le résultat si `termine`.
 - Démonstration PHASE 1 : agent `demonstration`, limité aux objets `demande`, webhook fixe
   `{N8N_WEBHOOK_BASE_URL}/webhook/oriana-demonstration`.
 - `POST /agents/callback` — appelé par n8n avec le secret partagé ; le backend écrit le résultat
-  dans Grist. La clé Grist reste ainsi exclusivement dans le backend.
+  dans la persistance. Aucun connecteur de données n’est exposé à n8n.
 
 ### Traitements_Agents
 `id` PK · `suivi_id` · `agent` · `objet_type` · `objet_id` · `statut_traitement`
@@ -252,27 +263,27 @@ Principe : un agent peut mettre plusieurs secondes à minutes. On ne bloque jama
 2. Le backend appelle le webhook n8n (URL + secret depuis l'environnement), en passant
    `objet_type`, `objet_id`, `agence_id`, `user_id`. Il répond immédiatement `202` au frontend.
 3. n8n travaille, puis appelle le callback backend protégé. Le backend écrit son résultat dans
-   Grist et met `statut_traitement` à `termine` (ou `erreur`).
+   la persistance et met `statut_traitement` à `termine` (ou `erreur`).
 4. Le frontend interroge `GET /agents/statut` (polling léger) jusqu'à `termine`, puis affiche
    le résultat. Pendant ce temps, l'UI montre « traitement en cours », sans figer.
 
-Ne jamais implémenter d'appel n8n synchrone bloquant. Grist est la boîte aux lettres du résultat.
+Ne jamais implémenter d'appel n8n synchrone bloquant. La persistance est la boîte aux lettres du
+résultat ; n8n ne détient aucun accès direct à la source de vérité.
 
-## 7. Découpage en phases (ne coder que la PHASE 1)
+## 7. Découpage et statut
 
-- **PHASE 1 (ce build)** : auth, rôles/droits, CRUD patrimoine (Sites→Lots) + qualification EAV
-  + offres/conditions + mandats + CRM de base (Societes, Contacts, Demandes) + lecture matching
-  + admin utilisateurs + squelette du contrat n8n (déclencher/statut) avec **un** agent branché
-  en démonstration.
-- **PHASE 2 (plus tard)** : Baux, Diagnostics, Documents, Annonces, Transactions, Interactions,
+- **PHASE 1 (implémentée, recette T-30A en cours)** : auth, rôles/droits, CRUD patrimoine
+  (Sites→Lots), qualification EAV, offres/conditions, mandats, CRM de base (Societes, Contacts,
+  Demandes), lecture matching, administration utilisateurs et contrat n8n avec un agent de
+  démonstration.
+- **Modules planifiés** : Baux, Diagnostics, Documents, Annonces, Transactions, Interactions,
   Actions, Copropriété, honoraires détaillés, historique CRM complet.
-- **CIBLE (réservé)** : POI thématiques (dépend d'un agent), Fonds de commerce, portail client
-  externe, collaboration inter-agences.
+- **Cible plateforme à spécifier** : Knowledge Center, ORMO détaillé, Organisation Virtuelle,
+  Chief Agent, Experts Virtuels et AI Gateway.
 
-Ne pas anticiper le code des PHASES 2/CIBLE. En revanche, ne rien coder qui **empêcherait** de
-les ajouter (garder `agence_id` partout, garder le 4e rôle `client` prévu dans l'enum).
+Ne pas anticiper leur code avant critères et contrats validés. Ne rien coder qui empêche leur ajout.
 
-## 8. Critères de « fini » pour la PHASE 1
+## 8. Critères de recette de la base actuelle
 
 - Un utilisateur peut se connecter, et selon son rôle, voit un périmètre correct (testé).
 - Un consultant ne peut PAS accéder aux données d'un autre consultant, même via appel API direct
@@ -289,10 +300,20 @@ les ajouter (garder `agence_id` partout, garder le 4e rôle `client` prévu dans
   métier après une bascule réversible et contrôlée.
 - Les sauvegardes automatiques, la rétention, le chiffrement des accès et un test réel de
   restauration sont obligatoires avant la bascule.
-- Grist peut ensuite piloter le calendrier éditorial, les brouillons et les validations marketing.
-- Brevo gère les abonnements, segments, campagnes, préférences et désinscriptions ; PostgreSQL
-  conserve la référence des consentements, leur date et leur provenance.
+- L’usage résiduel de Grist après bascule doit être explicitement décidé ; il peut éventuellement
+  piloter calendrier éditorial, brouillons et validations sans redevenir une source métier.
+- Un connecteur de diffusion tel que Brevo peut gérer abonnements, segments, campagnes,
+  préférences et désinscriptions ; PostgreSQL conserve la référence des consentements, leur date et
+  leur provenance. Ce connecteur reste remplaçable.
 - n8n et les agents IA produisent des brouillons de newsletters et de publications sociales.
   Une validation humaine est requise avant diffusion, au moins jusqu'à décision explicite contraire.
 - Une offre ne peut être publiée que si son état et sa disponibilité viennent d'être confirmés
   depuis PostgreSQL.
+
+## 10. Contrats à spécifier avant développement de la plateforme cible
+
+Pour le Knowledge Center, ORMO, l’Organisation Virtuelle, les Experts Virtuels, le Chief Agent et
+l’AI Gateway, chaque spécification devra définir : responsabilités, entrées/sorties, provenance,
+confiance, mémoire, droits, validation humaine, erreurs, reprise, coût, observabilité, rétention,
+sécurité, tests et mode dégradé. Le nombre historique d’au moins 23 agents/Experts est un élément de
+patrimoine, pas une contrainte de découpage technique.

@@ -1,14 +1,16 @@
 # orIAna
 
-Application web d’intelligence pour l’immobilier d’entreprise. Le nom de l’organisation est
-configurable et l’identité de l’application est centralisée pour permettre le futur changement
-de nom de la société.
+orIAna est une **plateforme d’organisation augmentée**, initialement construite pour BORÉAL dans
+l’immobilier d’affaires. Le CRM et l’immobilier sont des modules du produit ; ils ne définissent
+pas seuls sa finalité. La référence intellectuelle commence dans
+[`docs/vision/README_DOCUMENTATION.md`](docs/vision/README_DOCUMENTATION.md).
 
 Le monorepo contient :
 
 - `backend/` : API Node.js/Express, sessions et contrôle des autorisations ;
 - `frontend/` : interface React/Vite/Tailwind ;
-- Grist : source de vérité externe ;
+- PostgreSQL : source de vérité métier cible, préparée mais non basculée ;
+- Grist : source opérationnelle historique pendant la transition T-30 ;
 - n8n : exécution externe des agents asynchrones.
 
 Le frontend n’accède jamais directement à Grist ou à n8n.
@@ -125,8 +127,11 @@ enregistrée dans Grist séparément pour chaque rôle actif.
 
 ## Documents du projet
 
-- `SPEC.md` : exigences fonctionnelles et schéma ;
-- `PLAN.md` : séquence des tâches ;
-- `STATUS.md` : décisions et validations ;
-- `SECURITY_REVIEW.md` : revue de sécurité de la phase 1 ;
-- `AGENTS.md` : règles de contribution automatisée.
+- [`README_DOCUMENTATION.md`](docs/vision/README_DOCUMENTATION.md) : index, ordre de lecture et
+  autorité documentaire ;
+- [`CDC.md`](CDC.md) : capacités et exigences métier ;
+- [`SPEC.md`](SPEC.md) : contrats techniques et données ;
+- [`PLAN.md`](PLAN.md) : séquence des tâches ;
+- [`STATUS.md`](STATUS.md) : état, décisions et preuves ;
+- [`SECURITY_REVIEW.md`](SECURITY_REVIEW.md) : revue historique de la phase 1 ;
+- [`AGENTS.md`](AGENTS.md) : règles d’exécution dans le dépôt.

@@ -1,9 +1,11 @@
-# PLAN.md — Plan de construction orIAna (PHASE 1)
+# PLAN.md — Feuille de route orIAna
 
-> Séquence de tâches, chacune un checkpoint vérifiable. Traiter **dans l'ordre**. Ne pas démarrer
+> Version 2.0 — 19 juillet 2026. Séquence de tâches, chacune un checkpoint vérifiable. Traiter **dans l'ordre**. Ne pas démarrer
 > une tâche tant que la précédente n'est pas vérifiée, commitée, et STATUS.md à jour.
 > Chaque tâche liste ses **critères d'acceptation** : la tâche n'est finie que si TOUS sont vrais.
 > `[ ]` à faire · `[~]` en cours · `[x]` fait (mettre à jour au fil de l'eau, aussi dans STATUS.md).
+> Les tâches antérieures à T-22A conservent les noms historiques `manager` et `admin` ; T-22A les
+> remplace par `master_consultant` et `admin_agence` et ajoute les rôles canoniques actuels.
 
 ## Jalon 0 — Fondations
 
@@ -267,6 +269,16 @@
 - **Acceptation** : vision, ordre de réalisation et exigences transverses consignés avant tout
   développement du nouveau périmètre. Décision validée lors des échanges produit de juillet 2026.
 
+### [x] T-31A : Consolider le patrimoine documentaire v2.0
+- Établir la hiérarchie Vision → BORÉAL → ORMO → Plateforme → Patrimoine et le registre des
+  décisions, sans transformer les idées historiques en exigences validées.
+- Réaligner AGENTS, CDC, SPEC, PLAN et STATUS ; créer uniquement les référentiels nécessaires à
+  la compréhension autonome du projet.
+- Vérifier les liens, la cohérence cible/réel, les doublons, le Markdown et l’absence de secrets.
+- **Acceptation** : un nouvel arrivant comprend la philosophie, l’architecture, l’état réel et les
+  règles sans conversation historique ; rapport présenté et commit documentaire unique autorisé.
+- **État** : contenu contrôlé et validation humaine reçue le 19 juillet 2026.
+
 ### [ ] T-32 : Enrichir le bac à sable
 - Créer un jeu fictif cohérent couvrant les cinq rôles, tunnels CRM, sociétés, contacts, demandes,
   bâtiments, lots, offres, tâches, interactions et alertes de veille.
@@ -390,10 +402,23 @@
   parcours propres aux fonds de commerce sans dupliquer le CRM, le marketing ou les tâches.
 - **Acceptation** : périmètre métier validé et composants communs effectivement réutilisés.
 
+## Backlog d’architecture à planifier après arbitrage
+
+Ces décisions sont validées mais ne reçoivent pas ici de numéro ni de priorité arbitraire :
+
+- détailler ORMO et les contrats du Knowledge Center ;
+- spécifier l’Organisation Virtuelle, le Chief Agent et l’inventaire canonique des Experts ;
+- spécifier l’Expert de veille et d’évolution continue ;
+- définir la mesure de maturité patrimoniale.
+
+Leur ordonnancement sera décidé après T-30A/T-30 et les tâches déjà planifiées, puis inscrit dans
+ce fichier avec des critères d’acceptation avant tout code.
+
 ---
 
 ## Rappels transverses (valables pour toutes les tâches)
 - Après chaque tâche : lint + build + tests de la zone, puis commit `[T-xx] …`, puis STATUS.md.
-- Ne jamais coder PHASE 2/CIBLE.
+- Ne jamais coder une cible ou un module avant sa tâche, ses contrats et ses validations.
 - Ne jamais déplacer une décision de sécurité vers le frontend.
+- Mettre à jour la décision et la documentation d’autorité avant ou avec le code.
 - Tout blocage ou ambiguïté → STATUS.md, ne pas inventer.

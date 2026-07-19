@@ -1,5 +1,9 @@
 # Design System orIAna
 
+> Les règles d’expérience transverses sont définies dans
+> [`docs/ux/GUIDE_UX_UI.md`](docs/ux/GUIDE_UX_UI.md). Ce document décrit leur implémentation
+> visuelle actuelle.
+
 Le Design System constitue la fondation visuelle commune de l'application. Il privilégie la
 lisibilité, la progression guidée et des composants réutilisables sans logique métier.
 
