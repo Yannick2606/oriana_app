@@ -17,6 +17,16 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-19 — T-33D : premier lot du connecteur de messagerie**
+  - Le service d’authentification dépend désormais d’un port de messagerie injecté et n’importe
+    plus directement Nodemailer ni un adaptateur SMTP.
+  - `server.js` compose explicitement l’adaptateur avec les variables d’environnement. Le bac à
+    sable, qui injecte son propre service d’authentification, ne crée aucun transport SMTP.
+  - L’adaptateur conserve le contenu du message existant, refuse explicitement une configuration
+    incomplète et borne connexion, salutation et socket. Aucun secret n’est journalisé ou renvoyé.
+  - Aucune intégration IA, route publique ou donnée n’est modifiée. Vérifications réussies : lint
+    backend, 123 tests backend réussis sur 124 avec l’intégration
+    PostgreSQL ignorée, et `git diff --check`.
 - **2026-07-19 — T-33C : persistance métier découplée et tâche close**
   - L’audit de clôture confirme qu’aucun service métier, contrôleur ou middleware n’importe un
     adaptateur Grist, PostgreSQL ou bac à sable. Les modules dépendent uniquement du port injecté.

@@ -62,6 +62,7 @@ test('le callback n8n reste accessible sans session utilisateur', async () => {
   const app = createApp({
     patrimoineClient: dataClient,
     agentsClient: dataClient,
+    mailer: { async sendPasswordReset() {} },
     agentsOptions: {
       webhookBaseUrl: 'https://n8n.example.invalid',
       sharedSecret: 'test-shared-secret',

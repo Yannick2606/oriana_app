@@ -38,7 +38,7 @@ frontend ni par une donnée métier.
 | Zone | Propriétaire | Responsabilité | État observé |
 |---|---|---|---|
 | Composition | `backend/src/server.js`, `backend/src/app.js` | choisir et assembler services, persistance et connecteurs | le premier lot T-33C rend le port de persistance obligatoire et choisit explicitement le fournisseur au démarrage |
-| Identité | service d’authentification et référentiel des rôles | compte, rôle actif, rattachement d’agence et session publique | le référentiel d’identité est injecté sans valeur de repli fournisseur ; le connecteur SMTP relève encore de T-33D |
+| Identité | service d’authentification et référentiel des rôles | compte, rôle actif, rattachement d’agence et session publique | référentiel d’identité et port de messagerie injectés ; adaptateur SMTP composé au démarrage par le premier lot T-33D |
 | Autorisations | référentiel des rôles, middlewares et politiques de périmètre | normaliser les rôles et contrôler lecture/écriture côté serveur | consolidé par T-33B ; référentiel d’identité injecté et groupes de rôles centralisés |
 | Sessions | magasin de session et invalidation | conserver et invalider les sessions sans exposer de secret | PostgreSQL en exploitation normale, mémoire dans le bac à sable |
 | Persistance métier | port de dépôt générique de transition | lire et écrire les objets pris en charge | T-33C close ; modules découplés et adaptateurs Grist, PostgreSQL et bac à sable sélectionnés à la composition |
@@ -56,7 +56,7 @@ fournisseur ou un protocole externe.
 | Politique d’autorisation | construire le périmètre du rôle actif, décider lecture/écriture, charger une équipe par le référentiel d’identité | logique présente dans les middlewares et services ; consolidation prévue en T-33B |
 | Magasin de sessions | lire, enregistrer, expirer et invalider une session | `connect-pg-simple` en mode normal ; magasin mémoire Express dans la prévisualisation |
 | Persistance métier | `list`, `getById`, `create`, `update`, `delete` sur une ressource autorisée | T-33C implémentée ; Grist actuel, PostgreSQL cible et adaptateur mémoire en lecture seule satisfont le même port |
-| Envoi de message transactionnel | envoyer un message à un destinataire à partir d’un contenu validé, avec erreur explicite | SMTP via Nodemailer ; extraction prévue en T-33D |
+| Envoi de message transactionnel | envoyer un message à un destinataire à partir d’un contenu validé, avec erreur explicite | port injecté par T-33D ; adaptateur SMTP via Nodemailer composé au démarrage avec délais bornés |
 | Orchestration asynchrone | déclencher un traitement borné, recevoir un accusé, suivre son état et authentifier le callback | n8n pour le démonstrateur ; extraction prévue en T-33D |
 | Audit, notification, préférence, consentement, fichier, tâche et capture | aucun contrat exécutable avant arbitrage de l’autorité, du cycle de vie, des droits et de la conservation | spécification prévue en T-33E |
 
@@ -94,7 +94,7 @@ modèle à reproduire dans les services métier.
 | `app.js` et le service d’authentification proposaient Grist comme valeur de repli | fournisseur implicite dans le cœur applicatif | traité par le premier lot T-33C |
 | le calcul du périmètre importait directement Grist et les groupes de rôles étaient dupliqués | autorisation couplée au fournisseur et politiques divergentes | traité par T-33B |
 | le service Agents construit l’URL n8n et effectue lui-même l’appel réseau | orchestration confondue avec la règle métier | T-33D |
-| l’authentification dépend directement du transport SMTP | identité couplée au fournisseur de message | T-33D |
+| l’authentification dépendait directement du transport SMTP | identité couplée au fournisseur de message | traité par le premier lot T-33D |
 | les objets transverses futurs ne possèdent pas encore de contrat | risque d’inventer tables et comportements | T-33E |
 | aucune règle automatisée ne bloque les imports interdits | dérive architecturale silencieuse | T-33F |
 

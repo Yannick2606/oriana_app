@@ -12,6 +12,7 @@ const frontendOrigin = 'https://oriana.example.invalid';
 function testApp() {
   return createApp({
     persistenceClient: createPersistenceDouble(),
+    mailer: { async sendPasswordReset() {} },
     sessionSecret: randomBytes(32).toString('hex'),
     frontendOrigin,
   });

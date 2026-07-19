@@ -61,5 +61,6 @@ test('valide le paramètre demande_id et exige une session', async () => {
   await agent.get('/matching').expect(400, { error: 'DEMANDE_ID_REQUIRED' });
   await agent.get('/matching?demande_id=20x').expect(400, { error: 'INVALID_DEMANDE_ID' });
   await request(createApp({ patrimoineClient: dataClient, matchingClient: dataClient,
-    sessionSecret: randomBytes(32).toString('hex') })).get('/matching?demande_id=20').expect(401);
+    mailer: { async sendPasswordReset() {} }, sessionSecret: randomBytes(32).toString('hex') }))
+    .get('/matching?demande_id=20').expect(401);
 });

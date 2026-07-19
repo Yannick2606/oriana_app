@@ -41,6 +41,7 @@ import { createSandboxService } from './services/sandboxService.js';
 
 export function createApp({
   authService,
+  mailer,
   persistenceClient,
   patrimoineClient = persistenceClient,
   qualificationClient = patrimoineClient,
@@ -92,6 +93,7 @@ export function createApp({
   app.use(healthRoutes);
   const resolvedAuthService = authService ?? createAuthService({
     usersClient: utilisateursClient,
+    mailer,
     invalidateUserSessions,
   });
   app.use('/auth', createAuthRoutes(createAuthController(resolvedAuthService)));

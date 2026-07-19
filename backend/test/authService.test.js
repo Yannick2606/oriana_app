@@ -6,8 +6,14 @@ import bcrypt from 'bcrypt';
 
 import { AuthError, createAuthService } from '../src/services/authService.js';
 
+const mailer = { async sendPasswordReset() {} };
+
 test('refuse de créer le service sans référentiel d’identité injecté', () => {
   assert.throws(() => createAuthService(), /usersClient/);
+});
+
+test('refuse de créer le service sans port de messagerie injecté', () => {
+  assert.throws(() => createAuthService({ usersClient: {} }), /mailer/);
 });
 
 async function fixture({ actif = true, roles = ['consultant'], mustChange = false } = {}) {
@@ -38,7 +44,7 @@ async function fixture({ actif = true, roles = ['consultant'], mustChange = fals
     },
   };
 
-  return { motDePasse, service: createAuthService({ usersClient }), readFields: () => ({ ...fields }) };
+  return { motDePasse, service: createAuthService({ usersClient, mailer }), readFields: () => ({ ...fields }) };
 }
 
 test('login accepte le bon mot de passe sans renvoyer le hash', async () => {
@@ -201,6 +207,7 @@ test('un jeton valide remplace le mot de passe une seule fois et un jeton expir�
   const invalidated = [];
   const service = createAuthService({
     usersClient,
+    mailer,
     now: () => new Date('2026-07-14T12:10:00.000Z'),
     invalidateUserSessions: async (id) => invalidated.push(id),
   });

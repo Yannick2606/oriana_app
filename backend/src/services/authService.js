@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt';
 import { createHash, randomBytes } from 'node:crypto';
 
-import { mailService } from './mailService.js';
 import { normalizeRoleNames, ROLES } from './roleModel.js';
 
 export class AuthError extends Error {
@@ -45,13 +44,16 @@ export function createAuthService({
   usersClient,
   passwordComparer = bcrypt.compare,
   passwordHasher = (password) => bcrypt.hash(password, 12),
-  mailer = mailService,
+  mailer,
   createToken = () => randomBytes(32).toString('hex'),
   now = () => new Date(),
   invalidateUserSessions = async () => {},
 } = {}) {
   if (!usersClient) {
     throw new Error('Configuration d’authentification incomplète : usersClient');
+  }
+  if (!mailer?.sendPasswordReset) {
+    throw new Error('Configuration d’authentification incomplète : mailer');
   }
 
   return {

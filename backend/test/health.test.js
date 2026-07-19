@@ -10,6 +10,7 @@ import { createPersistenceDouble } from '../test-helpers/persistenceDouble.js';
 test('GET /health répond avec le statut ok', async () => {
   const response = await request(createApp({
     persistenceClient: createPersistenceDouble(),
+    mailer: { async sendPasswordReset() {} },
     sessionSecret: randomBytes(32).toString('hex'),
   }))
     .get('/health')

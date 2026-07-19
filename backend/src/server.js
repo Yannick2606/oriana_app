@@ -10,6 +10,7 @@ import { createPersistenceClient } from './services/persistence.js';
 import { createSandboxAuthService } from './services/sandboxAuthService.js';
 import { createSandboxClient } from './services/sandboxClient.js';
 import { createSessionInvalidator } from './services/sessionInvalidator.js';
+import { createMailService } from './services/mailService.js';
 
 const port = Number.parseInt(process.env.PORT ?? '3000', 10);
 const sandboxEnabled = process.env.ORIANA_SANDBOX_MODE === '1';
@@ -32,8 +33,17 @@ const sandboxAuthService = sandboxEnabled
     passwordHash: process.env.SANDBOX_PASSWORD_HASH,
   })
   : undefined;
+const mailer = sandboxEnabled ? undefined : createMailService({
+  host: process.env.SMTP_HOST ?? 'smtp.gmail.com',
+  port: Number(process.env.SMTP_PORT ?? 465),
+  user: process.env.SMTP_USER,
+  password: process.env.SMTP_APP_PASSWORD,
+  from: process.env.MAIL_FROM,
+  frontendUrl: process.env.FRONTEND_PUBLIC_URL ?? process.env.FRONTEND_ORIGIN,
+});
 const app = createApp({
   authService: sandboxAuthService,
+  mailer,
   sessionStore: sandboxEnabled ? undefined : createPostgresSessionStore(postgresPool),
   persistenceClient,
   invalidateUserSessions: sandboxEnabled ? undefined : createSessionInvalidator(postgresPool),
