@@ -1,7 +1,7 @@
-import { normalizeRoleNames } from './roleModel.js';
+import { activeRoleName, canManageAgencyData } from './roleModel.js';
 
 export function estManager(user) {
-  return ['directeur_agence', 'admin_agence'].includes(normalizeRoleNames(user?.role_actif)[0]);
+  return canManageAgencyData(user?.role_actif);
 }
 
 function memeReference(left, right) {
@@ -17,7 +17,7 @@ export function estGestionnaire(record, user) {
 }
 
 function estDansEquipe(record, user) {
-  return normalizeRoleNames(user?.role_actif)[0] === 'master_consultant'
+  return activeRoleName(user?.role_actif) === 'master_consultant'
     && user.equipe_ids?.some((id) => memeReference(record?.fields?.gestionnaire, id));
 }
 

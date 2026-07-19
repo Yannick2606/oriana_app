@@ -17,6 +17,19 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-19 — T-33B : politiques de rôles consolidées**
+  - Le référentiel canonique porte désormais les décisions communes de gestion des données
+    d'agence et d'administration des utilisateurs. Les middlewares et règles d'exclusivité les
+    réutilisent au lieu de maintenir leurs propres listes de rôles.
+  - L'ancien alias `manager` est normalisé en `master_consultant` et ne reçoit donc pas les droits
+    de suppression réservés au directeur et à l'administrateur d'agence. L'alias `admin` conserve
+    son équivalence avec `admin_agence`.
+  - Le super administrateur peut administrer les utilisateurs, mais ne reçoit toujours aucun
+    périmètre métier ni droit implicite de gestion des données d'une agence.
+  - La normalisation des anciens rôles lors de l'import Grist réutilise également le référentiel
+    canonique. Les politiques des cinq rôles sont couvertes directement.
+  - Vérifications réussies : lint backend, 118 tests backend réussis sur 119 avec l'intégration
+    PostgreSQL ignorée, et `git diff --check`.
 - **2026-07-19 — T-33B : premier lot d'injection du référentiel d'identité**
   - Le middleware de périmètre n'importe plus Grist et ne possède plus de fournisseur implicite
     pour charger l'équipe d'un master consultant.

@@ -1,3 +1,5 @@
+import { normalizeRoleNames } from './roleModel.js';
+
 function first(fields, names, fallback = null) {
   for (const name of names) if (fields[name] !== undefined && fields[name] !== null && fields[name] !== '') return fields[name];
   return fallback;
@@ -36,8 +38,7 @@ export function jsonValue(value) {
 }
 
 export function normalizedRoles(fields) {
-  const aliases = { manager: 'master_consultant', admin: 'admin_agence' };
-  return [...new Set(listValue(first(fields, ['roles', 'role'], [])).map((role) => aliases[role] ?? role))];
+  return normalizeRoleNames(listValue(first(fields, ['roles', 'role'], [])));
 }
 
 export function field(fields, canonical, ...aliases) { return first(fields, [canonical, ...aliases]); }

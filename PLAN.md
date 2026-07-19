@@ -319,14 +319,14 @@
 - **État** : cartographie, ports internes, responsabilités, règles de dépendance et écarts consignés
   le 19 juillet 2026 sans modification du code.
 
-#### [ ] T-33B : Consolider identité, rôles et autorisations
+#### [x] T-33B : Consolider identité, rôles et autorisations
 - Regrouper normalisation des rôles, périmètres agence/équipe/utilisateur et politiques de lecture
   ou d'écriture derrière le socle, sans faire du frontend une autorité.
 - Injecter l'accès aux utilisateurs et rattachements au lieu de prévoir un fournisseur implicite.
 - **Acceptation** : appels directs testés pour les cinq rôles, absence d'accès métier implicite du
   super administrateur et comportement de session existant conservé.
-- **État** : premier lot en cours — le calcul des périmètres reçoit désormais son référentiel
-  d'identité depuis la composition ; la consolidation complète des politiques reste à réaliser.
+- **État** : référentiel d'identité injecté, groupes de rôles centralisés et politiques de lecture,
+  écriture, gestion d'agence et administration vérifiées le 19 juillet 2026.
 
 #### [ ] T-33C : Découpler la persistance métier de Grist
 - Faire dépendre les modules d'un port de persistance injecté par la composition applicative ;

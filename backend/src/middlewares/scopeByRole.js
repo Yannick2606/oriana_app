@@ -1,4 +1,4 @@
-import { normalizeRoleNames } from '../services/roleModel.js';
+import { activeRoleName, canManageAgencyData } from '../services/roleModel.js';
 
 function sameReference(left, right) {
   return left !== undefined && left !== null && (Array.isArray(right)
@@ -10,14 +10,14 @@ export function buildAccessScope(user, teamIds = []) {
     return null;
   }
 
-  const role = normalizeRoleNames(user.role_actif)[0];
+  const role = activeRoleName(user.role_actif);
   if (role === 'consultant') {
     return { agence_id: user.agence_id, gestionnaire: user.id };
   }
   if (role === 'master_consultant') {
     return { agence_id: user.agence_id, gestionnaire: [user.id, ...teamIds] };
   }
-  if (role === 'directeur_agence' || role === 'admin_agence') {
+  if (canManageAgencyData(role)) {
     return { agence_id: user.agence_id };
   }
 
@@ -25,15 +25,15 @@ export function buildAccessScope(user, teamIds = []) {
 }
 
 export function buildWriteScope(user) {
-  const role = normalizeRoleNames(user?.role_actif)[0];
+  const role = activeRoleName(user?.role_actif);
   if (role === 'consultant' || role === 'master_consultant') return { agence_id: user.agence_id, gestionnaire: user.id };
-  if (role === 'directeur_agence' || role === 'admin_agence') return { agence_id: user.agence_id };
+  if (canManageAgencyData(role)) return { agence_id: user.agence_id };
   return null;
 }
 
 export async function scopeByRole(request, response, next) {
   const user = request.session?.user;
-  const role = normalizeRoleNames(user?.role_actif)[0];
+  const role = activeRoleName(user?.role_actif);
   let teamIds = [];
   try {
     if (role === 'master_consultant') {

@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { peutLire } from './exclusiviteService.js';
+import { canManageAgencyData } from './roleModel.js';
 
 const allowedStatuses = new Set(['en_cours', 'termine', 'erreur']);
 export class AgentsError extends Error {
@@ -66,7 +67,7 @@ export function createAgentsService(client, {
       if (input.objet_type !== 'demande') throw new AgentsError('Type objet invalide', 400, 'INVALID_OBJECT');
       const objectId = positiveId(input.objet_id); await readableDemand(objectId, user);
       const rows = await client.list('Traitements_Agents', { objet_type: ['demande'], objet_id: [objectId], agence_id: [user.agence_id] });
-      const visible = rows.filter((row) => ['directeur_agence', 'admin_agence', 'manager', 'admin'].includes(user.role_actif)
+      const visible = rows.filter((row) => canManageAgencyData(user.role_actif)
         || String(row.fields.user_id) === String(user.id)
         || user.equipe_ids?.some((id) => String(row.fields.user_id) === String(id)));
       visible.sort((a, b) => (b.fields.date_creation ?? 0) - (a.fields.date_creation ?? 0));
