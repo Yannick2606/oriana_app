@@ -28,8 +28,9 @@
     modifié et aucun déploiement effectué ; ces actions restent soumises à une validation distincte.
   - Vérifications réussies : lint backend, 113 tests backend réussis et 1 intégration PostgreSQL
     ignorée, lint frontend, 50 tests frontend, build frontend et `git diff --check`.
-  - Limite de contrôle : Docker est absent du poste, donc la résolution statique par
-    `docker compose config` devra être réalisée sur un hôte équipé avant tout lancement.
+  - La résolution statique a ensuite été validée sur le VPS avec Docker Compose v5.3.1 depuis une
+    copie temporaire du commit `e4d419e` : `docker compose config --no-env-resolution --quiet` a
+    produit `COMPOSE_CONFIG_OK`. Aucun build, conteneur, DNS ou déploiement n’a été déclenché.
   - T-32 reste en cours : les tunnels CRM, tâches et alertes de veille restent à enrichir.
 - **2026-07-19 — T-32 : premier jeu d’offres fictives et photographies locales**
   - Un générateur déterministe prépare cinq offres reliées à leur agence, utilisateurs fictifs,
