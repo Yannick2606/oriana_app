@@ -26,5 +26,7 @@ test('les onglets relient la sélection à son panneau et se parcourent aux flè
 
 test('les actions d’en-tête peuvent revenir à la ligne', () => {
   render(<PageHeader eyebrow="Commercialisation" title="Offre" description="Description" actions={<><button>Actualiser</button><button>Créer</button></>}/>);
-  expect(screen.getByText('Actualiser').parentElement).toHaveClass('flex-wrap');
+  const actions = screen.getByText('Actualiser').parentElement;
+  expect(actions).toHaveClass('flex-wrap', 'xl:shrink-0', 'xl:justify-end');
+  expect(actions.parentElement).toHaveClass('flex-col', 'xl:flex-row');
 });

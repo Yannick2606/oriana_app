@@ -17,8 +17,14 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-19 — T-32 : adaptation responsive de l’en-tête prête localement**
+  - L’en-tête de page conserve une composition verticale jusqu’aux écrans réellement larges afin
+    que les actions ne compriment plus le titre et sa description avec un zoom élevé.
+  - Sur l’accueil, le prénom et l’emoji de bienvenue restent solidaires pour éviter un emoji isolé.
+  - Vérifications locales réussies : `git diff --check`, lint frontend, 51 tests frontend et build
+    de production. Aucun commit, push ou déploiement n’a été effectué pour cette correction.
 - **2026-07-19 — T-32 : prévisualisation HTTPS ouverte et onboarding lecture seule corrigé**
-  - Le profil isolé du commit `2c9f785` est déployé sur `oriana-preview.boreal.immo` et
+  - Le profil isolé est déployé sur `oriana-preview.boreal.immo` et
     `api-oriana-preview.boreal.immo`. Les deux endpoints répondent en HTTPS avec un statut 200 et
     les conteneurs de production n’ont pas été redémarrés.
   - La connexion au compte fictif multirôle et l’ouverture du rôle administrateur d’agence sont
@@ -26,8 +32,9 @@
     malgré le mode lecture seule.
   - Le frontend détecte désormais `?sandbox=1`, fait avancer ce parcours uniquement en mémoire et
     affiche « Prévisualisation : progression non enregistrée. » sans appeler le serveur.
-  - Vérifications locales réussies : lint frontend, 51 tests frontend et build de production. Cette
-    correction reste à committer, pousser et redéployer séparément avant sa recette visuelle.
+  - Le correctif `eef3573` a été poussé puis redéployé uniquement sur le frontend de prévisualisation.
+    La progression locale et l’absence d’erreur ont été validées humainement ; le backend est resté
+    sain et les services de production n’ont pas été redémarrés.
 - **2026-07-19 — T-32 : profil de prévisualisation isolé préparé, non déployé**
   - Un profil Compose distinct assemble le frontend et le backend fictif sans conteneur PostgreSQL,
     sans Grist et sans n8n. Il n’utilise ni les noms de conteneurs ni les volumes de production.
