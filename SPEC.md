@@ -222,6 +222,14 @@ l'utilisateur), `PUT /{ressource}/:id` (403 si hors périmètre), `DELETE /{ress
 Ressources PHASE 1 : `sites`, `batiments`, `cellules`, `lots`, `offres`,
 `conditions-financieres`, `mandats`, `societes`, `contacts`, `demandes`.
 
+### Bac à sable Offre
+- `GET /sandbox/offres` — jeu fictif en lecture seule, disponible uniquement lorsque
+  `ORIANA_SANDBOX_MODE=1`, après authentification et calcul d’un périmètre métier valide.
+- Le mode est refusé avec `NODE_ENV=production`. Il ne remplace ni l’authentification ni la
+  persistance métier et ne contacte jamais Grist ou PostgreSQL.
+- Le frontend l’utilise uniquement avec le paramètre local `?sandbox=1`. Sans ce paramètre, les
+  routes métier habituelles restent la seule source de données.
+
 ### Qualification (EAV)
 - `GET /caracteristiques/dictionnaire?famille=&niveau=` — renvoie les caractéristiques du
   dictionnaire filtrées par famille et niveau (pour construire le formulaire dynamique).

@@ -13,10 +13,25 @@
 - PHASE 1 : terminée — T-00 à T-22 et extensions T-22A à T-22D validées.
 - Migration PostgreSQL : T-27, T-28 et T-29 terminées ; T-30 non démarrée.
 - Reprise fonctionnelle : T-30A est active ; toute bascule PostgreSQL reste bloquée.
-- PHASE 2 : vision modulaire repriorisée par T-31 ; aucun développement démarré.
+- PHASE 2 : vision modulaire repriorisée par T-31 ; T-32 est en cours.
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-19 — T-32 : premier jeu d’offres fictives et photographies locales**
+  - Un générateur déterministe prépare cinq offres reliées à leur agence, utilisateurs fictifs,
+    adresses non précises, sites, bâtiments, cellules, lots, conditions financières, mandats et
+    médias. Trois biens se situent dans le Val-d’Oise et deux dans le nord de la Seine-et-Marne.
+  - Les cinq photographies ont été générées spécifiquement pour orIAna, optimisées en WebP et
+    stockées dans le frontend sans URL externe, marque, texte ni personne identifiable.
+  - Le générateur ne contacte ni Grist ni PostgreSQL et peut être relancé avec
+    `npm run generate:sandbox --prefix backend` pour produire le même fichier JSON.
+  - Le backend expose le jeu en lecture seule uniquement avec `ORIANA_SANDBOX_MODE=1`, refuse ce
+    mode en production et conserve l’authentification ainsi que les contrôles de rôle réels.
+  - La fiche Offre activée par `?sandbox=1` présente les photographies et huit vues : Synthèse,
+    Bien & surfaces, Finances, Mandats, Actions, Visites, Documents et Transactions. Les quatre
+    contrats non implémentés affichent un état indisponible explicite, sans action simulée.
+  - T-32 reste en cours : ce premier lot ne couvre pas encore tous les tunnels CRM, interactions,
+    tâches et alertes prévus par son acceptation.
 - **2026-07-19 — T-30A : correctifs frontend publiés sur la branche de travail**
   - Les commits `86c97e1` (interactions et charte frontend) et `bb39638` (rôles et administration)
     ont été poussés sur `agent/t30a-interactions`, désormais synchronisée avec sa branche distante.

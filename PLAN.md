@@ -282,7 +282,7 @@
   règles sans conversation historique ; rapport présenté et commit documentaire unique autorisé.
 - **État** : contenu contrôlé et validation humaine reçue le 19 juillet 2026.
 
-### [ ] T-32 : Enrichir le bac à sable
+### [~] T-32 : Enrichir le bac à sable
 - Créer un jeu fictif cohérent couvrant les cinq rôles, tunnels CRM, sociétés, contacts, demandes,
   bâtiments, lots, offres, tâches, interactions et alertes de veille.
 - Ajouter des photographies d'immeubles utilisables légalement et stockées par orIAna, sans URL

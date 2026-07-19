@@ -1,0 +1,955 @@
+{
+  "meta": {
+    "schema": "oriana-sandbox-v1",
+    "version": 1,
+    "date_reference": "2026-07-19",
+    "territoire": [
+      "Val-d’Oise",
+      "Nord Seine-et-Marne"
+    ],
+    "avertissement": "Toutes les identités, adresses précises, sociétés et offres sont fictives."
+  },
+  "tables": {
+    "Agences": [
+      {
+        "id": 1,
+        "fields": {
+          "nom": "Agence Horizon — démonstration",
+          "code": "DEMO-IDF-NORD",
+          "agence_id": 1
+        }
+      }
+    ],
+    "Utilisateurs": [
+      {
+        "id": 1001,
+        "fields": {
+          "nom": "Rivière",
+          "prenom": "Camille",
+          "email": "camille.riviere@example.invalid",
+          "role": [
+            "L",
+            "super_admin"
+          ],
+          "actif": true,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 1002,
+        "fields": {
+          "nom": "Mercier",
+          "prenom": "Samir",
+          "email": "samir.mercier@example.invalid",
+          "role": [
+            "L",
+            "admin"
+          ],
+          "actif": true,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 1003,
+        "fields": {
+          "nom": "Legrand",
+          "prenom": "Inès",
+          "email": "ines.legrand@example.invalid",
+          "role": [
+            "L",
+            "directeur_agence"
+          ],
+          "actif": true,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 1004,
+        "fields": {
+          "nom": "Fontaine",
+          "prenom": "Noé",
+          "email": "noe.fontaine@example.invalid",
+          "role": [
+            "L",
+            "master_consultant"
+          ],
+          "actif": true,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 1005,
+        "fields": {
+          "nom": "Diallo",
+          "prenom": "Aïcha",
+          "email": "aicha.diallo@example.invalid",
+          "role": [
+            "L",
+            "consultant"
+          ],
+          "actif": true,
+          "agence_id": 1
+        }
+      }
+    ],
+    "Adresses": [
+      {
+        "id": 100,
+        "fields": {
+          "libelle": "Localisation fictive — secteur Gonesse",
+          "code_postal": "95500",
+          "ville": "Gonesse",
+          "departement": "Val-d’Oise",
+          "pays": "France",
+          "fictive": true,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 101,
+        "fields": {
+          "libelle": "Localisation fictive — secteur Saint-Ouen-l’Aumône",
+          "code_postal": "95310",
+          "ville": "Saint-Ouen-l’Aumône",
+          "departement": "Val-d’Oise",
+          "pays": "France",
+          "fictive": true,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 102,
+        "fields": {
+          "libelle": "Localisation fictive — secteur Argenteuil",
+          "code_postal": "95100",
+          "ville": "Argenteuil",
+          "departement": "Val-d’Oise",
+          "pays": "France",
+          "fictive": true,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 103,
+        "fields": {
+          "libelle": "Localisation fictive — secteur Mitry-Mory",
+          "code_postal": "77290",
+          "ville": "Mitry-Mory",
+          "departement": "Seine-et-Marne",
+          "pays": "France",
+          "fictive": true,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 104,
+        "fields": {
+          "libelle": "Localisation fictive — secteur Claye-Souilly",
+          "code_postal": "77410",
+          "ville": "Claye-Souilly",
+          "departement": "Seine-et-Marne",
+          "pays": "France",
+          "fictive": true,
+          "agence_id": 1
+        }
+      }
+    ],
+    "Sites": [
+      {
+        "id": 200,
+        "fields": {
+          "nom": "Site Gonesse — démonstration",
+          "adresse_id": 100,
+          "surface_terrain": 4200,
+          "divisible": false,
+          "en_bloc": true,
+          "gestionnaire": 1005,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 201,
+        "fields": {
+          "nom": "Site Saint-Ouen-l’Aumône — démonstration",
+          "adresse_id": 101,
+          "surface_terrain": 6100,
+          "divisible": true,
+          "en_bloc": true,
+          "gestionnaire": 1005,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 202,
+        "fields": {
+          "nom": "Site Argenteuil — démonstration",
+          "adresse_id": 102,
+          "surface_terrain": 2200,
+          "divisible": false,
+          "en_bloc": true,
+          "gestionnaire": 1005,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 203,
+        "fields": {
+          "nom": "Site Mitry-Mory — démonstration",
+          "adresse_id": 103,
+          "surface_terrain": 11200,
+          "divisible": false,
+          "en_bloc": true,
+          "gestionnaire": 1005,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 204,
+        "fields": {
+          "nom": "Site Claye-Souilly — démonstration",
+          "adresse_id": 104,
+          "surface_terrain": 2700,
+          "divisible": false,
+          "en_bloc": true,
+          "gestionnaire": 1005,
+          "agence_id": 1
+        }
+      }
+    ],
+    "Batiments": [
+      {
+        "id": 300,
+        "fields": {
+          "site_id": 200,
+          "nom": "Bâtiment Gonesse",
+          "numero": "B1",
+          "annee_construction": 2018,
+          "surface_totale": 1850,
+          "etat": "bon_etat",
+          "divisible": false,
+          "copropriete": false,
+          "erp": false,
+          "igh": false,
+          "photos": [
+            "/demo/offres/gonesse-activite-bureaux.webp"
+          ],
+          "gestionnaire": 1005,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 301,
+        "fields": {
+          "site_id": 201,
+          "nom": "Bâtiment Saint-Ouen-l’Aumône",
+          "numero": "B2",
+          "annee_construction": 2021,
+          "surface_totale": 920,
+          "etat": "tres_bon_etat",
+          "divisible": true,
+          "copropriete": false,
+          "erp": false,
+          "igh": false,
+          "photos": [
+            "/demo/offres/saint-ouen-aumone-parc-activites.webp"
+          ],
+          "gestionnaire": 1005,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 302,
+        "fields": {
+          "site_id": 202,
+          "nom": "Bâtiment Argenteuil",
+          "numero": "B3",
+          "annee_construction": 2012,
+          "surface_totale": 1260,
+          "etat": "renove",
+          "divisible": false,
+          "copropriete": false,
+          "erp": false,
+          "igh": false,
+          "photos": [
+            "/demo/offres/argenteuil-bureaux.webp"
+          ],
+          "gestionnaire": 1005,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 303,
+        "fields": {
+          "site_id": 203,
+          "nom": "Bâtiment Mitry-Mory",
+          "numero": "B4",
+          "annee_construction": 2019,
+          "surface_totale": 4800,
+          "etat": "bon_etat",
+          "divisible": false,
+          "copropriete": false,
+          "erp": false,
+          "igh": false,
+          "photos": [
+            "/demo/offres/mitry-mory-logistique.webp"
+          ],
+          "gestionnaire": 1005,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 304,
+        "fields": {
+          "site_id": 204,
+          "nom": "Bâtiment Claye-Souilly",
+          "numero": "B5",
+          "annee_construction": 2023,
+          "surface_totale": 760,
+          "etat": "neuf",
+          "divisible": false,
+          "copropriete": false,
+          "erp": true,
+          "igh": false,
+          "photos": [
+            "/demo/offres/claye-souilly-commerce-activite.webp"
+          ],
+          "gestionnaire": 1005,
+          "agence_id": 1
+        }
+      }
+    ],
+    "Cellules": [
+      {
+        "id": 400,
+        "fields": {
+          "batiment_id": 300,
+          "nom": "activite 1",
+          "numero": "C1",
+          "surface": 1450,
+          "etage": "rez_de_chaussee",
+          "type_bien": "activite",
+          "photos": [
+            "/demo/offres/gonesse-activite-bureaux.webp"
+          ],
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 401,
+        "fields": {
+          "batiment_id": 300,
+          "nom": "activite 2",
+          "numero": "C2",
+          "surface": 400,
+          "etage": "niveau_1",
+          "type_bien": "activite",
+          "photos": [
+            "/demo/offres/gonesse-activite-bureaux.webp"
+          ],
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 402,
+        "fields": {
+          "batiment_id": 301,
+          "nom": "activite 1",
+          "numero": "C1",
+          "surface": 620,
+          "etage": "rez_de_chaussee",
+          "type_bien": "activite",
+          "photos": [
+            "/demo/offres/saint-ouen-aumone-parc-activites.webp"
+          ],
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 403,
+        "fields": {
+          "batiment_id": 301,
+          "nom": "activite 2",
+          "numero": "C2",
+          "surface": 300,
+          "etage": "niveau_1",
+          "type_bien": "activite",
+          "photos": [
+            "/demo/offres/saint-ouen-aumone-parc-activites.webp"
+          ],
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 404,
+        "fields": {
+          "batiment_id": 302,
+          "nom": "bureaux 1",
+          "numero": "C1",
+          "surface": 315,
+          "etage": "rez_de_chaussee",
+          "type_bien": "bureaux",
+          "photos": [
+            "/demo/offres/argenteuil-bureaux.webp"
+          ],
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 405,
+        "fields": {
+          "batiment_id": 302,
+          "nom": "bureaux 2",
+          "numero": "C2",
+          "surface": 315,
+          "etage": "niveau_1",
+          "type_bien": "bureaux",
+          "photos": [
+            "/demo/offres/argenteuil-bureaux.webp"
+          ],
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 406,
+        "fields": {
+          "batiment_id": 302,
+          "nom": "bureaux 3",
+          "numero": "C3",
+          "surface": 315,
+          "etage": "niveau_2",
+          "type_bien": "bureaux",
+          "photos": [
+            "/demo/offres/argenteuil-bureaux.webp"
+          ],
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 407,
+        "fields": {
+          "batiment_id": 302,
+          "nom": "bureaux 4",
+          "numero": "C4",
+          "surface": 315,
+          "etage": "niveau_3",
+          "type_bien": "bureaux",
+          "photos": [
+            "/demo/offres/argenteuil-bureaux.webp"
+          ],
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 408,
+        "fields": {
+          "batiment_id": 303,
+          "nom": "logistique 1",
+          "numero": "C1",
+          "surface": 4320,
+          "etage": "rez_de_chaussee",
+          "type_bien": "logistique",
+          "photos": [
+            "/demo/offres/mitry-mory-logistique.webp"
+          ],
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 409,
+        "fields": {
+          "batiment_id": 303,
+          "nom": "logistique 2",
+          "numero": "C2",
+          "surface": 480,
+          "etage": "niveau_1",
+          "type_bien": "logistique",
+          "photos": [
+            "/demo/offres/mitry-mory-logistique.webp"
+          ],
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 410,
+        "fields": {
+          "batiment_id": 304,
+          "nom": "commerce 1",
+          "numero": "C1",
+          "surface": 520,
+          "etage": "rez_de_chaussee",
+          "type_bien": "commerce",
+          "photos": [
+            "/demo/offres/claye-souilly-commerce-activite.webp"
+          ],
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 411,
+        "fields": {
+          "batiment_id": 304,
+          "nom": "commerce 2",
+          "numero": "C2",
+          "surface": 240,
+          "etage": "niveau_1",
+          "type_bien": "commerce",
+          "photos": [
+            "/demo/offres/claye-souilly-commerce-activite.webp"
+          ],
+          "agence_id": 1
+        }
+      }
+    ],
+    "Lots": [
+      {
+        "id": 500,
+        "fields": {
+          "nom": "Lot Gonesse",
+          "numero": "L1",
+          "cellules": [
+            "L",
+            400,
+            401
+          ],
+          "site_id": 200,
+          "surface": 1850,
+          "divisible": false,
+          "nombre_parking": 34,
+          "en_bloc": true,
+          "gestionnaire": 1005,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 501,
+        "fields": {
+          "nom": "Lot Saint-Ouen-l’Aumône",
+          "numero": "L2",
+          "cellules": [
+            "L",
+            402,
+            403
+          ],
+          "site_id": 201,
+          "surface": 920,
+          "divisible": true,
+          "nombre_parking": 18,
+          "en_bloc": true,
+          "gestionnaire": 1005,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 502,
+        "fields": {
+          "nom": "Lot Argenteuil",
+          "numero": "L3",
+          "cellules": [
+            "L",
+            404,
+            405,
+            406,
+            407
+          ],
+          "site_id": 202,
+          "surface": 1260,
+          "divisible": false,
+          "nombre_parking": 22,
+          "en_bloc": true,
+          "gestionnaire": 1005,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 503,
+        "fields": {
+          "nom": "Lot Mitry-Mory",
+          "numero": "L4",
+          "cellules": [
+            "L",
+            408,
+            409
+          ],
+          "site_id": 203,
+          "surface": 4800,
+          "divisible": false,
+          "nombre_parking": 30,
+          "en_bloc": true,
+          "gestionnaire": 1005,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 504,
+        "fields": {
+          "nom": "Lot Claye-Souilly",
+          "numero": "L5",
+          "cellules": [
+            "L",
+            410,
+            411
+          ],
+          "site_id": 204,
+          "surface": 760,
+          "divisible": false,
+          "nombre_parking": 26,
+          "en_bloc": true,
+          "gestionnaire": 1005,
+          "agence_id": 1
+        }
+      }
+    ],
+    "Offres": [
+      {
+        "id": 600,
+        "fields": {
+          "numero": "OFF-95-GON-001",
+          "nom": "Gonesse — activité & bureaux indépendants",
+          "lot_id": 500,
+          "nature": "vente_et_location",
+          "type_contrat": "vente_ou_bail_commercial",
+          "occupation": "libre",
+          "stade_commercialisation": "commercialisation",
+          "gestionnaire": 1005,
+          "co_gestionnaires": [
+            "L",
+            1004
+          ],
+          "photo": "/demo/offres/gonesse-activite-bureaux.webp",
+          "photo_alt": "Bâtiment fictif d’activité et bureaux à Gonesse",
+          "ville": "Gonesse",
+          "code_postal": "95500",
+          "departement": "Val-d’Oise",
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 601,
+        "fields": {
+          "numero": "OFF-95-SOA-002",
+          "nom": "Saint-Ouen-l’Aumône — cellule divisible",
+          "lot_id": 501,
+          "nature": "location",
+          "type_contrat": "bail_commercial",
+          "occupation": "libre",
+          "stade_commercialisation": "commercialisation",
+          "gestionnaire": 1005,
+          "co_gestionnaires": [
+            "L",
+            1004
+          ],
+          "photo": "/demo/offres/saint-ouen-aumone-parc-activites.webp",
+          "photo_alt": "Parc d’activités fictif à Saint-Ouen-l’Aumône",
+          "ville": "Saint-Ouen-l’Aumône",
+          "code_postal": "95310",
+          "departement": "Val-d’Oise",
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 602,
+        "fields": {
+          "numero": "OFF-95-ARG-003",
+          "nom": "Argenteuil — immeuble de bureaux",
+          "lot_id": 502,
+          "nature": "vente",
+          "type_contrat": "vente_murs",
+          "occupation": "occupe",
+          "stade_commercialisation": "commercialisation",
+          "gestionnaire": 1005,
+          "co_gestionnaires": [
+            "L",
+            1004
+          ],
+          "photo": "/demo/offres/argenteuil-bureaux.webp",
+          "photo_alt": "Immeuble de bureaux fictif à Argenteuil",
+          "ville": "Argenteuil",
+          "code_postal": "95100",
+          "departement": "Val-d’Oise",
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 603,
+        "fields": {
+          "numero": "OFF-77-MIT-004",
+          "nom": "Mitry-Mory — entrepôt logistique",
+          "lot_id": 503,
+          "nature": "location",
+          "type_contrat": "bail_commercial",
+          "occupation": "libre",
+          "stade_commercialisation": "commercialisation",
+          "gestionnaire": 1005,
+          "co_gestionnaires": [
+            "L",
+            1004
+          ],
+          "photo": "/demo/offres/mitry-mory-logistique.webp",
+          "photo_alt": "Entrepôt logistique fictif à Mitry-Mory",
+          "ville": "Mitry-Mory",
+          "code_postal": "77290",
+          "departement": "Seine-et-Marne",
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 604,
+        "fields": {
+          "numero": "OFF-77-CLA-005",
+          "nom": "Claye-Souilly — commerce & activité",
+          "lot_id": 504,
+          "nature": "vente_et_location",
+          "type_contrat": "vente_ou_bail_commercial",
+          "occupation": "libre",
+          "stade_commercialisation": "pre_lancement",
+          "gestionnaire": 1005,
+          "co_gestionnaires": [
+            "L",
+            1004
+          ],
+          "photo": "/demo/offres/claye-souilly-commerce-activite.webp",
+          "photo_alt": "Local commercial et d’activité fictif à Claye-Souilly",
+          "ville": "Claye-Souilly",
+          "code_postal": "77410",
+          "departement": "Seine-et-Marne",
+          "agence_id": 1
+        }
+      }
+    ],
+    "Conditions_Financieres": [
+      {
+        "id": 700,
+        "fields": {
+          "offre_id": 600,
+          "type": "vente",
+          "prix_vente": 3550000,
+          "taxe_fonciere": 38200,
+          "taux_net_potentiel": 6.2,
+          "disponibilite": "2026-10-01",
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 701,
+        "fields": {
+          "offre_id": 600,
+          "type": "location",
+          "loyer_ht_m2_an": 145,
+          "loyer_global_an": 268250,
+          "charges_ht_m2_an": 16,
+          "depot_garantie": 67063,
+          "disponibilite": "2026-10-01",
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 702,
+        "fields": {
+          "offre_id": 601,
+          "type": "location",
+          "loyer_ht_m2_an": 118,
+          "loyer_global_an": 108560,
+          "charges_ht_m2_an": 14,
+          "depot_garantie": 27140,
+          "disponibilite": "2026-09-15",
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 703,
+        "fields": {
+          "offre_id": 602,
+          "type": "vente",
+          "prix_vente": 4850000,
+          "taxe_fonciere": 44600,
+          "taux_net_initial": 5.4,
+          "taux_net_potentiel": 6.1,
+          "disponibilite": "2027-01-01",
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 704,
+        "fields": {
+          "offre_id": 603,
+          "type": "location",
+          "loyer_ht_m2_an": 102,
+          "loyer_global_an": 489600,
+          "charges_ht_m2_an": 12,
+          "depot_garantie": 122400,
+          "disponibilite": "2026-11-01",
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 705,
+        "fields": {
+          "offre_id": 604,
+          "type": "vente",
+          "prix_vente": 2150000,
+          "taxe_fonciere": 21600,
+          "taux_net_potentiel": 6.4,
+          "disponibilite": "2026-12-01",
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 706,
+        "fields": {
+          "offre_id": 604,
+          "type": "location",
+          "loyer_ht_m2_an": 165,
+          "loyer_global_an": 125400,
+          "charges_ht_m2_an": 18,
+          "depot_garantie": 31350,
+          "disponibilite": "2026-12-01",
+          "agence_id": 1
+        }
+      }
+    ],
+    "Mandats": [
+      {
+        "id": 800,
+        "fields": {
+          "numero": "MAN-DEMO-001",
+          "numero_registre": "R-DEMO-100",
+          "offre_id": 600,
+          "type": "exclusif",
+          "nature": "vente_et_location",
+          "avancement": "actif",
+          "date_debut": "2026-07-01",
+          "date_fin": "2027-06-30",
+          "gestionnaire": 1005,
+          "donnee_exclusive": false,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 801,
+        "fields": {
+          "numero": "MAN-DEMO-002",
+          "numero_registre": "R-DEMO-101",
+          "offre_id": 601,
+          "type": "simple",
+          "nature": "location",
+          "avancement": "actif",
+          "date_debut": "2026-07-01",
+          "date_fin": "2027-06-30",
+          "gestionnaire": 1005,
+          "donnee_exclusive": false,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 802,
+        "fields": {
+          "numero": "MAN-DEMO-003",
+          "numero_registre": "R-DEMO-102",
+          "offre_id": 602,
+          "type": "exclusif",
+          "nature": "vente",
+          "avancement": "actif",
+          "date_debut": "2026-07-01",
+          "date_fin": "2027-06-30",
+          "gestionnaire": 1005,
+          "donnee_exclusive": false,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 803,
+        "fields": {
+          "numero": "MAN-DEMO-004",
+          "numero_registre": "R-DEMO-103",
+          "offre_id": 603,
+          "type": "simple",
+          "nature": "location",
+          "avancement": "actif",
+          "date_debut": "2026-07-01",
+          "date_fin": "2027-06-30",
+          "gestionnaire": 1005,
+          "donnee_exclusive": false,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 804,
+        "fields": {
+          "numero": "MAN-DEMO-005",
+          "numero_registre": "R-DEMO-104",
+          "offre_id": 604,
+          "type": "exclusif",
+          "nature": "vente_et_location",
+          "avancement": "actif",
+          "date_debut": "2026-07-01",
+          "date_fin": "2027-06-30",
+          "gestionnaire": 1005,
+          "donnee_exclusive": false,
+          "agence_id": 1
+        }
+      }
+    ],
+    "Medias": [
+      {
+        "id": 900,
+        "fields": {
+          "offre_id": 600,
+          "type": "photo",
+          "url": "/demo/offres/gonesse-activite-bureaux.webp",
+          "alt": "Bâtiment fictif d’activité et bureaux à Gonesse",
+          "provenance": "Image générée par IA pour le bac à sable orIAna",
+          "fictif": true,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 901,
+        "fields": {
+          "offre_id": 601,
+          "type": "photo",
+          "url": "/demo/offres/saint-ouen-aumone-parc-activites.webp",
+          "alt": "Parc d’activités fictif à Saint-Ouen-l’Aumône",
+          "provenance": "Image générée par IA pour le bac à sable orIAna",
+          "fictif": true,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 902,
+        "fields": {
+          "offre_id": 602,
+          "type": "photo",
+          "url": "/demo/offres/argenteuil-bureaux.webp",
+          "alt": "Immeuble de bureaux fictif à Argenteuil",
+          "provenance": "Image générée par IA pour le bac à sable orIAna",
+          "fictif": true,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 903,
+        "fields": {
+          "offre_id": 603,
+          "type": "photo",
+          "url": "/demo/offres/mitry-mory-logistique.webp",
+          "alt": "Entrepôt logistique fictif à Mitry-Mory",
+          "provenance": "Image générée par IA pour le bac à sable orIAna",
+          "fictif": true,
+          "agence_id": 1
+        }
+      },
+      {
+        "id": 904,
+        "fields": {
+          "offre_id": 604,
+          "type": "photo",
+          "url": "/demo/offres/claye-souilly-commerce-activite.webp",
+          "alt": "Local commercial et d’activité fictif à Claye-Souilly",
+          "provenance": "Image générée par IA pour le bac à sable orIAna",
+          "fictif": true,
+          "agence_id": 1
+        }
+      }
+    ]
+  }
+}

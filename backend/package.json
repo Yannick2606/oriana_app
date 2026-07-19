@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
+    "start:sandbox": "node -e \"process.env.ORIANA_SANDBOX_MODE='1'; import('./src/server.js')\"",
     "check:grist": "node scripts/checkGrist.js",
     "audit:grist": "node scripts/auditGrist.js",
     "migrate:postgres": "node scripts/migratePostgres.js",
@@ -31,6 +32,7 @@
     "prepare:offres": "node scripts/prepareOffres.js",
     "prepare:mandats": "node scripts/prepareMandats.js",
     "prepare:crm": "node scripts/prepareCrm.js",
+    "generate:sandbox": "node scripts/generateSandboxData.js",
     "lint": "eslint .",
     "test": "node --test"
   },

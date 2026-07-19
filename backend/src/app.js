@@ -11,6 +11,7 @@ import { createMatchingController } from './controllers/matchingController.js';
 import { createUtilisateursController } from './controllers/utilisateursController.js';
 import { createAgentsController } from './controllers/agentsController.js';
 import { createFormationController } from './controllers/formationController.js';
+import { createSandboxController } from './controllers/sandboxController.js';
 import { createAuthRoutes } from './routes/authRoutes.js';
 import healthRoutes from './routes/healthRoutes.js';
 import { createPatrimoineRoutes } from './routes/patrimoineRoutes.js';
@@ -22,6 +23,7 @@ import { createMatchingRoutes } from './routes/matchingRoutes.js';
 import { createUtilisateursRoutes } from './routes/utilisateursRoutes.js';
 import { createAgentsRoutes } from './routes/agentsRoutes.js';
 import { createFormationRoutes } from './routes/formationRoutes.js';
+import { createSandboxRoutes } from './routes/sandboxRoutes.js';
 import { requirePasswordChanged } from './middlewares/requirePasswordChanged.js';
 import { frontendCors } from './middlewares/frontendCors.js';
 import { createAuthService } from './services/authService.js';
@@ -36,6 +38,7 @@ import { createMatchingService } from './services/matchingService.js';
 import { createUtilisateursService } from './services/utilisateursService.js';
 import { createAgentsService } from './services/agentsService.js';
 import { createFormationService } from './services/formationService.js';
+import { createSandboxService } from './services/sandboxService.js';
 
 export function createApp({
   authService,
@@ -52,9 +55,13 @@ export function createApp({
   frontendOrigin = process.env.FRONTEND_ORIGIN,
   sessionStore,
   invalidateUserSessions = async () => {},
+  sandboxData,
 } = {}) {
   if (!sessionSecret) {
     throw new Error('Configuration de session incomplète : SESSION_SECRET');
+  }
+  if (sandboxData && process.env.NODE_ENV === 'production') {
+    throw new Error('Le jeu de démonstration est interdit en production');
   }
 
   const app = express();
@@ -85,6 +92,9 @@ export function createApp({
   app.use('/auth', createAuthRoutes(createAuthController(resolvedAuthService)));
   app.use(requirePasswordChanged);
   app.use(createFormationRoutes(createFormationController(createFormationService(utilisateursClient))));
+  if (sandboxData) {
+    app.use('/sandbox', createSandboxRoutes(createSandboxController(createSandboxService(sandboxData))));
+  }
   const resolvedAgentsOptions = {
     webhookBaseUrl: agentsOptions?.webhookBaseUrl ?? process.env.N8N_WEBHOOK_BASE_URL,
     sharedSecret: agentsOptions?.sharedSecret ?? process.env.N8N_SHARED_SECRET,
