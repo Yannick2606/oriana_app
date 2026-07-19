@@ -73,6 +73,38 @@ const offerSpecs = [
   },
 ];
 
+const crmData = {
+  societes: [
+    { id: 1100, raison_sociale: 'Atelier Noroît — démonstration', enseigne: 'Noroît', type_relation: 'prospect' },
+    { id: 1101, raison_sociale: 'Fluxia Logistique — démonstration', enseigne: 'Fluxia', type_relation: 'preneur' },
+    { id: 1102, raison_sociale: 'Maison Sillage — démonstration', enseigne: 'Sillage', type_relation: 'prospect' },
+    { id: 1103, raison_sociale: 'Kanso Services — démonstration', enseigne: 'Kanso', type_relation: 'partenaire' },
+  ],
+  contacts: [
+    { id: 1200, societe_id: 1100, prenom: 'Maëlle', nom: 'Roux', fonction: 'Direction', email: 'maelle.roux@example.invalid' },
+    { id: 1201, societe_id: 1100, prenom: 'Nabil', nom: 'Caron', fonction: 'Responsable immobilier', email: 'nabil.caron@example.invalid' },
+    { id: 1202, societe_id: 1101, prenom: 'Élise', nom: 'Meyer', fonction: 'Direction logistique', email: 'elise.meyer@example.invalid' },
+    { id: 1203, societe_id: 1102, prenom: 'Tom', nom: 'Diallo', fonction: 'Développement', email: 'tom.diallo@example.invalid' },
+    { id: 1204, societe_id: 1103, prenom: 'Lina', nom: 'Marchal', fonction: 'Conseil immobilier', email: 'lina.marchal@example.invalid' },
+    { id: 1205, societe_id: 1103, prenom: 'Sacha', nom: 'Petit', fonction: 'Chargé de projet', email: 'sacha.petit@example.invalid' },
+  ],
+  demandes: [
+    { id: 1300, societe_id: 1100, contact_id: 1200, nature_transaction: 'les_deux', familles: ['L', 'activite'], surface_min: 1200, surface_max: 2100, budget_min: 180000, budget_max: 3800000, secteur_geo: 'Gonesse et Roissy', criteres_specifiques: 'Bâtiment indépendant, accès poids lourds et bureaux intégrés.' },
+    { id: 1301, societe_id: 1101, contact_id: 1202, nature_transaction: 'location', familles: ['L', 'logistique'], surface_min: 4000, surface_max: 5500, budget_min: 400000, budget_max: 560000, secteur_geo: 'Mitry-Mory et nord Seine-et-Marne', criteres_specifiques: 'Quais, aire de manœuvre et disponibilité avant fin 2026.' },
+    { id: 1302, societe_id: 1102, contact_id: 1203, nature_transaction: 'vente', familles: ['L', 'bureaux'], surface_min: 900, surface_max: 1500, budget_min: 3500000, budget_max: 5200000, secteur_geo: 'Argenteuil et proche couronne nord-ouest', criteres_specifiques: 'Immeuble identifiable, stationnement et possibilité d’occupation partielle.' },
+    { id: 1303, societe_id: 1103, contact_id: 1204, nature_transaction: 'les_deux', familles: ['L', 'commerce'], surface_min: 600, surface_max: 900, budget_min: 110000, budget_max: 2400000, secteur_geo: 'Claye-Souilly et Meaux ouest', criteres_specifiques: 'Visibilité commerciale, accès livraison et stationnement clientèle.' },
+    { id: 1304, societe_id: 1100, contact_id: 1201, nature_transaction: 'location', familles: ['L', 'activite'], surface_min: 700, surface_max: 1100, budget_min: 85000, budget_max: 145000, secteur_geo: 'Saint-Ouen-l’Aumône et Cergy', criteres_specifiques: 'Cellule divisible avec accès direct et bureaux aménageables.' },
+  ],
+  matchings: [
+    { id: 1400, demande_id: 1300, lot_id: 500, score_global: 94, score_surface: 96, score_budget: 90, score_geographie: 98, score_transaction: 92, score_type_bien: 94 },
+    { id: 1401, demande_id: 1300, lot_id: 501, score_global: 82, score_surface: 78, score_budget: 86, score_geographie: 84, score_transaction: 82, score_type_bien: 80 },
+    { id: 1402, demande_id: 1301, lot_id: 503, score_global: 96, score_surface: 98, score_budget: 94, score_geographie: 99, score_transaction: 96, score_type_bien: 95 },
+    { id: 1403, demande_id: 1302, lot_id: 502, score_global: 91, score_surface: 90, score_budget: 88, score_geographie: 92, score_transaction: 95, score_type_bien: 91 },
+    { id: 1404, demande_id: 1303, lot_id: 504, score_global: 89, score_surface: 92, score_budget: 86, score_geographie: 91, score_transaction: 88, score_type_bien: 90 },
+    { id: 1405, demande_id: 1304, lot_id: 501, score_global: 93, score_surface: 95, score_budget: 92, score_geographie: 94, score_transaction: 93, score_type_bien: 91 },
+  ],
+};
+
 function record(id, fields) {
   return { id, fields: { ...fields, agence_id: agencyId } };
 }
@@ -83,6 +115,7 @@ export function createSandboxData() {
     Utilisateurs: users.map(({ id, ...fields }) => record(id, { ...fields, actif: true })),
     Adresses: [], Sites: [], Batiments: [], Cellules: [], Lots: [],
     Offres: [], Conditions_Financieres: [], Mandats: [], Medias: [],
+    Societes: [], Contacts: [], Demandes: [], Matching_demandes_lots: [],
   };
   let cellId = 400;
   let conditionId = 700;
@@ -157,6 +190,17 @@ export function createSandboxData() {
       provenance: 'Image générée par IA pour le bac à sable orIAna', fictif: true,
     }));
   });
+
+  tables.Societes = crmData.societes.map(({ id, ...fields }) => record(id, {
+    ...fields, gestionnaire: 1005, donnee_exclusive: false,
+  }));
+  tables.Contacts = crmData.contacts.map(({ id, ...fields }) => record(id, {
+    ...fields, gestionnaire: 1005, donnee_exclusive: false,
+  }));
+  tables.Demandes = crmData.demandes.map(({ id, ...fields }) => record(id, {
+    ...fields, gestionnaire: 1005, donnee_exclusive: false,
+  }));
+  tables.Matching_demandes_lots = crmData.matchings.map(({ id, ...fields }) => record(id, fields));
 
   return {
     meta: {

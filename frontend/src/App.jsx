@@ -22,7 +22,7 @@ const pageDescriptions = {
   administration: ['Administration', 'Gérez les utilisateurs et les référentiels de l’agence.'],
 };
 
-function Dashboard({ user, onHelp, onNavigate, onCreateOpportunity }) {
+function Dashboard({ user, onHelp, onNavigate, onCreateOpportunity, readOnly = false }) {
   const scope = user.role_actif === 'consultant'
     ? 'vos données'
     : ['manager', 'master_consultant'].includes(user.role_actif)
@@ -37,7 +37,7 @@ function Dashboard({ user, onHelp, onNavigate, onCreateOpportunity }) {
   ].filter(({ id }) => canNavigateTo(user.role_actif, id));
   return <div className="space-y-7 animate-enter">
     <Breadcrumb items={['Accueil']}/>
-    <PageHeader eyebrow="Vue d’ensemble" title={`Bienvenue, ${user.prenom || 'à vous'}\u00a0👋`} description={`Voici les informations utiles pour suivre ${scope} et identifier la prochaine action.`} actions={<><HelpButton onClick={onHelp}/><Button onClick={onCreateOpportunity}><Plus size={17}/>Nouvelle opportunité</Button></>}/>
+    <PageHeader eyebrow="Vue d’ensemble" title={`Bienvenue, ${user.prenom || 'à vous'}\u00a0👋`} description={`Voici les informations utiles pour suivre ${scope} et identifier la prochaine action.`} actions={<><HelpButton onClick={onHelp}/>{!readOnly && <Button onClick={onCreateOpportunity}><Plus size={17}/>Nouvelle opportunité</Button>}</>}/>
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {shortcuts.map(({ id, title, description, icon: Icon }) => <Card key={id} className="flex flex-col"><Icon className="text-oriana-lavande" size={20}/><h2 className="mt-4 font-titre text-xl">{title}</h2><p className="mt-2 flex-1 text-sm leading-6 text-oriana-discret">{description}</p><Button className="mt-5 w-full" variant="secondary" onClick={() => onNavigate(id)}>Ouvrir {title}<ArrowRight size={15}/></Button></Card>)}
     </div>
@@ -73,7 +73,7 @@ export default function App() {
   if (navigation.length === 0) return <main className="grid min-h-screen place-items-center bg-oriana-fond p-5 text-oriana-texte"><Card className="max-w-lg text-center"><h1 className="font-titre text-2xl">Rôle non reconnu</h1><p className="mt-3 text-sm leading-6 text-oriana-discret">Ce compte contient un rôle qui ne correspond pas au référentiel orIAna. Déconnectez-vous puis demandez sa correction à un administrateur.</p><Button className="mt-5" onClick={logout}>Se déconnecter</Button></Card></main>;
 
   return <AppShell theme={theme} onToggleTheme={toggleTheme} collapsed={collapsed} onToggleCollapsed={() => setCollapsed((value) => !value)} mobileOpen={mobileOpen} onToggleMobile={() => setMobileOpen((value) => !value)} backendStatus={backendStatus} user={user} onLogout={logout} onRoleChange={changeRole} navigation={navigation} activePage={safeActivePage} onNavigate={setActivePage}>
-    {safeActivePage === 'accueil' ? <Dashboard user={user} onHelp={() => setHelpOpen(true)} onNavigate={setActivePage} onCreateOpportunity={() => { setCrmCreateRequest((value) => value + 1); setActivePage('crm'); }}/> : safeActivePage === 'patrimoine' ? <PatrimoinePage/> : safeActivePage === 'offres' ? <OffresPage/> : safeActivePage === 'crm' || safeActivePage === 'matching' ? <CrmPage createSocieteRequest={crmCreateRequest}/> : safeActivePage === 'agents' ? <AgentsPage/> : safeActivePage === 'administration' ? <AdministrationPage user={user}/> : safeActivePage === 'autoformation' ? null : <ModuleOrientation page={safeActivePage} onBack={() => setActivePage('accueil')}/>}
+    {safeActivePage === 'accueil' ? <Dashboard user={user} onHelp={() => setHelpOpen(true)} onNavigate={setActivePage} onCreateOpportunity={() => { setCrmCreateRequest((value) => value + 1); setActivePage('crm'); }} readOnly={sandbox}/> : safeActivePage === 'patrimoine' ? <PatrimoinePage/> : safeActivePage === 'offres' ? <OffresPage/> : safeActivePage === 'crm' || safeActivePage === 'matching' ? <CrmPage createSocieteRequest={crmCreateRequest} readOnly={sandbox}/> : safeActivePage === 'agents' ? <AgentsPage/> : safeActivePage === 'administration' ? <AdministrationPage user={user}/> : safeActivePage === 'autoformation' ? null : <ModuleOrientation page={safeActivePage} onBack={() => setActivePage('accueil')}/>}
     <FormationExperience user={user} pageVisible={safeActivePage === 'autoformation'} readOnly={sandbox}/>
     <Modal open={helpOpen} onClose={() => setHelpOpen(false)} title="Votre vue d’ensemble"><p className="text-sm leading-6 text-oriana-discret">Cette page rassemble les informations de votre périmètre actif. Les menus visibles facilitent l’accès ; les autorisations restent systématiquement contrôlées par le backend.</p><Button className="mt-5" onClick={() => setHelpOpen(false)}>J’ai compris</Button></Modal>
   </AppShell>;

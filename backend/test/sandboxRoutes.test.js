@@ -6,6 +6,7 @@ import request from 'supertest';
 
 import { createApp } from '../src/app.js';
 import { createSandboxData } from '../src/sandbox/createSandboxData.js';
+import { createSandboxClient } from '../src/services/sandboxClient.js';
 
 const consultant = {
   id: 7, nom: 'Consultant', prenom: 'Démo', roles: ['consultant'],
@@ -20,9 +21,13 @@ function client() {
 }
 
 function fixture({ sandboxData = createSandboxData(), user = consultant } = {}) {
-  const persistence = client();
+  const persistence = sandboxData
+    ? createSandboxClient(sandboxData, { authEmail: 'preview@example.invalid' })
+    : client();
   const app = createApp({
     patrimoineClient: persistence,
+    crmClient: persistence,
+    matchingClient: persistence,
     utilisateursClient: persistence,
     sandboxData,
     sessionSecret: randomBytes(32).toString('hex'),
@@ -69,6 +74,26 @@ test('bloque toute écriture métier dans la prévisualisation', async () => {
   const response = await agent.post('/offres').send({ statut: 'brouillon' }).expect(403);
 
   assert.equal(response.body.error, 'SANDBOX_READ_ONLY');
+});
+
+test('sert le CRM et les matchings fictifs depuis la persistance isolée', async () => {
+  const agent = fixture({ user: {
+    id: 1002, nom: 'Mercier', prenom: 'Samir', roles: ['admin_agence'],
+    role_actif: 'admin_agence', agence_id: 1,
+  } });
+  await login(agent);
+
+  const [societes, contacts, demandes, matchings] = await Promise.all([
+    agent.get('/societes').expect(200),
+    agent.get('/contacts').expect(200),
+    agent.get('/demandes').expect(200),
+    agent.get('/matching?demande_id=1300').expect(200),
+  ]);
+
+  assert.equal(societes.body.data.length, 4);
+  assert.equal(contacts.body.data.length, 6);
+  assert.equal(demandes.body.data.length, 5);
+  assert.deepEqual(matchings.body.data.map((entry) => entry.score_global), [94, 82]);
 });
 
 test('marque le cookie de session comme sécurisé derrière le proxy de prévisualisation', async () => {

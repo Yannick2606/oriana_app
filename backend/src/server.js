@@ -36,6 +36,8 @@ const app = createApp({
   authService: sandboxAuthService,
   sessionStore: sandboxEnabled ? undefined : createPostgresSessionStore(postgresPool),
   patrimoineClient: persistenceClient,
+  crmClient: persistenceClient,
+  matchingClient: persistenceClient,
   utilisateursClient: persistenceClient,
   invalidateUserSessions: sandboxEnabled ? undefined : createSessionInvalidator(postgresPool),
   sandboxData,

@@ -42,3 +42,26 @@ test('référence uniquement des photographies locales présentes dans le projet
     assert.equal(existsSync(resolve('..', 'frontend', 'public', photo.slice(1))), true);
   }
 });
+
+test('relie un CRM fictif cohérent aux lots du bac à sable', () => {
+  const data = createSandboxData();
+  const { Societes, Contacts, Demandes, Lots, Matching_demandes_lots: matchings } = data.tables;
+  const ids = (records) => new Set(records.map((entry) => entry.id));
+  const societyIds = ids(Societes);
+  const contactIds = ids(Contacts);
+  const requestIds = ids(Demandes);
+  const lotIds = ids(Lots);
+
+  assert.equal(Societes.length, 4);
+  assert.equal(Contacts.length, 6);
+  assert.equal(Demandes.length, 5);
+  assert.equal(matchings.length, 6);
+  assert.ok(Contacts.every((contact) => societyIds.has(contact.fields.societe_id)));
+  assert.ok(Demandes.every((request) => societyIds.has(request.fields.societe_id)
+    && contactIds.has(request.fields.contact_id)));
+  assert.ok(matchings.every((matching) => requestIds.has(matching.fields.demande_id)
+    && lotIds.has(matching.fields.lot_id)
+    && matching.fields.score_global >= 0
+    && matching.fields.score_global <= 100));
+  assert.ok(Contacts.every((contact) => contact.fields.email.endsWith('@example.invalid')));
+});
