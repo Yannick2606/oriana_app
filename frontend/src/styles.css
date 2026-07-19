@@ -8,6 +8,9 @@
   --color-surface-alt: 49 31 61; --color-text: 250 247 251; --color-muted: 190 178 197;
   --color-border: 79 57 91; --radius: 0.75rem; --shadow: 0 8px 24px rgb(11 5 14 / .22);
   --shadow-lg: 0 24px 64px rgb(11 5 14 / .38);
+  --color-navigation: 24 10 32; --color-navigation-surface: 48 27 60;
+  --color-navigation-text: 250 247 251; --color-navigation-muted: 222 207 227;
+  --color-navigation-border: 77 52 90;
 }
 
 [data-theme='light'] {
@@ -16,6 +19,9 @@
   --color-surface-alt: 248 242 250; --color-text: 38 22 47; --color-muted: 103 85 112;
   --color-border: 222 207 227; --shadow: 0 8px 24px rgb(61 30 77 / .08);
   --shadow-lg: 0 24px 64px rgb(61 30 77 / .14);
+  --color-navigation: 24 10 32; --color-navigation-surface: 48 27 60;
+  --color-navigation-text: 250 247 251; --color-navigation-muted: 222 207 227;
+  --color-navigation-border: 77 52 90;
 }
 
 * { box-sizing: border-box; }

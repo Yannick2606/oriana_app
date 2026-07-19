@@ -42,6 +42,16 @@ test('modifie indépendamment les conditions de vente', async () => {
   await waitFor(() => expect(offresApi.updateCondition).toHaveBeenCalledWith(30, expect.objectContaining({ prix_vente: 1180000 })));
 });
 
+test('signale un échec d’enregistrement des conditions sans fermer le formulaire', async () => {
+  offresApi.updateCondition.mockRejectedValueOnce(new Error('indisponible'));
+  render(<OffresPage/>);
+  const saleCard = (await screen.findByRole('heading', { name: 'Conditions de vente' })).closest('section');
+  fireEvent.click(within(saleCard).getByRole('button', { name: 'Modifier' }));
+  fireEvent.click(within(saleCard).getByRole('button', { name: 'Enregistrer les conditions' }));
+  expect(await within(saleCard).findByRole('alert')).toHaveTextContent('Les conditions financières n’ont pas pu être enregistrées.');
+  expect(within(saleCard).getByRole('button', { name: 'Enregistrer les conditions' })).toBeInTheDocument();
+});
+
 test('crée une offre sur un lot avec la nature choisie', async () => {
   render(<OffresPage/>);
   await screen.findByRole('heading', { name: 'Horizon flexible' });

@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useEffect, useId, useRef } from 'react';
 import { ChevronLeft, ChevronRight, HelpCircle, Search, X } from 'lucide-react';
 
 const cx = (...classes) => classes.filter(Boolean).join(' ');
@@ -26,10 +26,31 @@ export function Radio({ label, ...props }) { return <label className="inline-fle
 export function Toggle({ checked, onChange, label }) { return <label className="inline-flex cursor-pointer items-center gap-3 text-sm"><button type="button" role="switch" aria-checked={checked} onClick={() => onChange?.(!checked)} className={cx('relative h-6 w-11 rounded-full transition', checked ? 'bg-oriana-violet' : 'bg-oriana-bordure')}><span className={cx('absolute top-1 h-4 w-4 rounded-full bg-white transition', checked ? 'left-6' : 'left-1')}/></button>{label}</label>; }
 
 export function Badge({ children, variant = 'default' }) { return <span className={cx('inline-flex rounded-full px-2.5 py-1 text-xs font-semibold', variant === 'accent' ? 'bg-oriana-violet/20 text-oriana-lavandeClair' : 'bg-oriana-surfaceAlt text-oriana-discret')}>{children}</span>; }
-export function Tooltip({ label, children }) { return <span className="group relative inline-flex">{children}<span role="tooltip" className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-oriana-fondAlt px-2 py-1 text-xs text-white shadow-oriana-lg group-hover:block group-focus-within:block">{label}</span></span>; }
+export function Tooltip({ label, children, placement = 'top', className }) {
+  if (!label) return children;
+  const position = placement === 'right'
+    ? 'left-full top-1/2 ml-2 -translate-y-1/2'
+    : 'bottom-full left-1/2 mb-2 -translate-x-1/2';
+  return <span className={cx('group relative inline-flex', className)}>{children}<span role="tooltip" className={cx('pointer-events-none absolute z-50 hidden whitespace-nowrap rounded-md bg-oriana-navigation px-2 py-1 text-xs text-oriana-navigationText shadow-oriana-lg group-hover:block group-focus-within:block', position)}>{label}</span></span>;
+}
 
-export function Modal({ open, onClose, title, children }) { const id = useId(); if (!open) return null; return <div className="fixed inset-0 z-50 grid place-items-center bg-oriana-fondAlt/75 p-4" role="presentation" onMouseDown={onClose}><div role="dialog" aria-modal="true" aria-labelledby={id} className="animate-enter w-full max-w-lg rounded-oriana border border-oriana-bordure bg-oriana-surface p-6 shadow-oriana-lg" onMouseDown={(event) => event.stopPropagation()}><div className="mb-4 flex items-center justify-between"><h2 id={id} className="font-titre text-xl">{title}</h2><Button variant="ghost" size="sm" aria-label="Fermer" onClick={onClose}><X size={18}/></Button></div>{children}</div></div>; }
-export function Drawer({ open, onClose, title, children }) { const id = useId(); if (!open) return null; return <div className="fixed inset-0 z-50 bg-oriana-fondAlt/70" role="presentation" onMouseDown={onClose}><aside role="dialog" aria-modal="true" aria-labelledby={id} className="animate-enter ml-auto h-full w-full max-w-md border-l border-oriana-bordure bg-oriana-surface p-6 shadow-oriana-lg" onMouseDown={(event) => event.stopPropagation()}><div className="mb-5 flex items-center justify-between"><h2 id={id} className="font-titre text-xl">{title}</h2><Button variant="ghost" size="sm" onClick={onClose} aria-label="Fermer"><X size={18}/></Button></div>{children}</aside></div>; }
+function useDialog(open, onClose) {
+  const ref = useRef(null);
+  const onCloseRef = useRef(onClose);
+  useEffect(() => { onCloseRef.current = onClose; }, [onClose]);
+  useEffect(() => {
+    if (!open) return undefined;
+    const previousFocus = document.activeElement;
+    const closeOnEscape = (event) => { if (event.key === 'Escape') onCloseRef.current(); };
+    document.addEventListener('keydown', closeOnEscape);
+    ref.current?.focus();
+    return () => { document.removeEventListener('keydown', closeOnEscape); previousFocus?.focus?.(); };
+  }, [open]);
+  return ref;
+}
+
+export function Modal({ open, onClose, title, children }) { const id = useId(); const dialogRef = useDialog(open, onClose); if (!open) return null; return <div className="fixed inset-0 z-50 grid place-items-center bg-oriana-fondAlt/75 p-4" role="presentation" onMouseDown={onClose}><div ref={dialogRef} tabIndex="-1" role="dialog" aria-modal="true" aria-labelledby={id} className="animate-enter w-full max-w-lg rounded-oriana border border-oriana-bordure bg-oriana-surface p-6 shadow-oriana-lg outline-none" onMouseDown={(event) => event.stopPropagation()}><div className="mb-4 flex items-center justify-between"><h2 id={id} className="font-titre text-xl">{title}</h2><Button variant="ghost" size="sm" aria-label="Fermer" onClick={onClose}><X size={18}/></Button></div>{children}</div></div>; }
+export function Drawer({ open, onClose, title, children }) { const id = useId(); const dialogRef = useDialog(open, onClose); if (!open) return null; return <div className="fixed inset-0 z-50 bg-oriana-fondAlt/70" role="presentation" onMouseDown={onClose}><aside ref={dialogRef} tabIndex="-1" role="dialog" aria-modal="true" aria-labelledby={id} className="animate-enter ml-auto h-full w-full max-w-md border-l border-oriana-bordure bg-oriana-surface p-6 shadow-oriana-lg outline-none" onMouseDown={(event) => event.stopPropagation()}><div className="mb-5 flex items-center justify-between"><h2 id={id} className="font-titre text-xl">{title}</h2><Button variant="ghost" size="sm" onClick={onClose} aria-label="Fermer"><X size={18}/></Button></div>{children}</aside></div>; }
 
 export function Table({ columns, rows }) { return <div className="overflow-x-auto rounded-oriana border border-oriana-bordure"><table className="w-full text-left text-sm"><thead className="bg-oriana-surfaceAlt text-xs uppercase tracking-wide text-oriana-discret"><tr>{columns.map((column) => <th className="px-4 py-3" key={column.key}>{column.label}</th>)}</tr></thead><tbody className="divide-y divide-oriana-bordure">{rows.map((row, index) => <tr className="hover:bg-oriana-surfaceAlt/60" key={row.id || index}>{columns.map((column) => <td className="px-4 py-3" key={column.key}>{column.render ? column.render(row) : row[column.key]}</td>)}</tr>)}</tbody></table></div>; }
 export function Pagination({ page = 1, total = 1, onChange }) { return <nav aria-label="Pagination" className="flex items-center justify-between gap-3 text-sm"><Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => onChange?.(page - 1)}><ChevronLeft size={15}/>Précédent</Button><span className="text-oriana-discret">Page {page} sur {total}</span><Button variant="secondary" size="sm" disabled={page >= total} onClick={() => onChange?.(page + 1)}>Suivant<ChevronRight size={15}/></Button></nav>; }
@@ -40,9 +61,28 @@ export function Loader({ label = 'Chargement' }) { return <div role="status" cla
 export function Skeleton({ className }) { return <span aria-hidden="true" className={cx('relative block h-4 overflow-hidden rounded bg-oriana-surfaceAlt', className)}><span className="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-oriana-lavande/15 to-transparent"/></span>; }
 export function EmptyState({ title, description, action }) { return <div className="grid min-h-52 place-items-center rounded-oriana border border-dashed border-oriana-bordure p-8 text-center"><div><div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full bg-oriana-violet/15 text-oriana-lavande"><Search size={20}/></div><h3 className="font-titre text-lg">{title}</h3><p className="mx-auto mt-2 max-w-sm text-sm text-oriana-discret">{description}</p>{action && <div className="mt-5">{action}</div>}</div></div>; }
 
-export function Tabs({ tabs, active, onChange }) { return <div role="tablist" className="flex gap-1 border-b border-oriana-bordure">{tabs.map((tab) => <button role="tab" aria-selected={active === tab.id} className={cx('border-b-2 px-3 py-2 text-sm font-semibold transition', active === tab.id ? 'border-oriana-violet text-oriana-texte' : 'border-transparent text-oriana-discret hover:text-oriana-texte')} onClick={() => onChange?.(tab.id)} key={tab.id}>{tab.label}</button>)}</div>; }
+export function Tabs({ tabs, active, onChange, children, ariaLabel = 'Sections de la fiche' }) {
+  const baseId = useId().replaceAll(':', '');
+  const activeIndex = Math.max(0, tabs.findIndex((tab) => tab.id === active));
+  const selected = tabs[activeIndex];
+  const tabId = (tab) => `${baseId}-tab-${tab.id}`;
+  const panelId = (tab) => `${baseId}-panel-${tab.id}`;
+  function moveFocus(event, index) {
+    let nextIndex = null;
+    if (event.key === 'ArrowRight') nextIndex = (index + 1) % tabs.length;
+    if (event.key === 'ArrowLeft') nextIndex = (index - 1 + tabs.length) % tabs.length;
+    if (event.key === 'Home') nextIndex = 0;
+    if (event.key === 'End') nextIndex = tabs.length - 1;
+    if (nextIndex === null) return;
+    event.preventDefault();
+    const buttons = event.currentTarget.parentElement.querySelectorAll('[role="tab"]');
+    buttons[nextIndex]?.focus();
+    onChange?.(tabs[nextIndex].id);
+  }
+  return <div><div role="tablist" aria-label={ariaLabel} className="flex max-w-full gap-1 overflow-x-auto border-b border-oriana-bordure">{tabs.map((tab, index) => <button type="button" id={tabId(tab)} role="tab" aria-controls={panelId(tab)} aria-selected={activeIndex === index} tabIndex={activeIndex === index ? 0 : -1} className={cx('shrink-0 border-b-2 px-3 py-2 text-sm font-semibold transition', activeIndex === index ? 'border-oriana-violet text-oriana-texte' : 'border-transparent text-oriana-discret hover:text-oriana-texte')} onKeyDown={(event) => moveFocus(event, index)} onClick={() => onChange?.(tab.id)} key={tab.id}>{tab.label}</button>)}</div>{selected && <div id={panelId(selected)} role="tabpanel" aria-labelledby={tabId(selected)} tabIndex="0">{children}</div>}</div>;
+}
 export function Accordion({ items, openId, onChange }) { return <div className="divide-y divide-oriana-bordure rounded-oriana border border-oriana-bordure">{items.map((item) => <div key={item.id}><button className="flex w-full items-center justify-between p-4 text-left font-semibold" aria-expanded={openId === item.id} onClick={() => onChange?.(openId === item.id ? null : item.id)}>{item.title}<ChevronRight size={17} className={cx('transition', openId === item.id && 'rotate-90')}/></button>{openId === item.id && <div className="px-4 pb-4 text-sm text-oriana-discret">{item.content}</div>}</div>)}</div>; }
 export function Toolbar({ children }) { return <div className="flex flex-wrap items-center justify-between gap-3 rounded-oriana border border-oriana-bordure bg-oriana-surface p-3">{children}</div>; }
 export function Breadcrumb({ items }) { return <nav aria-label="Fil d’Ariane"><ol className="flex flex-wrap items-center gap-2 text-xs text-oriana-discret">{items.map((item, index) => <li className="flex items-center gap-2" key={item}>{index > 0 && <ChevronRight size={12}/>}<span aria-current={index === items.length - 1 ? 'page' : undefined}>{item}</span></li>)}</ol></nav>; }
-export function PageHeader({ eyebrow, title, description, actions }) { return <header className="flex flex-col justify-between gap-4 md:flex-row md:items-end"><div><p className="mb-2 text-xs font-bold uppercase tracking-[.18em] text-oriana-lavande">{eyebrow}</p><h1 className="font-titre text-3xl tracking-tight md:text-4xl">{title}</h1><p className="mt-2 max-w-2xl text-sm leading-6 text-oriana-discret">{description}</p></div>{actions && <div className="flex gap-2">{actions}</div>}</header>; }
+export function PageHeader({ eyebrow, title, description, actions }) { return <header className="flex flex-col justify-between gap-4 md:flex-row md:items-end"><div className="min-w-0"><p className="mb-2 text-xs font-bold uppercase tracking-[.18em] text-oriana-lavande">{eyebrow}</p><h1 className="font-titre text-3xl tracking-tight md:text-4xl">{title}</h1><p className="mt-2 max-w-2xl text-sm leading-6 text-oriana-discret">{description}</p></div>{actions && <div className="flex flex-wrap gap-2 md:justify-end">{actions}</div>}</header>; }
 export function HelpButton({ onClick }) { return <Tooltip label="Aide contextuelle"><Button variant="secondary" size="sm" aria-label="Ouvrir l’aide" onClick={onClick}><HelpCircle size={17}/>Aide</Button></Tooltip>; }

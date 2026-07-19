@@ -5,3 +5,4 @@ export { qualificationApi } from './qualification';
 export { offresApi } from './offres';
 export { crmApi } from './crm';
 export { agentsApi } from './agents';
+export { systemApi } from './system';
