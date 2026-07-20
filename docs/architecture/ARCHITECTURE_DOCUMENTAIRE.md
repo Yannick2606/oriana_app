@@ -78,12 +78,20 @@ le [cadrage T-34](CADRAGE_T34_CAPTURE_MOBILE.md). La capacité peut être dével
 environnements isolés mais reste indisponible en production avant le Go T-30 et les validations
 propres aux données capturées.
 
-## Contrats à spécifier avant code
+## Contrats et implémentation progressive
 
-La spécification technique doit encore définir : modèle de métadonnées et versions, API de
-téléversement et reprise, stratégie de découpage des envois, contrôle de concurrence, quarantaine,
-antivirus, empreintes, prévisualisations, chiffrement, URLs temporaires, rétention, suppression,
-restauration, observabilité, quotas, erreurs et tests de charge.
+Le premier lot pur définit les catalogues, politiques, erreurs et contrats de ports. Restent à
+spécifier avant persistance ou activation : modèle physique et migrations, API de téléversement et
+reprise, stratégie de découpage des envois, adaptateurs de stockage et d’antivirus,
+prévisualisations, chiffrement, URLs temporaires, suppression, restauration, observabilité et tests
+de charge.
 
 Le fournisseur S3, les services OCR/IA et l’antivirus restent remplaçables. Aucun contrat ne doit
 exposer directement l’un d’eux au frontend.
+
+La proposition technique détaillée de T-34A est consignée dans la
+[spécification du socle documentaire](SPEC_T34A_SOCLE_DOCUMENTAIRE.md). Le profil audio, les quotas,
+la conservation et les rattachements initiaux sont acceptés par DEC-018 à DEC-021. Le stockage
+objet reste reporté à la qualification Qaegis. DEC-022 retient ClamAV isolé pour la preuve
+antivirus selon l’[étude datée](ETUDE_ANTIVIRUS_T34A_2026-07-20.md), sous réserve du POC formats,
+charge et indisponibilité avant activation.

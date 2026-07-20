@@ -358,3 +358,11 @@ Antivirus, OCR, transcription et analyse sémantique sont asynchrones et passent
 internes. Une analyse générative ne devient active qu’au travers de l’AI Gateway T-42, sauf nouvelle
 décision d’architecture explicitement validée. OCR ou transcription ne peuvent jamais écrire une
 donnée métier sans une commande humaine de validation.
+
+### Annexe normative T-34A
+
+La proposition détaillée du socle documentaire est décrite dans
+[`docs/architecture/SPEC_T34A_SOCLE_DOCUMENTAIRE.md`](docs/architecture/SPEC_T34A_SOCLE_DOCUMENTAIRE.md).
+Elle encadre le lot T-34A. Le profil vocal, les quotas, la conservation, les rattachements initiaux
+et l’antivirus de preuve sont acceptés par DEC-018 à DEC-022. Le noyau métier pur est implémenté ;
+le choix du stockage objet reste différé avant toute persistance ou activation de la capacité.

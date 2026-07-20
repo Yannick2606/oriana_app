@@ -13,10 +13,124 @@
 - PHASE 1 : terminée — T-00 à T-22 et extensions T-22A à T-22D validées.
 - Migration PostgreSQL : T-27, T-28 et T-29 terminées ; T-30 non démarrée.
 - Reprise fonctionnelle : T-30A est active ; toute bascule PostgreSQL reste bloquée.
-- PHASE 2 : vision modulaire repriorisée par T-31 ; T-32 et T-33 sont terminées, T-34 est suivante.
+- PHASE 2 : vision modulaire repriorisée par T-31 ; T-32 et T-33 sont terminées, T-34A est active.
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-20 — T-34A lot 1 : audit final prêt pour commit**
+  - L’audit a aligné les quotas `Mo`/`Go` sur des unités décimales et fermé l’accès aux actions non
+    cataloguées sur un brouillon privé ; un test de non-régression couvre ce refus.
+  - `SPEC.md`, l’architecture documentaire, l’annexe T-34A et les décisions distinguent désormais
+    le noyau pur implémenté du stockage objet, de la persistance et de l’activation encore différés.
+  - Vérifications réussies : frontières architecturales, ESLint, liens Markdown locaux, contrôle du
+    diff, recherche ciblée de motifs sensibles et 152 tests backend sur 153, avec l’intégration
+    PostgreSQL ignorée. Un premier passage concurrent avait échoué sans détail sur Mandats ; le
+    fichier puis la suite complète ont réussi sans correction dans cette zone.
+  - Aucun fichier n’est indexé. Aucun secret, schéma, route, adaptateur réel, commit, push ou
+    déploiement n’a été ajouté par l’audit.
+- **2026-07-20 — T-34A lot 1 : contrats de ports implémentés et lot clos**
+  - Les six ports documentaires disposent d’une liste immuable d’opérations requises et d’un
+    contrôle de composition qui refuse tout double ou futur adaptateur incomplet.
+  - `captureRepository`, `fileRepository`, `objectStorage`, `malwareScanner`, `previewGenerator` et
+    `retentionExecutor` restent sans implémentation réelle et ne sont pas composés dans l’application.
+  - Vérifications réussies : frontières architecturales et ESLint, 22 tests documentaires, puis 152
+    tests backend réussis sur 153 avec l’intégration PostgreSQL ignorée.
+  - Le lot 1 pur est clos. Aucun schéma, route, fournisseur, secret, commit, push ou déploiement n’a
+    été ajouté.
+- **2026-07-20 — T-34A lot 1 : politiques documentaires implémentées**
+  - Les politiques pures contrôlent conjointement extension, MIME déclaré, MIME détecté, taille et
+    durée audio, ainsi que les quatre rattachements autorisés.
+  - Les transitions Capture/Fichier, échéances DEC-020, gel juridique et verdicts DEC-022 sont
+    déterministes. Seul `sain` ouvre la suite du traitement.
+  - Les droits réservent le brouillon à son auteur, bornent le master à son équipe soumise, la
+    validation aux directeur/admin de l’agence et refusent tout accès métier implicite au super admin.
+  - Vérifications réussies : frontières architecturales et ESLint, 17 tests documentaires, puis 147
+    tests backend réussis sur 148 avec l’intégration PostgreSQL ignorée.
+  - Aucun port, route, fournisseur, secret, commit, push ou déploiement n’a été ajouté.
+- **2026-07-20 — T-34A lot 1 : catalogues et erreurs implémentés**
+  - Le nouveau module documentaire expose les catalogues immuables de types, cibles, formats,
+    états, verdicts, quotas et conservations issus de DEC-018 à DEC-022.
+  - `DocumentaryError` limite les erreurs du domaine à six codes stables, sans statut HTTP ni détail
+    fournisseur. Aucune route, persistance, variable d’environnement ou composition n’est ajoutée.
+  - Vérifications réussies : frontières architecturales et ESLint, 8 tests ciblés, puis 138 tests
+    backend réussis sur 139 avec l’intégration PostgreSQL ignorée.
+  - Les politiques pures et contrats de ports restent à implémenter. Aucun commit, push ou
+    déploiement n’a été réalisé.
+- **2026-07-20 — T-34A : premier lot technique délimité**
+  - L’audit confirme l’absence de tables Capture/Fichier, de ports documentaires et de routes
+    `/socle` dans le backend actuel.
+  - Le lot proposé crée seulement un module pur de catalogues, politiques, erreurs et contrats de
+    ports, avec tests unitaires et sans import Express, persistance, réseau, filesystem ou fournisseur.
+  - Migrations, routes, composition, stockage objet, ClamAV, OCR, IA et activation restent hors lot.
+    La source opérationnelle Grist et le blocage du Go T-30 sont inchangés.
+  - Aucun code applicatif, secret, commit, push ou déploiement n’a été ajouté.
+- **2026-07-20 — T-34A : antivirus de preuve validé**
+  - DEC-022 retient ClamAV `clamd` en conteneur isolé derrière `malwareScanner`, sans exposition
+    publique ni droit métier général.
+  - Seul `sain` permet la suite ; `infecte`, `non_analysable`, `erreur` et `indisponible` maintiennent
+    le fichier en quarantaine et aucun diagnostic brut ne traverse l’API.
+  - L’activation reste interdite avant POC de chaque format, de la charge, de l’indisponibilité et
+    de la fraîcheur des signatures, avec capacité réservée de 3 Gio minimum et 4 Gio préférés.
+  - Le stockage reste reporté à la qualification Qaegis. Aucun scanner, secret, commit, push ou
+    déploiement n’a été ajouté.
+- **2026-07-20 — T-34A : étude antivirus préparée**
+  - ClamAV `clamd` en conteneur isolé est recommandé pour la preuve derrière le port
+    `malwareScanner`, avec flux borné et verdicts normalisés.
+  - Seul `sain` permet la suite ; infection, format non analysable, erreur ou indisponibilité
+    maintiennent le fichier en quarantaine. HEIC, WebM et MP4 exigent une preuve spécifique.
+  - La documentation officielle recommande 3 Gio de RAM au minimum et 4 Gio de préférence ; aucune
+    installation sur le VPS actuel n’est autorisée avant mesure de capacité et POC de charge.
+  - Aucun scanner, fournisseur, secret, commit, push ou déploiement n’a été ajouté.
+- **2026-07-20 — T-34A : piste Qaegis intégrée à l’étude de stockage**
+  - Qaegis devient le candidat prioritaire à qualifier ; Scaleway Multi-AZ Paris reste la référence
+    technique et la solution de repli, sans décision fournisseur définitive.
+  - Aucune documentation technique publique clairement attribuable à cette offre Qaegis n’a été
+    identifiée. Un questionnaire couvre responsabilités, régions, S3, droits, chiffrement,
+    restauration, conformité, coûts et preuve fictive.
+  - Aucun compte, engagement, secret, push ou déploiement n’a été créé.
+- **2026-07-20 — T-34A : étude du stockage objet préparée**
+  - Les offres officielles Scaleway, OVHcloud, Backblaze et Cloudflare ont été comparées sur région,
+    S3, versionnement, cycle de vie, chiffrement, restauration et coût.
+  - Scaleway Standard Multi-AZ Paris constitue la référence technique étudiée ; la piste Qaegis a
+    ensuite été ajoutée comme candidat prioritaire à qualifier.
+  - Cloudflare R2 est écarté comme stockage principal car son API S3 n’implémente pas les opérations
+    de versionnement requises. Aucun compte, abonnement, secret, push ou déploiement n’a été créé.
+- **2026-07-20 — T-34A : rattachements initiaux validés**
+  - DEC-021 autorise Société, Contact, Demande et Offre, sous contrôle serveur du rôle, de l’agence,
+    des rattachements et de la visibilité de la cible.
+  - Territoire, Opportunité, Tâche et Idée éditoriale restent des intentions de brouillon non
+    validables jusqu’à l’implémentation de leurs contrats, persistance et droits.
+  - Aucun code, fournisseur, push ou déploiement n’a été ajouté.
+- **2026-07-20 — T-34A : matrice de conservation validée**
+  - DEC-020 fixe 24 heures pour un transfert incomplet, 7 jours pour une quarantaine, 90 jours
+    d’inactivité pour un brouillon privé, 30 jours pour une capture rejetée ou un aperçu
+    régénérable, et la durée de vie du parent pour un original validé.
+  - Le gel juridique suspend toute purge et une restauration ne doit pas remettre en circulation un
+    objet déjà purgé. La validation métier et juridique reste obligatoire avant production.
+  - Aucun code, fournisseur, push ou déploiement n’a été ajouté.
+- **2026-07-20 — T-34A : quotas initiaux validés**
+  - DEC-019 fixe 20 Mo par fichier, 10 fichiers ou 100 Mo par capture, 100 fichiers ou 2 Go par
+    utilisateur et par jour, puis 500 fichiers ou 10 Go par agence et par jour.
+  - Une alerte est prévue à 80 %. Les limites restent configurables côté serveur et révisables après
+    mesure ; `413` distingue la taille du fichier et `429` le quota journalier.
+  - Aucun code, fournisseur, push ou déploiement n’a été ajouté.
+- **2026-07-20 — T-34A : profil de capture vocale validé**
+  - DEC-018 accepte `audio/webm` et `audio/mp4`, avec un plafond de 5 minutes et 20 Mo.
+  - Le backend devra contrôler le type réel, conserver l’original et produire la version de travail
+    de façon asynchrone ; une alternative textuelle reste disponible.
+  - La recette sur terminaux ciblés, l’antivirus et l’action explicite avant transcription restent
+    obligatoires. Aucun code, fournisseur, push ou déploiement n’a été ajouté.
+- **2026-07-20 — T-34A : proposition du contrat documentaire rédigée**
+  - L’annexe décrit métadonnées, versions, empreintes, droits, quarantaine, ports internes et
+    restauration conjointe des métadonnées et objets.
+  - Les formats documentaires et la limite de 20 Mo sont repris des décisions existantes ; audio,
+    quotas et conservation ont ensuite été arbitrés explicitement par DEC-018 à DEC-020.
+  - La recette de restauration rapproche inventaire, versions, empreintes, droits, quarantaines et
+    purges en attente, tout en vérifiant que les objets restaurés restent privés.
+  - Deux arbitrages restent bloquants après DEC-018 à DEC-021 : stockage objet et antivirus. Aucun
+    schéma, route, fournisseur, push ou déploiement n’a été ajouté.
+  - Un support non normatif prépare pour chacun une recommandation, une alternative et ses
+    conséquences ; aucune option ne devient applicable sans validation humaine.
 - **2026-07-20 — T-34 : cadrage et conditions d’activation validés**
   - T-34 reste découpée en socle documentaire, brouillons multi-appareil, envoi résilient, analyse
     asynchrone et validation mobile, dans cet ordre.

@@ -382,11 +382,18 @@
 - **État** : cadrage et ordre T-34A à T-34E validés le 20 juillet 2026 ; aucun composant de capture,
   stockage, OCR ou IA n’est encore implémenté.
 
-#### [ ] T-34A : Socle documentaire
+#### [~] T-34A : Socle documentaire
 - Définir métadonnées, droits, versions, empreintes, quarantaine et stockage objet privé compatible
   S3 selon `docs/architecture/ARCHITECTURE_DOCUMENTAIRE.md`.
 - **Acceptation** : originaux hors disque applicatif permanent, accès backend contrôlé, formats et
   limite de 20 Mo testés, restauration documentée.
+- **État** : proposition de spécification et matrice de recommandations rédigées le 20 juillet
+  2026 ; le profil audio, les quotas, la conservation et les rattachements initiaux sont acceptés
+  par DEC-018 à DEC-021. DEC-022 retient un adaptateur ClamAV isolé pour la preuve, avec POC avant
+  activation. Le stockage reste reporté à la qualification Qaegis et constitue l’arbitrage restant.
+  L’audit d’implémentation délimite un premier lot pur : catalogues, politiques, erreurs et contrats
+  de ports, sans route, migration, fournisseur ou activation. Ce premier lot est implémenté et
+  testé ; aucune capacité active n’en résulte.
 
 #### [ ] T-34B : Brouillons multi-appareil
 - Synchroniser les brouillons smartphone et bureau avec versions et conflits explicites, sans
