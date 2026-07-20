@@ -34,6 +34,11 @@ Une création de brouillon accepte seulement :
   soit tous deux fournis ; le type appartient à `VALID_ATTACHMENT_TARGETS` et l’objet est visible
   par l’auteur.
 
+DEC-033 fixe sa future représentation PostgreSQL : quatre références facultatives vers Société,
+Contact, Demande et Offre, avec au plus une cible renseignée. L’adaptateur conserve le
+contrat `{ type, id }`. La suppression autorisée de la cible détache la proposition sans supprimer
+la Capture. Cette cible relationnelle reste non implémentée et n’autorise aucune migration.
+
 Le backend impose l’identifiant, `agence_id`, l’auteur, `brouillon_prive`, la version et les dates.
 Conformément à DEC-032, la géolocalisation est entièrement absente du contrat initial. Aucun champ,
 même nullable, ne lui est réservé. Les références de fichiers sont en lecture seule dans ce lot et
@@ -61,6 +66,12 @@ Une répétition avec l’ancienne version produit le même conflit et ne réapp
 Le backend n’effectue ni fusion automatique, ni écrasement forcé. DEC-025 fixe le code stable
 `CAPTURE_VERSION_CONFLICT` et sa réponse sûre après contrôle complet des droits.
 
+DEC-036 fixe la future opération PostgreSQL à une transaction courte. L’adaptateur recherche et
+verrouille la ligne dans le périmètre identifiant, auteur, agence et état privé, puis compare la
+version. Il effectue ensemble la mutation et l’incrément, ou construit sans mutation le conflit sûr
+depuis le même état verrouillé. Un objet absent ou non visible ne divulgue aucune valeur. Cette
+cible reste non implémentée et n’autorise ni migration, ni adaptateur, ni route.
+
 ## 5. API cible validée
 
 Toutes les routes exigent une session et vérifient les droits avant de révéler le brouillon :
@@ -78,10 +89,22 @@ lit jamais les brouillons d’un membre de l’équipe. Le master, le directeur 
 d’agence restent auteurs de leurs propres brouillons ; leur rôle ne leur donne pas accès aux
 brouillons privés d’autrui. Le super administrateur n’obtient aucun accès métier implicite.
 
+DEC-035 fixe le futur curseur à un jeton chiffré et authentifié valable 15 minutes. Il porte la
+version de format, la position stable, l’auteur, l’agence et les filtres de requête. Le matériel
+cryptographique reste uniquement dans l’environnement. Chaque page revérifie tous les droits ; un
+curseur ne constitue jamais une autorisation. Cette cible reste non implémentée et n’autorise ni
+secret, ni codec, ni route.
+
 DEC-028 impose une clé d’idempotence aléatoire fournie par le client et bornée à l’auteur et à
 l’agence pendant 24 heures. La même clé et les mêmes données retournent le brouillon existant ; la
 même clé avec des données différentes produit un conflit sans mutation. La clé ne constitue jamais
 une autorisation et sa purge après expiration doit être contrôlée.
+
+DEC-034 fixe sa future persistance dans un registre technique séparé contenant uniquement une
+empreinte de clé, l’auteur, l’agence, l’empreinte déterministe de la commande, la Capture créée et
+l’expiration. La clé brute n’est ni stockée ni journalisée. Une entrée expirée n’est plus reconnue
+et peut être remplacée ou purgée sans supprimer la Capture. Cette cible reste non implémentée et
+n’autorise ni table, ni migration, ni tâche planifiée.
 
 ## 6. Conflit compréhensible et résolution explicite
 
@@ -161,9 +184,20 @@ géolocalisation.
 Migrations, adaptateur PostgreSQL, routes, interface, service worker et stockage local restent hors
 de ce premier lot. Leur réalisation exige une nouvelle validation.
 
+L’[audit de persistance](AUDIT_PERSISTANCE_T34B_2026-07-20.md) confirme que le mécanisme de
+migration, l’idempotence CI et la restauration existants sont réutilisables, mais que quatre choix
+physiques ont été identifiés et fermés : DEC-033 pour le rattachement polymorphe, DEC-034 pour le
+stockage de l’idempotence, DEC-035 pour le codec de curseur et DEC-036 pour le conflit atomique. La
+[matrice de persistance](ARBITRAGES_PERSISTANCE_T34B.md) en conserve l’historique sans autoriser de
+SQL ni d’adaptateur.
+
 ## 11. Arbitrages validés
 
 Les dix options, recommandations et impacts validés sont consignés dans
 [`ARBITRAGES_T34B_BROUILLONS_MULTI_APPAREIL.md`](ARBITRAGES_T34B_BROUILLONS_MULTI_APPAREIL.md).
 Les décisions DEC-023 à DEC-032 bornent le lot pur implémenté. Toute capacité active reste soumise à
 une validation explicite distincte.
+
+Les quatre choix de persistance sont validés par DEC-033 à DEC-036 et leur historique figure dans
+[`ARBITRAGES_PERSISTANCE_T34B.md`](ARBITRAGES_PERSISTANCE_T34B.md). Ils décrivent une cible non
+implémentée et n’autorisent ni migration, ni adaptateur, ni route, ni activation.

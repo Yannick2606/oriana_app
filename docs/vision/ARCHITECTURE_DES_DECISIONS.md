@@ -40,6 +40,10 @@ historique : elle est remplacée par une nouvelle entrée qui la référence. St
 | DEC-030 | Un brouillon expose trois champs modifiables bornés | acceptée | arbitrage T-34B, 2026-07-20 | type, commentaire de 2 000 caractères et rattachement proposé |
 | DEC-031 | Le premier lot de brouillons reste strictement en ligne | acceptée | arbitrage T-34B, 2026-07-20 | aucune donnée métier persistée dans le navigateur avant modèle de menace |
 | DEC-032 | La géolocalisation est absente du premier contrat de brouillon | acceptée | arbitrage T-34B, 2026-07-20 | ajout ultérieur soumis à consentement, finalité et rétention explicites |
+| DEC-033 | Le rattachement proposé utilise quatre références exclusives | cible validée | arbitrage persistance T-34B, 2026-07-20 | intégrité référentielle et détachement sans suppression de la Capture |
+| DEC-034 | L’idempotence utilise un registre séparé expirant après 24 heures | cible validée | arbitrage persistance T-34B, 2026-07-20 | empreintes seulement, purge indépendante des Captures |
+| DEC-035 | La pagination utilise un curseur chiffré et authentifié valable 15 minutes | cible validée | arbitrage persistance T-34B, 2026-07-20 | position et périmètre non lisibles, droits revérifiés à chaque page |
+| DEC-036 | La modification d’un brouillon utilise une transaction et un verrou de ligne | cible validée | arbitrage persistance T-34B, 2026-07-20 | mutation unique ou conflit cohérent issu du même état autorisé |
 
 Les identifiants `SRC-HIST-*` sont décrits dans
 [l’audit stratégique](../audit/AUDIT_STRATEGIQUE_PATRIMOINE_ORIANA.md).
@@ -248,6 +252,67 @@ contient aucun champ de géolocalisation. Aucun adaptateur ne collecte, ne dédu
 persiste une position dans ce lot. Une évolution ultérieure exigera une décision distincte précisant
 au minimum la finalité, le consentement explicite, la précision nécessaire, la durée de conservation,
 les droits d’effacement et les contrôles d’accès.
+
+### DEC-033 — Rattachement relationnel exclusif des brouillons
+
+**Contexte.** Le contrat de domaine expose un rattachement proposé facultatif sous la forme
+`{ type, id }`, vers Société, Contact, Demande ou Offre. Un couple générique en base faciliterait
+l’ajout de nouvelles cibles, mais ne garantirait pas nativement leur existence.
+**Décision.** La future persistance PostgreSQL représente ces quatre cibles par quatre références
+facultatives protégées par des clés étrangères. Une contrainte relationnelle impose qu’aucune ou une
+seule référence soit renseignée. L’adaptateur Capture traduit cette représentation physique vers le
+contrat de domaine unique et refuse toute combinaison invalide.
+**Suppression.** La suppression autorisée d’une cible détache le rattachement proposé ; elle ne
+supprime ni la Capture ni son brouillon. L’opération reste soumise aux droits et règles propres à la
+cible. **Statut.** Cible validée, non implémentée. Cette décision n’autorise ni migration, ni
+adaptateur, ni activation et ne change pas le blocage T-30.
+
+### DEC-034 — Registre d’idempotence séparé et temporaire
+
+**Contexte.** DEC-028 borne l’idempotence d’une création à l’auteur et à l’agence pendant 24 heures.
+Placer la clé sur Capture mélangerait une donnée technique temporaire au brouillon durable et
+compliquerait sa purge.
+**Décision.** La future persistance utilise un registre technique distinct. Il conserve uniquement
+une empreinte cryptographique de la clé, l’auteur, l’agence, une empreinte déterministe de la
+commande canonique, la Capture créée et l’expiration. L’unicité porte sur l’agence, l’auteur et
+l’empreinte de clé. La clé brute n’est ni persistée ni journalisée.
+**Comportement.** Avant expiration, même clé et même commande retournent la Capture initiale ; une
+commande différente est refusée sans mutation. Après 24 heures, l’entrée n’est plus reconnue et
+peut être remplacée ou purgée par une tâche contrôlée, sans supprimer la Capture. Toute opération
+revérifie la session et les droits ; le registre n’est jamais une autorisation.
+**Statut.** Cible validée, non implémentée. Cette décision n’autorise ni table, ni migration, ni
+tâche planifiée, ni adaptateur et ne change pas le blocage T-30.
+
+### DEC-035 — Curseur de pagination chiffré, authentifié et temporaire
+
+**Contexte.** DEC-029 impose un curseur opaque et une pagination stable par date de modification
+puis identifiant. Un curseur signé mais lisible exposerait sa position et son périmètre ; un état
+stocké côté serveur ajouterait une nouvelle persistance temporaire.
+**Décision.** Le futur codec serveur produit un jeton chiffré et authentifié contenant uniquement la
+version du format, la position `date_mise_a_jour` et `id`, l’auteur, l’agence, les filtres de la
+requête et une expiration fixée à 15 minutes. Le matériel cryptographique reste uniquement dans
+l’environnement et sa rotation doit être prévue sans inscrire de valeur dans le dépôt.
+**Sécurité.** Le curseur ne constitue jamais une autorisation. Chaque page revérifie la session, le
+rôle actif, l’agence, l’auteur et l’état privé. Un jeton altéré, expiré ou lié à un autre périmètre
+est refusé sans révéler son contenu. La limite reste contrôlée indépendamment selon DEC-029.
+**Statut.** Cible validée, non implémentée. Cette décision n’autorise ni secret, ni codec, ni route,
+ni migration et ne change pas le blocage T-30.
+
+### DEC-036 — Conflit atomique dans une transaction courte
+
+**Contexte.** Une mise à jour conditionnelle suivie d’une lecture distincte détecte une version
+obsolète, mais un autre écrivain peut modifier encore le brouillon avant la construction de la
+réponse `409`. La charge de conflit ne représenterait alors pas nécessairement le même état.
+**Décision.** Le futur adaptateur Capture ouvre une transaction courte, recherche le brouillon dans
+le périmètre identifiant, auteur, agence et état privé, puis verrouille cette ligne. Il compare
+`version_attendue` à l’état verrouillé. Une version courante autorise une seule mutation et un seul
+incrément ; une version obsolète ne mute rien et produit les champs sûrs de DEC-025 depuis ce même
+état. Toute erreur annule la transaction.
+**Sécurité.** Un brouillon absent ou non visible ne révèle aucune version ni valeur. Le verrou reste
+limité à la ligne autorisée et à la durée de la transaction. Il n’autorise ni nouvelle tentative
+automatique, ni fusion, ni forçage et ne remplace aucun contrôle serveur.
+**Statut.** Cible validée, non implémentée. Cette décision n’autorise ni migration, ni adaptateur,
+ni route et ne change pas le blocage T-30.
 
 ## Modèle pour une nouvelle décision
 

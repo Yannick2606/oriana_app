@@ -79,6 +79,8 @@ Une contradiction est enregistrée dans STATUS et résolue dans le document qui 
 - [Audit T-34A — Préparation du lot 1](../architecture/AUDIT_IMPLEMENTATION_T34A_LOT1_2026-07-20.md)
 - [Spécification T-34B — Brouillons multi-appareil](../architecture/SPEC_T34B_BROUILLONS_MULTI_APPAREIL.md)
 - [Arbitrages T-34B — Brouillons multi-appareil](../architecture/ARBITRAGES_T34B_BROUILLONS_MULTI_APPAREIL.md)
+- [Audit de persistance T-34B](../architecture/AUDIT_PERSISTANCE_T34B_2026-07-20.md)
+- [Arbitrages de persistance T-34B](../architecture/ARBITRAGES_PERSISTANCE_T34B.md)
 - [Sources métier et règles d’import](../referentiels/SOURCES_METIER_ET_IMPORT.md)
 - [Audit stratégique du patrimoine](../audit/AUDIT_STRATEGIQUE_PATRIMOINE_ORIANA.md)
 - [Audit interface / charte du 19 juillet 2026](../audit/AUDIT_INTERFACE_CHARTE_2026-07-19.md)

@@ -18,6 +18,53 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-20 — T-34B : audit documentaire de persistance clos**
+  - DEC-033 à DEC-036 possèdent chacune une entrée unique dans la synthèse et le registre détaillé ;
+    la matrice ne contient plus de question ouverte.
+  - Les liens du corpus T-34B sont valides, `git diff --check` réussit et le diff reste limité aux
+    fichiers Markdown. `.env` est inchangé et aucune signature de secret n’est détectée.
+  - La cible de persistance est documentée mais non implémentée. Aucun test de base, migration,
+    adaptateur, route, commit, push ou déploiement n’est revendiqué.
+- **2026-07-20 — T-34B : conflit atomique de persistance validé**
+  - DEC-036 fixe une transaction courte qui recherche et verrouille le brouillon dans le périmètre
+    identifiant, auteur, agence et état privé avant de comparer `version_attendue`.
+  - La mutation et l’incrément réussissent ensemble, ou le conflit sûr est construit depuis le même
+    état verrouillé sans mutation ni fuite. Toute erreur annule la transaction.
+  - Les quatre arbitrages de persistance sont clos. Aucun SQL, migration, adaptateur, route, commit,
+    push ou déploiement n’a été ajouté.
+- **2026-07-20 — T-34B : curseur opaque de persistance validé**
+  - DEC-035 fixe un futur curseur chiffré et authentifié valable 15 minutes, contenant la position
+    stable, l’auteur, l’agence, les filtres et une version de format.
+  - Le matériel cryptographique restera uniquement dans l’environnement. Le curseur ne conférera
+    aucun droit et le serveur revérifiera le périmètre complet à chaque page.
+  - Seul le conflit atomique restait alors à arbitrer. Aucun secret, codec, route, SQL, adaptateur,
+    commit, push ou déploiement n’avait été ajouté.
+- **2026-07-20 — T-34B : persistance de l’idempotence validée**
+  - DEC-034 place l’idempotence dans un futur registre technique séparé, unique par agence, auteur
+    et empreinte de clé. La clé brute ne sera ni stockée ni journalisée.
+  - Le registre conservera aussi l’empreinte déterministe de la commande, la Capture créée et
+    l’expiration. Après 24 heures, l’entrée ne sera plus reconnue et pourra être remplacée ou purgée
+    sans supprimer la Capture.
+  - Curseur opaque et conflit atomique restaient alors à arbitrer. Aucun SQL, table, tâche
+    planifiée, adaptateur, commit, push ou déploiement n’avait été ajouté.
+- **2026-07-20 — T-34B : rattachement relationnel de persistance validé**
+  - DEC-033 représente la proposition de rattachement par quatre références facultatives vers
+    Société, Contact, Demande ou Offre, avec au plus une cible renseignée.
+  - L’adaptateur traduira ultérieurement cette forme vers `{ type, id }`. La suppression autorisée
+    d’une cible détachera la proposition sans supprimer la Capture.
+  - Idempotence, curseur opaque et conflit atomique restaient alors à arbitrer. Aucun SQL,
+    adaptateur, route, commit, push ou déploiement n’avait été ajouté.
+- **2026-07-20 — T-34B : audit et matrice de persistance consignés**
+  - L’audit statique confirme le migrateur transactionnel, le rejeu d’idempotence en CI et les
+    procédures existantes de sauvegarde/restauration ; aucune base ni donnée d’environnement n’a
+    été consultée.
+  - Le workflow PostgreSQL devra évoluer avec toute cinquième migration, car il énumère les quatre
+    fichiers actuels et attend exactement quatre entrées dans `schema_migrations`.
+  - Le CRUD PostgreSQL générique n’est pas adapté aux invariants Capture. Un futur adaptateur dédié
+    derrière `captureRepository` est recommandé, sans décision ni implémentation à ce stade.
+  - Quatre arbitrages documentés étaient alors ouverts : rattachement polymorphe, idempotence
+    24 heures, curseur opaque et conflit atomique. Aucun SQL, adaptateur, route, commit, push ou
+    déploiement n’avait été ajouté.
 - **2026-07-20 — T-34B lot pur : audit final de robustesse réussi**
   - Le comptage du commentaire s’arrête au 2 001e caractère sans construire de tableau proportionnel
     à la taille d’une entrée externe ; un test couvre désormais une chaîne d’un million de caractères.

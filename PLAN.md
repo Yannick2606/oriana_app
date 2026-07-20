@@ -413,6 +413,14 @@
   persistée dans le navigateur avant validation d’un modèle de menace. DEC-032 exclut entièrement
   la géolocalisation du premier contrat. Les dix arbitrages et le lot pur sont validés ; toute
   persistance, route, interface ou activation reste soumise à une validation explicite distincte.
+  L’audit statique du socle PostgreSQL est consigné : mécanismes de migration, CI et restauration
+  réutilisables. DEC-033 retient quatre références facultatives avec une cible au maximum et
+  détachement lors de sa suppression. DEC-034 retient un registre d’idempotence séparé, limité aux
+  empreintes, borné par auteur et agence et expirant après 24 heures. DEC-035 fixe un curseur
+  chiffré et authentifié valable 15 minutes, lié au périmètre et sans valeur sensible dans le dépôt.
+  DEC-036 fixe une transaction courte et un verrou de ligne pour produire une mutation unique ou un
+  conflit cohérent. Les quatre arbitrages de persistance sont clos ; toute préparation de migration
+  ou d’adaptateur exige encore une autorisation distincte.
 
 #### [ ] T-34C : Envoi résilient
 - Permettre interruption, reprise et contrôle d’intégrité des envois sans retransmettre les parties
