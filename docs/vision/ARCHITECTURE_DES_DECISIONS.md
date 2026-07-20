@@ -30,6 +30,16 @@ historique : elle est remplacée par une nouvelle entrée qui la référence. St
 | DEC-020 | La conservation documentaire suit une matrice par classe et un gel juridique prioritaire | acceptée | arbitrage T-34A, 2026-07-20 | purge contrôlée et non-réintroduction après restauration |
 | DEC-021 | Les premiers rattachements de Capture sont Société, Contact, Demande et Offre | acceptée | arbitrage T-34A, 2026-07-20 | les cibles futures restent des intentions non validables |
 | DEC-022 | La preuve antivirus utilise ClamAV isolé derrière `malwareScanner` | acceptée | arbitrage T-34A, 2026-07-20 | seul `sain` libère le traitement ; POC formats et capacité avant activation |
+| DEC-023 | La version d’un brouillon Capture commence à `1` et augmente de `1` par mutation réussie | acceptée | arbitrage T-34B, 2026-07-20 | contrôle de concurrence simple, atomique et testable |
+| DEC-024 | La version attendue d’un brouillon est transmise dans le JSON du `PATCH` | acceptée | arbitrage T-34B, 2026-07-20 | contrat explicite et cohérent avec le port métier |
+| DEC-025 | Un conflit de brouillon visible renvoie la version serveur et ses champs modifiables sûrs | acceptée | arbitrage T-34B, 2026-07-20 | résolution compréhensible sans fuite hors périmètre |
+| DEC-026 | Un conflit de brouillon se résout sans forçage global ni fusion automatique | acceptée | arbitrage T-34B, 2026-07-20 | choix humain explicite entre rechargement et réapplication |
+| DEC-027 | Le travail local en conflit peut être enregistré comme nouveau brouillon privé | acceptée | arbitrage T-34B, 2026-07-20 | nouvel identifiant et version `1`, sans copie implicite de fichiers |
+| DEC-028 | La création d’un brouillon est idempotente pendant 24 heures | acceptée | arbitrage T-34B, 2026-07-20 | une clé aléatoire est bornée à l’utilisateur et à l’agence |
+| DEC-029 | Les brouillons privés sont listés par auteur avec un curseur borné | acceptée | arbitrage T-34B, 2026-07-20 | tri récent, 20 résultats par défaut et 50 maximum |
+| DEC-030 | Un brouillon expose trois champs modifiables bornés | acceptée | arbitrage T-34B, 2026-07-20 | type, commentaire de 2 000 caractères et rattachement proposé |
+| DEC-031 | Le premier lot de brouillons reste strictement en ligne | acceptée | arbitrage T-34B, 2026-07-20 | aucune donnée métier persistée dans le navigateur avant modèle de menace |
+| DEC-032 | La géolocalisation est absente du premier contrat de brouillon | acceptée | arbitrage T-34B, 2026-07-20 | ajout ultérieur soumis à consentement, finalité et rétention explicites |
 
 Les identifiants `SRC-HIST-*` sont décrits dans
 [l’audit stratégique](../audit/AUDIT_STRATEGIQUE_PATRIMOINE_ORIANA.md).
@@ -127,6 +137,117 @@ type réel, ni l’isolation des parseurs, ni la validation humaine.
 WebM et MP4, les erreurs et l’indisponibilité, la fraîcheur des signatures et la charge. La capacité
 doit réserver au moins 3 Gio de RAM, 4 Gio de préférence selon l’éditeur, en plus des autres
 services. Une comparaison avec une offre managée reste requise avant la production.
+
+### DEC-023 — Version séquentielle des brouillons Capture
+
+**Contexte.** T-34B exige la reprise multi-appareil et interdit tout écrasement silencieux. Une
+version stable est nécessaire pour comparer la commande reçue à l’état courant du brouillon.
+**Décision.** Un brouillon Capture est créé avec la version entière `1`. Chaque mutation réussie
+incrémente atomiquement cette version de `1`. Une commande refusée, invalide ou en conflit ne la
+modifie pas. La version appartient à une Capture et ne constitue ni une horloge globale, ni une
+preuve d’ordre entre plusieurs objets.
+**Suite.** DEC-024 fixe le transport de la version attendue, DEC-025 la charge utile sûre du
+conflit et DEC-026 les actions de résolution humaine.
+
+### DEC-024 — Version attendue dans la commande JSON
+
+**Contexte.** Le backend doit recevoir la version sur laquelle l’utilisateur a commencé sa
+modification afin de détecter une écriture concurrente. Le contrat peut employer `If-Match` ou une
+propriété métier explicite. **Décision.** Chaque `PATCH` de brouillon transmet obligatoirement
+`version_attendue` dans son corps JSON. Le backend valide un entier positif et le transmet au port
+`updateWithExpectedVersion`. L’absence ou l’invalidité de cette propriété refuse la commande avant
+toute mutation. **Suite.** DEC-025 fixe la charge utile sûre du conflit. Les actions de résolution
+restent ouvertes.
+
+### DEC-025 — Réponse sûre au conflit de brouillon
+
+**Contexte.** Pour résoudre un conflit sans écrasement silencieux, l’utilisateur doit comprendre
+l’état courant du serveur. Une réponse trop pauvre ne permet pas la comparaison ; une réponse trop
+large peut révéler des données ou métadonnées techniques. **Décision.** Après contrôle complet de
+la session, du rôle actif, de l’agence, de l’auteur et de l’état privé, une version obsolète renvoie
+`409` avec le code stable `CAPTURE_VERSION_CONFLICT`, la version serveur et uniquement les champs
+du brouillon autorisés en modification. Un objet absent ou non visible ne divulgue aucune version
+ni valeur courante. **Suite.** DEC-026 fixe les actions de résolution et interdit la fusion
+automatique comme l’écrasement forcé.
+
+### DEC-026 — Résolution humaine sans écrasement forcé
+
+**Contexte.** La résolution d’un conflit doit préserver le travail sans masquer quelle version fait
+autorité. Un écrasement global ou une fusion automatique pourrait perdre ou combiner des données
+sans compréhension suffisante. **Décision.** L’utilisateur choisit soit d’abandonner ses changements
+locaux et de charger la version serveur, soit de réappliquer manuellement des champs choisis sur
+cette version avant une nouvelle commande portant sa version courante. Aucun bouton de forçage
+global et aucune fusion automatique ne sont autorisés. **Exigence UX.** Les deux versions sont
+distinguées clairement et le choix reste utilisable au clavier comme au toucher. La duplication en
+nouveau brouillon est fixée par DEC-027.
+
+### DEC-027 — Sauvegarde du conflit dans un nouveau brouillon
+
+**Contexte.** L’utilisateur peut préférer préserver ses valeurs locales plutôt que les réappliquer
+immédiatement sur la version serveur. **Décision.** L’action explicite « Enregistrer comme nouveau
+brouillon » appelle le contrat normal de création avec les seuls champs modifiables choisis. Le
+backend impose un nouvel identifiant, l’auteur, l’agence, l’état `brouillon_prive`, la version `1`
+et les dates serveur. Aucun fichier, état technique, géolocalisation ou rattachement non autorisé
+n’est copié implicitement. **Sécurité.** L’accès au brouillon en conflit est revérifié avant de
+présenter l’action. DEC-028 fixe l’idempotence afin qu’une réponse réseau perdue ne produise pas
+plusieurs copies.
+
+### DEC-028 — Création idempotente des brouillons
+
+**Contexte.** Une réponse réseau perdue peut conduire le navigateur à répéter une création et à
+produire plusieurs brouillons identiques. **Décision.** Chaque création porte une clé d’idempotence
+aléatoire générée par l’application, bornée à l’utilisateur et à son agence pendant 24 heures. La
+même clé avec les mêmes données retourne le brouillon déjà créé sans nouvelle mutation. La même clé
+avec des données différentes est refusée par un conflit stable. Passé le délai, la clé technique
+peut être purgée selon une tâche contrôlée. **Sécurité.** La clé n’accorde aucun droit, ne remplace
+pas la session et ne permet jamais de retrouver le brouillon d’un autre périmètre.
+
+### DEC-029 — Liste bornée des brouillons de l’auteur
+
+**Contexte.** La reprise sur un autre appareil exige une liste serveur sans élargir la visibilité
+aux brouillons privés de l’équipe ou de l’agence. Une pagination par position serait instable quand
+les brouillons sont modifiés simultanément. **Décision.** Le port `captureRepository` est étendu par
+`listByAuthor`. Il reçoit l’auteur et l’agence imposés par la session, un curseur opaque et une
+limite. Il restitue uniquement les Captures `brouillon_prive` de cet auteur, triées par date de
+modification décroissante avec un départage stable par identifiant. La limite vaut 20 par défaut et
+50 au maximum. **Sécurité.** Aucun rôle hiérarchique ne peut élargir cette liste ; le super
+administrateur ne reçoit aucun accès métier implicite. Le curseur ne contient aucune donnée métier
+lisible ni autorisation réutilisable.
+
+### DEC-030 — Champs modifiables d’un brouillon
+
+**Contexte.** Le premier lot doit permettre de corriger les métadonnées utiles d’une capture sans
+ouvrir la modification des attributs d’autorité, des pièces jointes ou de données sensibles.
+**Décision.** Une création exige `type`. Une modification partielle accepte uniquement :
+
+- `type`, facultatif dans la commande et issu du catalogue `CAPTURE_TYPES` lorsqu’il est présent ;
+- `commentaire`, facultatif et limité à 2 000 caractères ;
+- `rattachement_propose`, facultatif, composé d’un type et d’un identifiant fournis ensemble,
+  validés côté serveur et désignant un objet visible par l’auteur.
+
+L’auteur, l’agence, l’état, la version, les dates, les fichiers et la géolocalisation ne sont pas
+modifiables par ce contrat. Tout champ inconnu est rejeté plutôt qu’ignoré.
+
+### DEC-031 — Premier lot strictement en ligne
+
+**Contexte.** Le stockage local de brouillons, contacts ou médias créerait une nouvelle surface de
+risque sur les terminaux perdus, partagés ou révoqués. Aucun modèle de menace validé ne définit
+encore leur chiffrement, leur rétention et leur effacement.
+**Décision.** Le premier lot T-34B assure uniquement la reprise en ligne depuis l’autorité serveur.
+Il ne persiste aucune donnée métier dans IndexedDB, `localStorage`, `sessionStorage` ou le cache du
+navigateur. Un éventuel service worker ne peut mettre en cache que le shell applicatif non sensible.
+Le véritable fonctionnement déconnecté est reporté à un lot distinct, après validation d’un modèle
+de menace couvrant notamment perte du terminal, révocation, durée de conservation, purge et quotas.
+
+### DEC-032 — Géolocalisation absente du premier contrat
+
+**Contexte.** Un champ nullable ou désactivé intégrerait déjà la géolocalisation au modèle initial
+sans finalité, consentement ni durée de conservation validés.
+**Décision.** Le premier contrat de création, lecture, liste et modification des brouillons ne
+contient aucun champ de géolocalisation. Aucun adaptateur ne collecte, ne déduit, ne transmet ou ne
+persiste une position dans ce lot. Une évolution ultérieure exigera une décision distincte précisant
+au minimum la finalité, le consentement explicite, la précision nécessaire, la durée de conservation,
+les droits d’effacement et les contrôles d’accès.
 
 ## Modèle pour une nouvelle décision
 

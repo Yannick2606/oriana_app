@@ -366,3 +366,9 @@ La proposition détaillée du socle documentaire est décrite dans
 Elle encadre le lot T-34A. Le profil vocal, les quotas, la conservation, les rattachements initiaux
 et l’antivirus de preuve sont acceptés par DEC-018 à DEC-022. Le noyau métier pur est implémenté ;
 le choix du stockage objet reste différé avant toute persistance ou activation de la capacité.
+
+Le contrat validé des brouillons multi-appareil est décrit dans
+[`docs/architecture/SPEC_T34B_BROUILLONS_MULTI_APPAREIL.md`](docs/architecture/SPEC_T34B_BROUILLONS_MULTI_APPAREIL.md).
+DEC-023 à DEC-032 fixent la concurrence, la résolution, les champs, la liste et les frontières du
+premier lot. Les contrats et validations purs sont implémentés ; aucun schéma, adaptateur, route ou
+comportement actif n’est ajouté.

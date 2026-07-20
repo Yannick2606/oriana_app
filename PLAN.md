@@ -395,11 +395,24 @@
   de ports, sans route, migration, fournisseur ou activation. Ce premier lot est implémenté et
   testé ; aucune capacité active n’en résulte.
 
-#### [ ] T-34B : Brouillons multi-appareil
+#### [~] T-34B : Brouillons multi-appareil
 - Synchroniser les brouillons smartphone et bureau avec versions et conflits explicites, sans
-  écrasement silencieux ; géolocalisation désactivée par défaut.
+  écrasement silencieux ; la géolocalisation est absente du premier contrat.
 - **Acceptation** : un dossier commencé sur smartphone est repris sur ordinateur et un conflit
   concurrent est détecté puis résolu explicitement.
+- **État** : contrat et matrice d’arbitrage validés le 20 juillet 2026. Le premier lot est
+  implémenté sous forme pure : validation de version, erreur de conflit et extension du port de
+  lecture, sans migration, route, interface ou stockage local. DEC-023 fixe la version initiale à
+  `1` et son incrément à `1` par mutation réussie ; DEC-024 impose `version_attendue` dans le JSON
+  du `PATCH` ; DEC-025 fixe une réponse `409` sûre après contrôle des droits ; DEC-026 interdit le
+  forçage et la fusion automatique ; DEC-027 permet une copie explicite en nouveau brouillon sans
+  recopier les fichiers ; DEC-028 rend la création idempotente pendant 24 heures ; DEC-029 fixe
+  `listByAuthor`, son cloisonnement, son tri et ses limites de pagination. DEC-030 borne les champs
+  modifiables au type catalogué, au commentaire facultatif de 2 000 caractères et au rattachement
+  proposé contrôlé. DEC-031 maintient le premier lot strictement en ligne, sans donnée métier
+  persistée dans le navigateur avant validation d’un modèle de menace. DEC-032 exclut entièrement
+  la géolocalisation du premier contrat. Les dix arbitrages et le lot pur sont validés ; toute
+  persistance, route, interface ou activation reste soumise à une validation explicite distincte.
 
 #### [ ] T-34C : Envoi résilient
 - Permettre interruption, reprise et contrôle d’intégrité des envois sans retransmettre les parties

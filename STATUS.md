@@ -13,10 +13,107 @@
 - PHASE 1 : terminée — T-00 à T-22 et extensions T-22A à T-22D validées.
 - Migration PostgreSQL : T-27, T-28 et T-29 terminées ; T-30 non démarrée.
 - Reprise fonctionnelle : T-30A est active ; toute bascule PostgreSQL reste bloquée.
-- PHASE 2 : vision modulaire repriorisée par T-31 ; T-32 et T-33 sont terminées, T-34A est active.
+- PHASE 2 : vision modulaire repriorisée par T-31 ; T-32 et T-33 sont terminées, T-34A attend le
+  choix du stockage et la spécification de T-34B est active.
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-20 — T-34B lot pur : audit final de robustesse réussi**
+  - Le comptage du commentaire s’arrête au 2 001e caractère sans construire de tableau proportionnel
+    à la taille d’une entrée externe ; un test couvre désormais une chaîne d’un million de caractères.
+  - Vérifications finales réussies : 31 tests documentaires, lint et frontières backend, puis 162
+    tests backend dont 161 réussis et l’intégration PostgreSQL ignorée comme prévu.
+  - `git diff --check` et le contrôle de traces sensibles restent verts. Aucun commit, push ou
+    déploiement n’a été effectué.
+- **2026-07-20 — T-34B lot pur : implémentation vérifiée**
+  - `backend/src/documentary/drafts.js` valide les créations et modifications partielles, borne les
+    commentaires à 2 000 caractères Unicode, protège les champs serveur et normalise la liste.
+  - Le catalogue expose `CAPTURE_VERSION_CONFLICT` et le port `captureRepository` exige désormais
+    `listByAuthor`. Aucun adaptateur, schéma, route, interface ou stockage local n’est ajouté.
+  - Vérifications réussies : 31 tests documentaires ciblés, lint et frontières backend, puis 162
+    tests backend dont 161 réussis et l’intégration PostgreSQL ignorée comme prévu.
+  - Aucun commit, push ou déploiement n’a été effectué.
+- **2026-07-20 — T-34B : audit de cohérence documentaire terminé**
+  - Les documents distinguent désormais le contrat validé de la capacité non implémentée ; les
+    anciens libellés « proposition à valider » ont été retirés du périmètre T-34B.
+  - Le type est obligatoire à la création mais facultatif dans un `PATCH` partiel ; lorsqu’il est
+    présent, sa valeur reste contrôlée par `CAPTURE_TYPES`.
+  - Liens locaux valides, décisions uniques, `git diff --check` réussi et aucune trace de secret
+    détectée. Aucun code, schéma, commit, push ou déploiement n’a été ajouté.
+- **2026-07-20 — T-34B : géolocalisation exclue et arbitrages terminés**
+  - DEC-032 exclut tout champ, collecte, déduction, transmission ou stockage de géolocalisation du
+    premier contrat de brouillon.
+  - Un ajout ultérieur exigera une décision sur la finalité, le consentement, la précision, la
+    rétention, l’effacement et les accès.
+  - Les dix arbitrages DEC-023 à DEC-032 sont désormais validés. Aucun code, schéma, commit, push
+    ou déploiement n’a été ajouté.
+- **2026-07-20 — T-34B : premier lot strictement en ligne validé**
+  - DEC-031 exclut du premier lot toute persistance de donnée métier dans IndexedDB,
+    `localStorage`, `sessionStorage` ou le cache du navigateur.
+  - Un éventuel service worker reste limité au shell non sensible. Le mode déconnecté complet est
+    reporté après validation de son modèle de menace.
+  - Seule la géolocalisation reste à arbitrer. Aucun code, schéma, commit, push ou déploiement n’a
+    été ajouté.
+- **2026-07-20 — T-34B : champs modifiables validés**
+  - DEC-030 limite la modification au type catalogué, au commentaire facultatif de 2 000
+    caractères et au rattachement proposé dont la cible est contrôlée côté serveur.
+  - L’auteur, l’agence, l’état, la version, les dates, les fichiers et la géolocalisation restent
+    non modifiables ; les champs inconnus sont rejetés.
+  - Les frontières hors ligne et géolocalisation restent à arbitrer. Aucun code, schéma, commit,
+    push ou déploiement n’a été ajouté.
+- **2026-07-20 — T-34B : liste privée des brouillons validée**
+  - DEC-029 ajoute au contrat futur du repository `listByAuthor`, limité à l’auteur et à l’agence
+    issus de la session, sans élargissement hiérarchique ni accès métier du super administrateur.
+  - La liste utilise un curseur opaque, le tri modification décroissante puis identifiant, 20
+    résultats par défaut et 50 maximum.
+  - Champs modifiables, frontière hors ligne et géolocalisation restent à arbitrer. Aucun code,
+    schéma, commit, push ou déploiement n’a été ajouté.
+- **2026-07-20 — T-34B : création idempotente validée**
+  - DEC-028 borne pendant 24 heures une clé aléatoire à l’utilisateur et à son agence. Même clé et
+    mêmes données retournent le brouillon existant ; des données différentes produisent un conflit.
+  - La clé ne remplace ni la session ni les droits et peut être purgée après expiration. Liste,
+    champs modifiables, frontière hors ligne et géolocalisation restent à arbitrer.
+  - Aucun code, schéma, commit, push ou déploiement n’a été ajouté.
+- **2026-07-20 — T-34B : sauvegarde en nouveau brouillon validée**
+  - DEC-027 permet de préserver des valeurs locales en créant explicitement un nouveau brouillon
+    privé par le contrat normal de création, avec nouvel identifiant et version `1`.
+  - Seuls les champs modifiables choisis sont repris. Fichiers, état technique et géolocalisation ne
+    sont jamais copiés implicitement ; l’accès au brouillon source est revérifié.
+  - L’idempotence reste ouverte avec les quatre autres arbitrages, soit cinq choix restants. Aucun
+    code, schéma, commit, push ou déploiement n’a été ajouté.
+- **2026-07-20 — T-34B : résolution humaine du conflit validée**
+  - DEC-026 interdit tout écrasement global et toute fusion automatique d’un brouillon en conflit.
+  - L’utilisateur charge la version serveur ou réapplique manuellement des champs choisis avant une
+    nouvelle commande. La comparaison doit rester explicite, accessible au clavier et au toucher.
+  - La duplication reste ouverte avec les cinq autres arbitrages, soit six choix restants. Aucun
+    code, schéma, commit, push ou déploiement n’a été ajouté.
+- **2026-07-20 — T-34B : réponse de conflit validée**
+  - DEC-025 fixe `409 CAPTURE_VERSION_CONFLICT`, avec version serveur et seuls champs modifiables
+    sûrs après contrôle complet de la session, du rôle, de l’agence, de l’auteur et de l’état privé.
+  - Un objet absent ou non visible ne divulgue aucune version ni valeur. Les actions de résolution
+    restent ouvertes avec les six autres arbitrages, soit sept choix restants.
+  - Aucun code, schéma, commit, push ou déploiement n’a été ajouté.
+- **2026-07-20 — T-34B : transport de la version attendue validé**
+  - DEC-024 impose `version_attendue` dans le JSON de chaque `PATCH` de brouillon. Elle doit être un
+    entier positif et son absence ou son invalidité refuse la commande avant mutation.
+  - Le contrat reste cohérent avec `updateWithExpectedVersion`. La réponse de conflit et sa
+    résolution font partie des huit arbitrages restants.
+  - Aucun code, schéma, commit, push ou déploiement n’a été ajouté.
+- **2026-07-20 — T-34B : version des brouillons validée**
+  - DEC-023 fixe la version initiale d’une Capture à `1` et son incrément atomique à `1` après chaque
+    mutation réussie. Une commande refusée ou en conflit ne modifie pas la version.
+  - La version reste locale à la Capture et ne constitue pas une horloge globale. Le transport, la
+    réponse de conflit et sa résolution font partie des neuf arbitrages restants.
+  - Aucun code, schéma, commit, push ou déploiement n’a été ajouté.
+- **2026-07-20 — T-34B : proposition des brouillons multi-appareil rédigée**
+  - L’audit confirme que T-34A fournit les politiques et le port de mise à jour avec version, mais
+    qu’aucune table, liste de brouillons, route, interface, PWA ou persistance navigateur n’existe.
+  - La proposition borne les champs modifiables, la concurrence optimiste, le conflit `409`, la
+    reprise entre sessions, l’idempotence de création et les contrôles de périmètre.
+  - Le premier lot recommandé reste pur et en ligne. IndexedDB, service worker, médias locaux et
+    géolocalisation sont différés jusqu’au modèle de menace et aux décisions correspondantes.
+  - Dix arbitrages ont été soumis à validation humaine. Aucun code, secret, schéma, fournisseur,
+    commit, push ou déploiement n’a été ajouté.
 - **2026-07-20 — T-34A lot 1 : audit final prêt pour commit**
   - L’audit a aligné les quotas `Mo`/`Go` sur des unités décimales et fermé l’accès aux actions non
     cataloguées sur un brouillon privé ; un test de non-régression couvre ce refus.

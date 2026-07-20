@@ -2,6 +2,7 @@ const operations = {
   captureRepository: [
     'createDraft',
     'getById',
+    'listByAuthor',
     'updateWithExpectedVersion',
     'transition',
     'listExpired',

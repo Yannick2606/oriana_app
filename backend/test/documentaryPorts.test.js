@@ -19,7 +19,8 @@ function portDouble(port, omittedOperation) {
 test('décrit les six contrats de ports sans adaptateur', () => {
   assert.deepEqual(DOCUMENTARY_PORT_OPERATIONS, {
     captureRepository: [
-      'createDraft', 'getById', 'updateWithExpectedVersion', 'transition', 'listExpired',
+      'createDraft', 'getById', 'listByAuthor', 'updateWithExpectedVersion', 'transition',
+      'listExpired',
     ],
     fileRepository: [
       'createVersion', 'getById', 'listByCapture', 'recordMalwareVerdict', 'listExpired',
