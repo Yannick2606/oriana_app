@@ -329,3 +329,12 @@ l’AI Gateway, chaque spécification devra définir : responsabilités, entrée
 confiance, mémoire, droits, validation humaine, erreurs, reprise, coût, observabilité, rétention,
 sécurité, tests et mode dégradé. Le nombre historique d’au moins 23 agents/Experts est un élément de
 patrimoine, pas une contrainte de découpage technique.
+
+### Objets transverses du socle
+
+La cible technique d’autorité, cycles de vie, droits, conservation et API pour Audit,
+Notification, Préférence, Consentement, Fichier, Tâche et Capture est définie dans
+[`docs/architecture/CONTRATS_OBJETS_TRANSVERSES.md`](docs/architecture/CONTRATS_OBJETS_TRANSVERSES.md).
+Elle est validée comme contrat de socle, mais chaque capacité reste non exécutable tant que ses
+catalogues métier et paramètres de conservation applicables ne sont pas définis. Aucune table ni
+route n’est réputée implémentée par cette validation documentaire.

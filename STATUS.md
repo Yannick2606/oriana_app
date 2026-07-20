@@ -17,6 +17,22 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-20 — T-33E : contrats transverses validés et tâche close**
+  - La validation humaine confirme les contrats cibles d’Audit, Notification, Préférence,
+    Consentement, Fichier, Tâche et Capture, ainsi que leurs frontières respectives.
+  - La clôture autorise les futures tâches propriétaires à s’appuyer sur ces contrats ; elle ne
+    crée aucune table, route, interface ou capacité et ne vaut pas activation en production.
+  - Chaque implémentation devra encore valider ses catalogues, transitions, finalités, durées et
+    règles réglementaires applicables avant activation.
+- **2026-07-20 — T-33E : proposition des contrats transverses prête à valider**
+  - Audit, Notification, Préférence, Consentement, Fichier, Tâche et Capture disposent désormais
+    d’une proposition distinguant autorité, données minimales, cycle de vie, droits et conservation.
+  - Un contrat API cible explicite les opérations permises, notamment l’absence de CRUD destructif
+    pour l’audit et le consentement, la reprise des fichiers et la validation humaine des captures.
+  - Les durées légales, finalités, catalogues et matrices détaillées restent soumis à validation
+    métier et architecture ; aucune valeur réglementaire n’a été inventée.
+  - Aucune table, route, interface, donnée fictive, variable d’environnement, intégration IA,
+    publication GitHub ou opération de déploiement n’a été créée par ce lot documentaire.
 - **2026-07-20 — T-33D : connecteurs externes encapsulés et tâche close**
   - L’audit final confirme que l’authentification et le service Agents dépendent uniquement des
     ports injectés. Nodemailer, `fetch`, les URL et les variables fournisseur restent confinés aux

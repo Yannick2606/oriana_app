@@ -23,12 +23,17 @@ cellules d’un lot, co-gestionnaires, familles d’une demande et portées d’
 ## Objets cibles à spécifier avant création
 
 Connaissance, Source, Signal, Capacité, Mission, Proposition, Décision métier, Action, Résultat,
-Retour d’expérience, Consentement, Préférence, Notification, Fichier, Tâche, Interaction, Tunnel,
-Étape, Publication et Abonnement de veille.
+Retour d’expérience, Audit, Consentement, Préférence, Notification, Fichier, Tâche, Capture,
+Interaction, Tunnel, Étape, Publication et Abonnement de veille.
 
 Cette liste exprime un besoin de modélisation, pas une autorisation de créer des tables. Chaque
 objet doit recevoir une définition ORMO, une autorité, un cycle de vie, des droits, une politique de
 conservation et des critères d’acceptation.
+
+Les contrats cibles T-33E pour Audit, Consentement, Préférence, Notification, Fichier, Tâche et
+Capture sont validés et consignés dans les
+[contrats des objets transverses](../architecture/CONTRATS_OBJETS_TRANSVERSES.md). Leur
+implémentation reste affectée aux tâches propriétaires et exige leur paramétrage applicable.
 
 ## Invariants transverses
 

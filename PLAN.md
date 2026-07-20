@@ -347,12 +347,14 @@
 - **État** : ports de messagerie et d’orchestration injectés, adaptateurs SMTP et n8n composés au
   démarrage, délais et erreurs vérifiés le 20 juillet 2026 ; aucun fournisseur IA intégré.
 
-#### [ ] T-33E : Spécifier les objets transverses encore absents
+#### [x] T-33E : Spécifier les objets transverses encore absents
 - Définir avant code l'autorité, le cycle de vie, les droits, la conservation et les contrats API
   d'Audit, Notification, Préférence, Consentement, Fichier, Tâche et Capture.
 - Reporter leurs tables et interfaces tant que chaque contrat n'a pas été validé.
 - **Acceptation** : arbitrages consignés dans les documents d'autorité, sans table, donnée ou
   capacité simulée créée prématurément.
+- **État** : contrats du socle validés le 20 juillet 2026 ; leurs paramètres métier,
+  réglementaires et de conservation restent à préciser dans chaque tâche d’implémentation.
 
 #### [ ] T-33F : Protéger et vérifier les frontières
 - Ajouter des contrôles automatisés empêchant les imports interdits entre modules, persistance et

@@ -43,7 +43,7 @@ frontend ni par une donnée métier.
 | Sessions | magasin de session et invalidation | conserver et invalider les sessions sans exposer de secret | PostgreSQL en exploitation normale, mémoire dans le bac à sable |
 | Persistance métier | port de dépôt générique de transition | lire et écrire les objets pris en charge | T-33C close ; modules découplés et adaptateurs Grist, PostgreSQL et bac à sable sélectionnés à la composition |
 | Connecteurs | adaptateurs externes | email et orchestration asynchrone | T-33D close ; ports SMTP et n8n injectés et adaptateurs composés au démarrage |
-| Objets transverses futurs | socle | Audit, Notification, Préférence, Consentement, Fichier, Tâche et Capture | à spécifier ; aucune création de table autorisée par T-33A |
+| Objets transverses futurs | socle | Audit, Notification, Préférence, Consentement, Fichier, Tâche et Capture | contrats cibles validés par T-33E ; aucune table encore créée |
 
 ## Ports internes
 
@@ -58,7 +58,7 @@ fournisseur ou un protocole externe.
 | Persistance métier | `list`, `getById`, `create`, `update`, `delete` sur une ressource autorisée | T-33C implémentée ; Grist actuel, PostgreSQL cible et adaptateur mémoire en lecture seule satisfont le même port |
 | Envoi de message transactionnel | envoyer un message à un destinataire à partir d’un contenu validé, avec erreur explicite | port injecté par T-33D ; adaptateur SMTP via Nodemailer composé au démarrage avec délais bornés |
 | Orchestration asynchrone | déclencher un traitement borné, recevoir un accusé, suivre son état et authentifier le callback | port injecté par T-33D ; adaptateur n8n composé au démarrage avec délai de cinq secondes |
-| Audit, notification, préférence, consentement, fichier, tâche et capture | aucun contrat exécutable avant arbitrage de l’autorité, du cycle de vie, des droits et de la conservation | spécification prévue en T-33E |
+| Audit, notification, préférence, consentement, fichier, tâche et capture | contrats cibles d’autorité, cycle de vie, droits, conservation et API | T-33E validée ; implémentation reportée aux tâches propriétaires |
 
 Le port de persistance générique est une compatibilité de transition avec les contrats de phase 1.
 Il ne justifie pas de propager des noms de tables ou des particularités Grist dans les futurs objets.
@@ -95,7 +95,7 @@ modèle à reproduire dans les services métier.
 | le calcul du périmètre importait directement Grist et les groupes de rôles étaient dupliqués | autorisation couplée au fournisseur et politiques divergentes | traité par T-33B |
 | le service Agents construisait l’URL n8n et effectuait lui-même l’appel réseau | orchestration confondue avec la règle métier | traité par le second lot T-33D |
 | l’authentification dépendait directement du transport SMTP | identité couplée au fournisseur de message | traité par le premier lot T-33D |
-| les objets transverses futurs ne possèdent pas encore de contrat | risque d’inventer tables et comportements | T-33E |
+| les objets transverses futurs ne possédaient pas encore de contrat | risque d’inventer tables et comportements | traité par T-33E |
 | aucune règle automatisée ne bloque les imports interdits | dérive architecturale silencieuse | T-33F |
 
 ## Critères de conservation du comportement
