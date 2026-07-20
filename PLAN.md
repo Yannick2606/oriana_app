@@ -337,13 +337,15 @@
 - **État** : port injecté explicitement, sélection du fournisseur limitée à la composition et
   vocabulaire interne neutralisé le 19 juillet 2026 ; Grist reste le fournisseur opérationnel.
 
-#### [ ] T-33D : Encapsuler les connecteurs externes
+#### [x] T-33D : Encapsuler les connecteurs externes
 - Placer SMTP, n8n et les futurs fournisseurs derrière des ports internes configurés au démarrage,
   avec délais, erreurs explicites et secrets maintenus hors des données métier.
 - Ne pas intégrer de fournisseur IA dans ce lot ; préparer seulement la frontière utilisée plus
   tard par T-34D, T-36 et T-42.
 - **Acceptation** : aucun service métier ne construit directement une URL fournisseur ou un client
   réseau ; les indisponibilités restent testables sans appel externe.
+- **État** : ports de messagerie et d’orchestration injectés, adaptateurs SMTP et n8n composés au
+  démarrage, délais et erreurs vérifiés le 20 juillet 2026 ; aucun fournisseur IA intégré.
 
 #### [ ] T-33E : Spécifier les objets transverses encore absents
 - Définir avant code l'autorité, le cycle de vie, les droits, la conservation et les contrats API

@@ -38,11 +38,11 @@ frontend ni par une donnée métier.
 | Zone | Propriétaire | Responsabilité | État observé |
 |---|---|---|---|
 | Composition | `backend/src/server.js`, `backend/src/app.js` | choisir et assembler services, persistance et connecteurs | le premier lot T-33C rend le port de persistance obligatoire et choisit explicitement le fournisseur au démarrage |
-| Identité | service d’authentification et référentiel des rôles | compte, rôle actif, rattachement d’agence et session publique | référentiel d’identité et port de messagerie injectés ; adaptateur SMTP composé au démarrage par le premier lot T-33D |
+| Identité | service d’authentification et référentiel des rôles | compte, rôle actif, rattachement d’agence et session publique | référentiel d’identité et port de messagerie injectés ; adaptateur SMTP composé au démarrage, T-33D close |
 | Autorisations | référentiel des rôles, middlewares et politiques de périmètre | normaliser les rôles et contrôler lecture/écriture côté serveur | consolidé par T-33B ; référentiel d’identité injecté et groupes de rôles centralisés |
 | Sessions | magasin de session et invalidation | conserver et invalider les sessions sans exposer de secret | PostgreSQL en exploitation normale, mémoire dans le bac à sable |
 | Persistance métier | port de dépôt générique de transition | lire et écrire les objets pris en charge | T-33C close ; modules découplés et adaptateurs Grist, PostgreSQL et bac à sable sélectionnés à la composition |
-| Connecteurs | adaptateurs externes | email et orchestration asynchrone | ports SMTP et n8n injectés par T-33D ; adaptateurs composés au démarrage |
+| Connecteurs | adaptateurs externes | email et orchestration asynchrone | T-33D close ; ports SMTP et n8n injectés et adaptateurs composés au démarrage |
 | Objets transverses futurs | socle | Audit, Notification, Préférence, Consentement, Fichier, Tâche et Capture | à spécifier ; aucune création de table autorisée par T-33A |
 
 ## Ports internes

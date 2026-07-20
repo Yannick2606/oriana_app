@@ -17,6 +17,17 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-20 — T-33D : connecteurs externes encapsulés et tâche close**
+  - L’audit final confirme que l’authentification et le service Agents dépendent uniquement des
+    ports injectés. Nodemailer, `fetch`, les URL et les variables fournisseur restent confinés aux
+    adaptateurs et à la composition au démarrage.
+  - SMTP conserve des délais bornés et n8n son déclenchement asynchrone avec délai de cinq
+    secondes. Les indisponibilités, refus et configurations absentes sont testés sans appel réel.
+  - Les secrets demeurent hors des données métier et le callback n8n conserve sa comparaison
+    temporelle sûre. Les codes API existants et les routes publiques sont inchangés.
+  - T-33D n’intègre aucun fournisseur IA ; elle prépare seulement les frontières prévues pour
+    T-34D, T-36 et T-42. La dernière suite compte 126 tests réussis sur 127, avec l’intégration
+    PostgreSQL ignorée.
 - **2026-07-20 — T-33D : second lot du connecteur d’orchestration n8n**
   - Le service Agents dépend désormais d’un port d’orchestration injecté. Il ne lit plus de
     variable d’environnement, ne construit plus d’URL fournisseur et n’appelle plus `fetch`.
