@@ -13,10 +13,24 @@
 - PHASE 1 : terminée — T-00 à T-22 et extensions T-22A à T-22D validées.
 - Migration PostgreSQL : T-27, T-28 et T-29 terminées ; T-30 non démarrée.
 - Reprise fonctionnelle : T-30A est active ; toute bascule PostgreSQL reste bloquée.
-- PHASE 2 : vision modulaire repriorisée par T-31 ; T-32 est terminée et T-33 est active.
+- PHASE 2 : vision modulaire repriorisée par T-31 ; T-32 et T-33 sont terminées, T-34 est suivante.
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-20 — T-33F et T-33 : frontières automatisées et tâches closes**
+  - `checkArchitecture.js`, exécuté par le lint backend, refuse les imports d’un service vers un
+    middleware, l’accès aux adaptateurs hors composition, les sorties du frontend hors de son
+    source et les appels réseau hors des connecteurs ou de l’API frontend.
+  - La politique `resourceMatchesScope` appartient désormais au service partagé `accessPolicy` ;
+    cinq services métier ne dépendent plus du middleware HTTP.
+  - Quatre tests prouvent le refus des violations et les exceptions de composition. Le contrôle
+    architectural et les lints sont verts ; le frontend construit et réussit 52 tests.
+  - La suite backend finale réussit 130 tests sur 131, avec l’intégration PostgreSQL ignorée. Un
+    premier passage avait signalé isolément le fichier Patrimoine sans détail ; celui-ci a ensuite
+    réussi seul puis dans la suite complète, sans modification supplémentaire.
+  - Limites : l’analyse porte sur les imports ES modules statiques/dynamiques à chaîne littérale et
+    les primitives réseau explicites. Les scripts d’exploitation et tests restent hors du chemin
+    applicatif contrôlé. Aucun push ni déploiement n’a été réalisé.
 - **2026-07-20 — T-33E : contrats transverses validés et tâche close**
   - La validation humaine confirme les contrats cibles d’Audit, Notification, Préférence,
     Consentement, Fichier, Tâche et Capture, ainsi que leurs frontières respectives.

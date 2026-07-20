@@ -1,4 +1,4 @@
-import { resourceMatchesScope } from '../middlewares/scopeByRole.js';
+import { resourceMatchesScope } from './accessPolicy.js';
 import { patrimoineConfig } from './patrimoineConfig.js';
 
 export class PatrimoineError extends Error {

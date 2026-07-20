@@ -303,12 +303,14 @@
 - **État** : prévisualisation déployée, contrôlée et validée humainement le 19 juillet 2026 ; tâche
   close après clarification de la répartition des capacités futures.
 
-### [~] T-33 : Extraire le socle applicatif réutilisable
+### [x] T-33 : Extraire le socle applicatif réutilisable
 - Isoler identité, rôles, agences, fichiers, notifications, audit, préférences, consentements,
   tâches, capture et connecteurs externes derrière des contrats stables.
 - Préserver un monolithe modulaire déployable simplement ; aucune multiplication prématurée des
   services ni dépendance directe d'un module métier à un fournisseur externe.
 - **Acceptation** : frontières documentées, dépendances contrôlées et tests existants conservés.
+- **État** : lots T-33A à T-33F terminés le 20 juillet 2026 ; frontières, ports, contrats et
+  contrôle automatisé sont en place sans bascule de persistance ni fournisseur IA.
 
 #### [x] T-33A : Cartographier et fixer les frontières du socle
 - Inventorier les dépendances entre composition applicative, modules métier, persistance et
@@ -356,11 +358,13 @@
 - **État** : contrats du socle validés le 20 juillet 2026 ; leurs paramètres métier,
   réglementaires et de conservation restent à préciser dans chaque tâche d’implémentation.
 
-#### [ ] T-33F : Protéger et vérifier les frontières
+#### [x] T-33F : Protéger et vérifier les frontières
 - Ajouter des contrôles automatisés empêchant les imports interdits entre modules, persistance et
   connecteurs, puis exécuter l'ensemble des vérifications backend et frontend.
 - **Acceptation** : contrôles de frontières reproductibles, lint, tests et build existants verts,
   avec limites restantes consignées.
+- **État** : contrôle Node sans dépendance ajouté au lint backend, cinq imports inversés corrigés ;
+  vérifications backend et frontend réussies le 20 juillet 2026.
 
 ## Jalon 7 — Usage mobile, CRM et pilotage commercial
 

@@ -1,9 +1,5 @@
 import { activeRoleName, canManageAgencyData } from '../services/roleModel.js';
-
-function sameReference(left, right) {
-  return left !== undefined && left !== null && (Array.isArray(right)
-    ? right.some((value) => String(left) === String(value)) : String(left) === String(right));
-}
+import { resourceMatchesScope } from '../services/accessPolicy.js';
 
 export function buildAccessScope(user, teamIds = []) {
   if (!user?.agence_id || !user?.role_actif) {
@@ -55,16 +51,6 @@ export async function scopeByRole(request, response, next) {
   request.writeScope = buildWriteScope(user);
   user.equipe_ids = teamIds;
   return next();
-}
-
-export function resourceMatchesScope(resource, accessScope) {
-  const fields = resource?.fields ?? resource;
-  if (!fields || !accessScope) {
-    return false;
-  }
-
-  return Object.entries(accessScope)
-    .every(([field, expected]) => sameReference(fields[field], expected));
 }
 
 export function requireResourceAccess(loadResource) {

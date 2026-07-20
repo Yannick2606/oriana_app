@@ -1,4 +1,4 @@
-import { resourceMatchesScope } from '../middlewares/scopeByRole.js';
+import { resourceMatchesScope } from './accessPolicy.js';
 import { peutLire } from './exclusiviteService.js';
 
 export class MatchingError extends Error {

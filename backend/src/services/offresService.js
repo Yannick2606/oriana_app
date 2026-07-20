@@ -1,4 +1,4 @@
-import { resourceMatchesScope } from '../middlewares/scopeByRole.js';
+import { resourceMatchesScope } from './accessPolicy.js';
 
 const offerFields = [
   'numero', 'nom', 'lot_id', 'nature', 'type_contrat', 'occupation',

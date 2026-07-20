@@ -1,4 +1,4 @@
-import { resourceMatchesScope } from '../middlewares/scopeByRole.js';
+import { resourceMatchesScope } from './accessPolicy.js';
 
 const niveaux = {
   batiment: { table: 'Batiments', field: 'batiment_id' },

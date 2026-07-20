@@ -96,7 +96,23 @@ modèle à reproduire dans les services métier.
 | le service Agents construisait l’URL n8n et effectuait lui-même l’appel réseau | orchestration confondue avec la règle métier | traité par le second lot T-33D |
 | l’authentification dépendait directement du transport SMTP | identité couplée au fournisseur de message | traité par le premier lot T-33D |
 | les objets transverses futurs ne possédaient pas encore de contrat | risque d’inventer tables et comportements | traité par T-33E |
-| aucune règle automatisée ne bloque les imports interdits | dérive architecturale silencieuse | T-33F |
+| aucune règle automatisée ne bloquait les imports interdits | dérive architecturale silencieuse | traité par T-33F |
+
+## Contrôle automatisé des frontières
+
+Le script `backend/scripts/checkArchitecture.js`, intégré au lint backend, analyse les sources du
+backend et du frontend sans dépendance externe. Il échoue avec fichier, ligne, règle et cible quand :
+
+- un service backend importe un middleware HTTP ;
+- un module applicatif importe directement un adaptateur de persistance ou un connecteur réservé à
+  la composition dans `server.js` ou à la fabrique de persistance ;
+- une source frontend importe hors de `frontend/src` ;
+- une primitive réseau frontend apparaît hors de `frontend/src/api`, ou un `fetch` backend hors
+  des connecteurs autorisés.
+
+Le contrôle couvre les imports ES modules statiques, réexportés et dynamiques dont la cible est une
+chaîne littérale. Les scripts d’exploitation, migrations et tests sont exclus de la frontière
+d’exécution ; ils restent soumis au lint, aux tests et aux règles de sécurité du dépôt.
 
 ## Critères de conservation du comportement
 

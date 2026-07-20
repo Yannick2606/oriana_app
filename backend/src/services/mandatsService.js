@@ -1,4 +1,4 @@
-import { resourceMatchesScope } from '../middlewares/scopeByRole.js';
+import { resourceMatchesScope } from './accessPolicy.js';
 import { peutEcrire, peutLire, validerTransitionExclusivite } from './exclusiviteService.js';
 
 const fields = [

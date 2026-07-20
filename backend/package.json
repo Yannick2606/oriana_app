@@ -33,7 +33,8 @@
     "prepare:mandats": "node scripts/prepareMandats.js",
     "prepare:crm": "node scripts/prepareCrm.js",
     "generate:sandbox": "node scripts/generateSandboxData.js",
-    "lint": "eslint .",
+    "check:architecture": "node scripts/checkArchitecture.js",
+    "lint": "npm run check:architecture && eslint .",
     "test": "node --test"
   },
   "dependencies": {
