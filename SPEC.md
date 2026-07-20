@@ -338,3 +338,23 @@ Notification, Préférence, Consentement, Fichier, Tâche et Capture est défini
 Elle est validée comme contrat de socle, mais chaque capacité reste non exécutable tant que ses
 catalogues métier et paramètres de conservation applicables ne sont pas définis. Aucune table ni
 route n’est réputée implémentée par cette validation documentaire.
+
+## 11. Cadrage technique de la capture mobile
+
+Le séquencement, les conditions d’activation, les limites du hors-ligne et la place de l’IA sont
+définis dans
+[`docs/architecture/CADRAGE_T34_CAPTURE_MOBILE.md`](docs/architecture/CADRAGE_T34_CAPTURE_MOBILE.md).
+
+T-34 peut être développé avec doubles de test, PostgreSQL isolé et stockage privé de
+préproduction. Aucune route Capture/Fichier ne doit être activée en production avant le Go T-30,
+les droits, rétentions et objets cibles validés, et la restauration du stockage vérifiée. Grist ne
+reçoit aucune nouvelle table ou double écriture pour contourner cette dépendance.
+
+Le service worker ne met en cache que le shell non sensible. Les données hors ligne ne sont jamais
+placées dans `localStorage` ou `sessionStorage`. Les médias locaux exigent un modèle de menace et
+une purge bornée avant implémentation.
+
+Antivirus, OCR, transcription et analyse sémantique sont asynchrones et passent par des ports
+internes. Une analyse générative ne devient active qu’au travers de l’AI Gateway T-42, sauf nouvelle
+décision d’architecture explicitement validée. OCR ou transcription ne peuvent jamais écrire une
+donnée métier sans une commande humaine de validation.

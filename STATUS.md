@@ -17,6 +17,17 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-20 — T-34 : cadrage et conditions d’activation validés**
+  - T-34 reste découpée en socle documentaire, brouillons multi-appareil, envoi résilient, analyse
+    asynchrone et validation mobile, dans cet ordre.
+  - Le développement isolé est possible, mais aucune activation en production ne précède le Go
+    T-30, les matrices de droits/rétention et la restauration vérifiée du stockage objet.
+  - Le hors-ligne exclut `localStorage` et `sessionStorage` pour les données sensibles ; les médias
+    locaux exigent un modèle de menace, une durée bornée et une purge vérifiable.
+  - T-34D constitue le premier usage fonctionnel IA envisagé. Les ports et l’OCR peuvent précéder
+    T-42, mais aucun fournisseur génératif n’est activé sans AI Gateway ou décision transitoire.
+  - Aucun schéma, route, interface, fournisseur, variable d’environnement, push ou déploiement n’a
+    été ajouté par ce cadrage documentaire.
 - **2026-07-20 — T-33F et T-33 : frontières automatisées et tâches closes**
   - `checkArchitecture.js`, exécuté par le lint backend, refuse les imports d’un service vers un
     middleware, l’accès aux adaptateurs hors composition, les sorties du frontend hors de son

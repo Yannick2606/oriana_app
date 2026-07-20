@@ -368,7 +368,7 @@
 
 ## Jalon 7 — Usage mobile, CRM et pilotage commercial
 
-### [ ] T-34 : Capture mobile, voix, OCR et boîte de réception
+### [~] T-34 : Capture mobile, voix, OCR et boîte de réception
 - Proposer une PWA smartphone avec capture explicite « signal terrain », « article/document » et
   « carte de visite », import de photo, fonctionnement hors ligne et commentaire vocal.
 - Extraire les données par OCR, conserver source/date/auteur/niveau de confiance, détecter les
@@ -377,6 +377,10 @@
   à un territoire, client, opportunité, tâche ou idée éditoriale.
 - **Acceptation** : aucune donnée extraite n'est publiée ou versée définitivement sans validation ;
   les erreurs de faible confiance sont signalées et la source reste traçable.
+- **Prérequis d’activation** : développement isolé autorisé, mais production interdite avant le Go
+  T-30, la validation des droits et rétentions, et la restauration du stockage objet.
+- **État** : cadrage et ordre T-34A à T-34E validés le 20 juillet 2026 ; aucun composant de capture,
+  stockage, OCR ou IA n’est encore implémenté.
 
 #### [ ] T-34A : Socle documentaire
 - Définir métadonnées, droits, versions, empreintes, quarantaine et stockage objet privé compatible
@@ -401,6 +405,8 @@
   erreurs récupérables et contenu traité comme donnée non fiable.
 - **Acceptation** : interface non bloquante, reprise après échec et aucune instruction issue d’un
   document exécutée comme consigne système.
+- **Dépendance IA** : ports et OCR peuvent être développés ici ; l’analyse générative attend
+  l’AI Gateway T-42 ou une décision d’architecture transitoire explicite.
 
 #### [ ] T-34E : Validation et expérience mobile
 - Présenter les propositions extraites, leurs sources et différences, puis exiger une validation

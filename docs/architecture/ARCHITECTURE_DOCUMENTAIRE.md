@@ -71,6 +71,13 @@ La recette de capacité couvre **30 utilisateurs simultanés** afin de conserver
 du lancement. Le VPS Hostinger KVM 2 connu est considéré comme suffisant pour le démarrage
 applicatif, sous réserve des mesures réelles, mais il ne doit pas porter durablement les documents.
 
+## Cadrage de réalisation
+
+L’ordre de réalisation, les conditions d’activation et la frontière entre OCR et IA sont fixés par
+le [cadrage T-34](CADRAGE_T34_CAPTURE_MOBILE.md). La capacité peut être développée sur des
+environnements isolés mais reste indisponible en production avant le Go T-30 et les validations
+propres aux données capturées.
+
 ## Contrats à spécifier avant code
 
 La spécification technique doit encore définir : modèle de métadonnées et versions, API de

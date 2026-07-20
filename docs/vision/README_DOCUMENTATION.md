@@ -70,6 +70,7 @@ Une contradiction est enregistrée dans STATUS et résolue dans le document qui 
 - [Architecture du socle applicatif](../architecture/ARCHITECTURE_SOCLE_APPLICATIF.md)
 - [Contrats des objets transverses](../architecture/CONTRATS_OBJETS_TRANSVERSES.md)
 - [Architecture documentaire](../architecture/ARCHITECTURE_DOCUMENTAIRE.md)
+- [Cadrage T-34 — Capture mobile](../architecture/CADRAGE_T34_CAPTURE_MOBILE.md)
 - [Sources métier et règles d’import](../referentiels/SOURCES_METIER_ET_IMPORT.md)
 - [Audit stratégique du patrimoine](../audit/AUDIT_STRATEGIQUE_PATRIMOINE_ORIANA.md)
 - [Audit interface / charte du 19 juillet 2026](../audit/AUDIT_INTERFACE_CHARTE_2026-07-19.md)
