@@ -18,13 +18,22 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-21 — T-30A : explorateur Patrimoine restructuré localement**
+  - La grille simultanée Site → Bâtiment → Cellule → Lot est remplacée par une navigation à
+    onglets avec compteurs, recherche sur le niveau actif, liste principale et fiche contextuelle.
+  - Le rattachement courant reste visible dans un fil dédié ; chaque fiche permet d’ouvrir le
+    niveau suivant. Sur smartphone, la liste et la fiche se succèdent avec un retour explicite.
+  - Les API, autorisations, formulaires et règles de lecture seule restent inchangés. Les contrôles
+    réussissent : lint frontend, build Vite et 58 tests frontend sur 58.
+  - La vérification visuelle automatisée locale est empêchée par l’isolation réseau du navigateur
+    intégré. Cette refonte n’est ni poussée, ni déployée et attend la recette humaine.
 - **2026-07-21 — T-30A : défaut de syntaxe détecté avant remplacement de la prévisualisation**
   - La reconstruction isolée de la prévisualisation s’est arrêtée pendant le build frontend sur
     une accolade JSX manquante dans `frontend/src/App.jsx` ; aucun conteneur n’a été remplacé.
   - La correction locale est limitée à la fermeture de la propriété `onBack`. Le lint frontend,
     le build Vite de production et les 57 tests frontend réussissent après correction.
-  - La prévisualisation distante n’est pas encore mise à jour : un commit correctif, son push puis
-    une nouvelle reconstruction explicitement validée restent nécessaires.
+  - Le correctif `d3d4ea5` a ensuite été poussé puis reconstruit uniquement dans la prévisualisation
+    isolée. Les conteneurs frontend et backend sont sains et l’accueil a été contrôlé humainement.
 - **2026-07-20 — T-30A : lecture seule frontend fermée et couverture automatisée consolidée**
   - Patrimoine masque les créations et modifications en prévisualisation ; la qualification reste
     visible avec des champs désactivés et sans commande d’enregistrement.

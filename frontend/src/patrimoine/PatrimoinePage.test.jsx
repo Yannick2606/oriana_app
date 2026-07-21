@@ -35,8 +35,11 @@ test('la prévisualisation permet de parcourir le patrimoine sans commande d’�
 test('parcourt la hiérarchie complète du site au lot', async () => {
   render(<PatrimoinePage/>);
   expect((await screen.findAllByText('Parc du Levant')).length).toBeGreaterThan(0);
+  fireEvent.click(screen.getByRole('tab', { name: 'Bâtiments · 1' }));
   fireEvent.click(screen.getByRole('button', { name: /Bâtiment Atlas/ }));
+  fireEvent.click(screen.getByRole('tab', { name: 'Cellules · 1' }));
   fireEvent.click(screen.getByRole('button', { name: /Cellule Nord/ }));
+  fireEvent.click(screen.getByRole('tab', { name: 'Lots · 1' }));
   fireEvent.click(screen.getByRole('button', { name: /Lot Logistique/ }));
   expect(screen.getByRole('button', { name: /Modifier la fiche/i })).toBeInTheDocument();
   expect(screen.getByText('Divisible')).toBeInTheDocument();
@@ -45,6 +48,7 @@ test('parcourt la hiérarchie complète du site au lot', async () => {
 test('crée un bâtiment dans le site sélectionné', async () => {
   render(<PatrimoinePage/>);
   await screen.findAllByText('Parc du Levant');
+  fireEvent.click(screen.getByRole('tab', { name: 'Bâtiments · 1' }));
   fireEvent.click(screen.getByRole('button', { name: 'Créer un bâtiment' }));
   expect(screen.getByRole('dialog')).toHaveTextContent('Créer un bâtiment');
   fireEvent.change(screen.getByLabelText('Nom'), { target: { value: 'Bâtiment Nova' } });
@@ -55,11 +59,26 @@ test('crée un bâtiment dans le site sélectionné', async () => {
 test('édite la fiche d’un lot sans modifier son rattachement', async () => {
   render(<PatrimoinePage/>);
   await screen.findAllByText('Parc du Levant');
+  fireEvent.click(screen.getByRole('tab', { name: 'Bâtiments · 1' }));
   fireEvent.click(screen.getByRole('button', { name: /Bâtiment Atlas/ }));
+  fireEvent.click(screen.getByRole('tab', { name: 'Cellules · 1' }));
   fireEvent.click(screen.getByRole('button', { name: /Cellule Nord/ }));
+  fireEvent.click(screen.getByRole('tab', { name: 'Lots · 1' }));
   fireEvent.click(screen.getByRole('button', { name: /Lot Logistique/ }));
   fireEvent.click(screen.getByRole('button', { name: /Modifier la fiche/i }));
   fireEvent.change(screen.getByLabelText('Nom'), { target: { value: 'Lot Logistique rénové' } });
   fireEvent.click(screen.getByRole('button', { name: 'Enregistrer' }));
   await waitFor(() => expect(patrimoineApi.update).toHaveBeenCalledWith('lots', 4, expect.objectContaining({ nom: 'Lot Logistique rénové', cellules: [3] })));
+});
+
+test('filtre le niveau actif sans perdre le contexte de rattachement', async () => {
+  render(<PatrimoinePage/>);
+  await screen.findAllByText('Parc du Levant');
+  fireEvent.click(screen.getByRole('tab', { name: 'Bâtiments · 1' }));
+  fireEvent.change(screen.getByRole('searchbox', { name: 'Recherche' }), { target: { value: 'Atlas' } });
+  fireEvent.click(screen.getByRole('button', { name: /Bâtiment Atlas/ }));
+  expect(screen.getByRole('navigation', { name: 'Rattachement de l’actif' })).toHaveTextContent('Parc du Levant');
+  expect(screen.getByRole('navigation', { name: 'Rattachement de l’actif' })).toHaveTextContent('Bâtiment Atlas');
+  fireEvent.click(screen.getByRole('tab', { name: 'Sites · 1' }));
+  expect(screen.getByRole('navigation', { name: 'Rattachement de l’actif' })).not.toHaveTextContent('Bâtiment Atlas');
 });

@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Building2, ChevronRight, Factory, LandPlot, Pencil, Plus, RefreshCw, Warehouse } from 'lucide-react';
+import { ArrowLeft, Building2, ChevronRight, Factory, LandPlot, Pencil, Plus, RefreshCw, Warehouse } from 'lucide-react';
 import { patrimoineApi } from '../api/patrimoine';
-import { Badge, Breadcrumb, Button, Card, Checkbox, Drawer, EmptyState, Field, Input, Loader, Notification, PageHeader, Select, Textarea } from '../components/ui';
+import { Badge, Breadcrumb, Button, Card, Checkbox, Drawer, EmptyState, Field, Input, Loader, Notification, PageHeader, SearchBar, Select, Tabs, Textarea } from '../components/ui';
 import { QualificationPanel } from './QualificationPanel';
 
 const emptyData = { sites: [], batiments: [], cellules: [], lots: [] };
 const levels = [
-  { key: 'sites', singular: 'site', label: 'Sites', icon: LandPlot },
-  { key: 'batiments', singular: 'bâtiment', label: 'Bâtiments', icon: Building2 },
-  { key: 'cellules', singular: 'cellule', label: 'Cellules', icon: Factory },
-  { key: 'lots', singular: 'lot', label: 'Lots', icon: Warehouse },
+  { key: 'sites', selectionKey: 'siteId', singular: 'site', label: 'Sites', icon: LandPlot },
+  { key: 'batiments', selectionKey: 'batimentId', singular: 'bâtiment', label: 'Bâtiments', icon: Building2 },
+  { key: 'cellules', selectionKey: 'celluleId', singular: 'cellule', label: 'Cellules', icon: Factory },
+  { key: 'lots', selectionKey: 'lotId', singular: 'lot', label: 'Lots', icon: Warehouse },
 ];
 
 function numberOrEmpty(value) { return value === '' ? '' : Number(value); }
@@ -43,7 +43,7 @@ function payloadFor(resource, form) {
 
 function RecordButton({ record, active, onClick, icon: Icon, subtitle }) {
   return <button type="button" onClick={onClick} aria-pressed={active} className={`w-full rounded-oriana border p-3 text-left transition ${active ? 'border-oriana-lavande bg-oriana-violet/15 shadow-oriana' : 'border-oriana-bordure bg-oriana-surface hover:bg-oriana-surfaceAlt'}`}>
-    <span className="flex items-start gap-3"><span className="mt-0.5 rounded-lg bg-oriana-violet/15 p-2 text-oriana-lavande"><Icon size={17}/></span><span className="min-w-0"><span className="block truncate text-sm font-semibold">{record.nom || `${record.numero || 'Sans nom'}`}</span><span className="mt-1 block truncate text-xs text-oriana-discret">{subtitle}</span></span></span>
+    <span className="flex items-start gap-3"><span className="mt-0.5 rounded-lg bg-oriana-violet/15 p-2 text-oriana-lavande"><Icon size={17}/></span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-semibold">{record.nom || `${record.numero || 'Sans nom'}`}</span><span className="mt-1 block truncate text-xs text-oriana-discret">{subtitle}</span></span><ChevronRight className="mt-2 shrink-0 text-oriana-discret" size={15}/></span>
   </button>;
 }
 
@@ -76,6 +76,9 @@ function HeritageForm({ resource, record, selection, data, pending, onCancel, on
 export function PatrimoinePage({ readOnly = false }) {
   const [data, setData] = useState(emptyData);
   const [selection, setSelection] = useState({ siteId: null, batimentId: null, celluleId: null, lotId: null });
+  const [activeLevel, setActiveLevel] = useState('sites');
+  const [query, setQuery] = useState('');
+  const [mobileDetail, setMobileDetail] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [editor, setEditor] = useState(null);
@@ -98,9 +101,9 @@ export function PatrimoinePage({ readOnly = false }) {
 
   const visible = useMemo(() => ({
     sites: data.sites,
-    batiments: data.batiments.filter((item) => !selection.siteId || Number(item.site_id) === Number(selection.siteId)),
-    cellules: data.cellules.filter((item) => !selection.batimentId || Number(item.batiment_id) === Number(selection.batimentId)),
-    lots: data.lots.filter((item) => selection.celluleId ? listIds(item.cellules).includes(Number(selection.celluleId)) : selection.siteId ? Number(item.site_id) === Number(selection.siteId) : true),
+    batiments: selection.siteId ? data.batiments.filter((item) => Number(item.site_id) === Number(selection.siteId)) : [],
+    cellules: selection.batimentId ? data.cellules.filter((item) => Number(item.batiment_id) === Number(selection.batimentId)) : [],
+    lots: selection.celluleId ? data.lots.filter((item) => listIds(item.cellules).includes(Number(selection.celluleId))) : selection.siteId ? data.lots.filter((item) => Number(item.site_id) === Number(selection.siteId)) : [],
   }), [data, selection]);
 
   function select(resource, id) {
@@ -108,23 +111,52 @@ export function PatrimoinePage({ readOnly = false }) {
     if (resource === 'batiments') setSelection((current) => ({ ...current, batimentId: id, celluleId: null, lotId: null }));
     if (resource === 'cellules') setSelection((current) => ({ ...current, celluleId: id, lotId: null }));
     if (resource === 'lots') setSelection((current) => ({ ...current, lotId: id }));
+    setMobileDetail(true);
   }
 
-  const selectedEntry = [...levels].reverse().map((level) => ({ resource: level.key, record: data[level.key].find((item) => item.id === selection[`${level.singular === 'bâtiment' ? 'batiment' : level.singular}Id`]) })).find((entry) => entry.record);
+  const activeLevelConfig = levels.find((level) => level.key === activeLevel);
+  const activeLevelIndex = levels.findIndex((level) => level.key === activeLevel);
+  const activeRecords = visible[activeLevel].filter((record) => `${record.nom || ''} ${record.numero || ''}`.toLocaleLowerCase('fr').includes(query.trim().toLocaleLowerCase('fr')));
+  const activeRecord = data[activeLevel].find((record) => record.id === selection[activeLevelConfig.selectionKey]);
+  const selectedEntry = activeRecord ? { resource: activeLevel, record: activeRecord } : null;
+  const selectedPath = levels.slice(0, activeLevelIndex + 1).map((level) => ({ ...level, record: data[level.key].find((record) => record.id === selection[level.selectionKey]) })).filter((level) => level.record);
   const qualification = qualificationContext(selectedEntry, data);
-  async function save(payload) { setPending(true); setError(''); try { const response = editor.record ? await patrimoineApi.update(editor.resource, editor.record.id, payload) : await patrimoineApi.create(editor.resource, payload); await load(); setEditor(null); select(editor.resource, response.data.id); } catch { setError('L’enregistrement a échoué. Vérifiez les informations et votre périmètre.'); } finally { setPending(false); } }
+  async function save(payload) { setPending(true); setError(''); try { const response = editor.record ? await patrimoineApi.update(editor.resource, editor.record.id, payload) : await patrimoineApi.create(editor.resource, payload); await load(); setEditor(null); setActiveLevel(editor.resource); select(editor.resource, response.data.id); } catch { setError('L’enregistrement a échoué. Vérifiez les informations et votre périmètre.'); } finally { setPending(false); } }
+
+  function changeLevel(resource) {
+    setActiveLevel(resource);
+    setQuery('');
+    setMobileDetail(false);
+  }
 
   return <div className="space-y-7 animate-enter">
     <Breadcrumb items={['Accueil', 'Patrimoine']}/>
     <PageHeader eyebrow="Actifs immobiliers" title="Patrimoine" description={readOnly ? 'Prévisualisez la hiérarchie complète, du site jusqu’au lot commercialisable.' : 'Parcourez et maintenez la hiérarchie complète, du site jusqu’au lot commercialisable.'} actions={<><Button variant="secondary" onClick={load} disabled={loading}><RefreshCw size={16}/>Actualiser</Button>{!readOnly && <Button onClick={() => setEditor({ resource: 'sites', record: null })}><Plus size={17}/>Nouveau site</Button>}</>}/>
     {readOnly && <Notification title="Données fictives en lecture seule" description="Vous pouvez parcourir et qualifier visuellement les actifs sans modifier les données."/>}
     {error && <Notification title="Action impossible" description={error}/>} {loading && <Loader label="Chargement du patrimoine…"/>}
-    {!loading && data.sites.length === 0 ? <EmptyState title="Aucun site dans votre périmètre" description={readOnly ? 'Aucune donnée fictive n’est disponible pour cette prévisualisation.' : 'Créez le premier site pour commencer la hiérarchie patrimoniale.'} action={!readOnly ? <Button onClick={() => setEditor({ resource: 'sites', record: null })}><Plus size={16}/>Créer un site</Button> : undefined}/> : !loading && <>
-      <div className="grid gap-3 xl:grid-cols-4">{levels.map((level, index) => { const selectedId = selection[`${level.singular === 'bâtiment' ? 'batiment' : level.singular}Id`]; return <Card key={level.key} className="min-h-56 p-3"><div className="mb-3 flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-wider text-oriana-lavande">Étape {index + 1}</p><h2 className="mt-1 font-titre text-lg">{level.label}</h2></div>{!readOnly && <Button variant="ghost" size="sm" aria-label={`Créer un ${level.singular}`} onClick={() => setEditor({ resource: level.key, record: null })}><Plus size={16}/></Button>}</div><div className="space-y-2">{visible[level.key].map((record) => <RecordButton key={record.id} record={record} icon={level.icon} active={selectedId === record.id} onClick={() => select(level.key, record.id)} subtitle={level.key === 'sites' ? formatSurface(record.surface_terrain) : level.key === 'batiments' ? formatSurface(record.surface_totale) : formatSurface(record.surface)}/>)}{visible[level.key].length === 0 && <p className="rounded-lg border border-dashed border-oriana-bordure p-4 text-center text-xs text-oriana-discret">Aucun élément à ce niveau.</p>}</div></Card>; })}</div>
-      {selectedEntry && <Card><div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start"><div><div className="flex items-center gap-2"><Badge variant="accent">{levels.find((level) => level.key === selectedEntry.resource).singular}</Badge>{selectedEntry.record.numero && <Badge>N° {selectedEntry.record.numero}</Badge>}</div><h2 className="mt-3 font-titre text-2xl">{selectedEntry.record.nom}</h2><p className="mt-2 text-sm text-oriana-discret">{formatSurface(selectedEntry.record.surface ?? selectedEntry.record.surface_totale ?? selectedEntry.record.surface_terrain)}</p></div>{!readOnly && <Button variant="secondary" onClick={() => setEditor(selectedEntry)}><Pencil size={16}/>Modifier la fiche</Button>}</div><div className="mt-5 flex flex-wrap gap-2 text-xs text-oriana-discret"><span className="rounded-full bg-oriana-surfaceAlt px-3 py-1.5">Gestionnaire #{selectedEntry.record.gestionnaire || '—'}</span><span className="rounded-full bg-oriana-surfaceAlt px-3 py-1.5">Agence #{selectedEntry.record.agence_id || '—'}</span>{selectedEntry.record.divisible && <span className="rounded-full bg-oriana-violet/15 px-3 py-1.5 text-oriana-lavandeClair">Divisible</span>}</div></Card>}
-      {qualification && <QualificationPanel key={`${qualification.niveau}-${selectedEntry.record.id}-${qualification.famille}`} niveau={qualification.niveau} bienId={selectedEntry.record.id} famille={qualification.famille} readOnly={readOnly}/>}
-      <div className="flex items-center gap-2 text-xs text-oriana-discret"><span>Site</span><ChevronRight size={13}/><span>Bâtiment</span><ChevronRight size={13}/><span>Cellule</span><ChevronRight size={13}/><span>Lot</span></div>
-    </>}
+    {!loading && data.sites.length === 0 ? <EmptyState title="Aucun site dans votre périmètre" description={readOnly ? 'Aucune donnée fictive n’est disponible pour cette prévisualisation.' : 'Créez le premier site pour commencer la hiérarchie patrimoniale.'} action={!readOnly ? <Button onClick={() => setEditor({ resource: 'sites', record: null })}><Plus size={16}/>Créer un site</Button> : undefined}/> : !loading && <Card className="p-0">
+      <Tabs tabs={levels.map((level) => ({ id: level.key, label: `${level.label} · ${visible[level.key].length}` }))} active={activeLevel} onChange={changeLevel} ariaLabel="Niveaux du patrimoine">
+        <div className="grid gap-4 p-3 lg:grid-cols-[minmax(17rem,0.72fr)_minmax(0,2fr)] lg:p-4">
+          <section aria-label={`Liste des ${activeLevelConfig.label.toLocaleLowerCase('fr')}`} className={mobileDetail ? 'hidden self-start lg:block' : 'self-start'}>
+            <div className="mb-4 flex items-center justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[.16em] text-oriana-lavande">Niveau {activeLevelIndex + 1} sur 4</p><h2 className="mt-1 font-titre text-2xl">{activeLevelConfig.label}</h2></div><div className="flex items-center gap-2"><Badge>{visible[activeLevel].length}</Badge>{!readOnly && <Button variant="ghost" size="sm" aria-label={`Créer un ${activeLevelConfig.singular}`} onClick={() => setEditor({ resource: activeLevel, record: null })}><Plus size={16}/></Button>}</div></div>
+            <SearchBar value={query} onChange={(event) => setQuery(event.target.value)} placeholder={`Rechercher dans les ${activeLevelConfig.label.toLocaleLowerCase('fr')}`}/>
+            <div className="mt-3 max-h-[34rem] space-y-2 overflow-y-auto pr-1">{activeRecords.map((record) => <RecordButton key={record.id} record={record} icon={activeLevelConfig.icon} active={record.id === selection[activeLevelConfig.selectionKey]} onClick={() => select(activeLevel, record.id)} subtitle={activeLevel === 'sites' ? formatSurface(record.surface_terrain) : activeLevel === 'batiments' ? formatSurface(record.surface_totale) : formatSurface(record.surface)}/>)}{activeRecords.length === 0 && <p className="rounded-lg border border-dashed border-oriana-bordure p-6 text-center text-sm text-oriana-discret">{query ? 'Aucun élément ne correspond à cette recherche.' : 'Aucun élément dans ce contexte.'}</p>}</div>
+          </section>
+          <section aria-label="Fiche de l’actif sélectionné" className={mobileDetail ? 'space-y-4' : 'hidden space-y-4 lg:block'}>
+            {!selectedEntry ? <EmptyState title={`Sélectionnez un ${activeLevelConfig.singular}`} description={`Sa fiche et son rattachement apparaîtront ici sans perdre la liste des ${activeLevelConfig.label.toLocaleLowerCase('fr')}.`}/> : <>
+              <Card>
+                <Button className="mb-4 lg:hidden" variant="ghost" size="sm" onClick={() => setMobileDetail(false)}><ArrowLeft size={15}/>Retour à la liste</Button>
+                <nav aria-label="Rattachement de l’actif" className="mb-4 flex flex-wrap items-center gap-2 text-xs text-oriana-discret">{selectedPath.map((level, index) => <span className="inline-flex items-center gap-2" key={level.key}>{index > 0 && <ChevronRight size={12}/>}<span>{level.record.nom || level.label}</span></span>)}</nav>
+                <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start"><div><div className="flex flex-wrap items-center gap-2"><Badge variant="accent">{activeLevelConfig.singular}</Badge>{selectedEntry.record.numero && <Badge>N° {selectedEntry.record.numero}</Badge>}</div><h2 className="mt-3 font-titre text-3xl">{selectedEntry.record.nom}</h2><p className="mt-2 text-sm text-oriana-discret">{formatSurface(selectedEntry.record.surface ?? selectedEntry.record.surface_totale ?? selectedEntry.record.surface_terrain)}</p></div>{!readOnly && <Button variant="secondary" onClick={() => setEditor(selectedEntry)}><Pencil size={16}/>Modifier la fiche</Button>}</div>
+                <div className="mt-5 flex flex-wrap gap-2 text-xs text-oriana-discret"><span className="rounded-full bg-oriana-surfaceAlt px-3 py-1.5">Gestionnaire #{selectedEntry.record.gestionnaire || '—'}</span><span className="rounded-full bg-oriana-surfaceAlt px-3 py-1.5">Agence #{selectedEntry.record.agence_id || '—'}</span>{selectedEntry.record.divisible && <span className="rounded-full bg-oriana-violet/15 px-3 py-1.5 text-oriana-lavandeClair">Divisible</span>}</div>
+                {activeLevel !== 'lots' && <div className="mt-6 border-t border-oriana-bordure pt-4"><Button variant="secondary" onClick={() => changeLevel(levels[activeLevelIndex + 1].key)}>Explorer les {levels[activeLevelIndex + 1].label.toLocaleLowerCase('fr')}<ChevronRight size={15}/></Button></div>}
+              </Card>
+              {qualification && <QualificationPanel key={`${qualification.niveau}-${selectedEntry.record.id}-${qualification.famille}`} niveau={qualification.niveau} bienId={selectedEntry.record.id} famille={qualification.famille} readOnly={readOnly}/>}
+            </>}
+          </section>
+        </div>
+      </Tabs>
+    </Card>}
     {!readOnly && <Drawer open={Boolean(editor)} onClose={() => !pending && setEditor(null)} title={editor?.record ? `Modifier ${editor.record.nom}` : `Créer un ${levels.find((level) => level.key === editor?.resource)?.singular || ''}`}>{editor && <HeritageForm key={`${editor.resource}-${editor.record?.id || 'new'}`} {...editor} selection={selection} data={data} pending={pending} onCancel={() => setEditor(null)} onSave={save}/>}</Drawer>}
   </div>;
 }
