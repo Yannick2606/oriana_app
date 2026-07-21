@@ -82,3 +82,35 @@ test('filtre le niveau actif sans perdre le contexte de rattachement', async () 
   fireEvent.click(screen.getByRole('tab', { name: 'Sites · 1' }));
   expect(screen.getByRole('navigation', { name: 'Rattachement de l’actif' })).not.toHaveTextContent('Bâtiment Atlas');
 });
+
+test('guide le parcours vers le niveau suivant depuis la fiche active', async () => {
+  render(<PatrimoinePage readOnly/>);
+  await screen.findAllByText('Parc du Levant');
+  fireEvent.click(screen.getByRole('button', { name: 'Explorer les bâtiments' }));
+  expect(screen.getByRole('tab', { name: 'Bâtiments · 1' })).toHaveAttribute('aria-selected', 'true');
+  fireEvent.click(screen.getByRole('button', { name: /Bâtiment Atlas/ }));
+  expect(screen.getByRole('navigation', { name: 'Rattachement de l’actif' })).toHaveTextContent('Parc du Levant');
+  expect(screen.getByRole('button', { name: 'Explorer les cellules' })).toBeInTheDocument();
+});
+
+test('revient explicitement de la fiche vers la liste sur le parcours mobile', async () => {
+  render(<PatrimoinePage readOnly/>);
+  await screen.findAllByText('Parc du Levant');
+  fireEvent.click(screen.getByRole('button', { name: /Parc du Levant/ }));
+  const list = screen.getByRole('region', { name: 'Liste des sites' });
+  const detail = screen.getByRole('region', { name: 'Fiche de l’actif sélectionné' });
+  expect(list).toHaveClass('hidden');
+  expect(detail).not.toHaveClass('hidden');
+  fireEvent.click(screen.getByRole('button', { name: 'Retour à la liste' }));
+  expect(list).not.toHaveClass('hidden');
+  expect(detail).toHaveClass('hidden');
+});
+
+test('propose une reprise après une indisponibilité de chargement', async () => {
+  patrimoineApi.listAll.mockReset().mockRejectedValueOnce(new Error('indisponible')).mockResolvedValue(hierarchy);
+  render(<PatrimoinePage readOnly/>);
+  expect(await screen.findByText('Action impossible')).toBeInTheDocument();
+  expect(screen.getByText('Le patrimoine n’a pas pu être chargé.')).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Actualiser' }));
+  expect((await screen.findAllByText('Parc du Levant')).length).toBeGreaterThan(0);
+});

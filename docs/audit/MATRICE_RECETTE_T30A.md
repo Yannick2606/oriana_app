@@ -122,6 +122,24 @@ dans le frontend doit aussi être refusée par appel direct au backend.
 | PAT-04 | Tenter une écriture hors périmètre | Refus serveur sans donnée de l’autre périmètre | Cinq rôles par appels directs | Bloqué | Environnement non créé |
 | PAT-05 | Provoquer validation et indisponibilité API | Formulaire conservé ou reprise proposée | Desktop et smartphone | Bloqué | Environnement non créé |
 
+#### Fiche guidée PAT-01 — à exécuter après mise à jour de la prévisualisation
+
+Cette fiche prépare la recette humaine du commit `2ff6144` sans la déclarer réussie. Pour chacun
+des quatre rôles métier, consigner séparément l’appareil, le navigateur et le mode d’interaction :
+
+1. ouvrir Patrimoine et vérifier que **Sites** est le niveau actif avec son compteur ;
+2. sélectionner un site, utiliser **Explorer les bâtiments**, puis poursuivre jusqu’au lot ;
+3. vérifier à chaque niveau la liste filtrée, la fiche active et le fil de rattachement ;
+4. rechercher un actif, effacer la recherche et vérifier que le contexte reste cohérent ;
+5. au clavier, parcourir les onglets avec `←`, `→`, `Début` et `Fin`, puis activer les actions ;
+6. sur smartphone, ouvrir une fiche puis utiliser **Retour à la liste** sans perdre la sélection ;
+7. confirmer l’absence de création et de modification dans la prévisualisation en lecture seule ;
+8. joindre une preuve expurgée pour desktop, smartphone et clavier avant de modifier PAT-01.
+
+Support automatisé local au 21 juillet 2026 : le parcours guidé, le retour mobile et la reprise
+après indisponibilité sont couverts ; la suite frontend compte 61 tests réussis. Cette preuve ne
+remplace ni le contrôle visuel, ni les quatre rôles, ni le backend effectivement recetté.
+
 ### Offres
 
 | ID | Action | Résultat attendu | Rôles / environnement | Statut | Preuve / anomalie |

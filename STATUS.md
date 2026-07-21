@@ -18,6 +18,14 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-21 — T-30A : preuves de navigation Patrimoine renforcées localement**
+  - Trois non-régressions couvrent désormais l’ouverture guidée du niveau suivant, le retour
+    explicite fiche → liste sur smartphone et la reprise après indisponibilité du chargement.
+  - La suite frontend complète réussit avec 61 tests sur 61 ; le lint et le build Vite de
+    production réussissent également.
+  - La fiche guidée de PAT-01 est préparée dans la matrice T-30A. Son statut reste « À exécuter » :
+    ces preuves automatisées ne remplacent pas la recette humaine sur la prévisualisation.
+  - Ce lot de preuves et de documentation n’est ni poussé ni déployé.
 - **2026-07-21 — T-30A : explorateur Patrimoine restructuré localement**
   - La grille simultanée Site → Bâtiment → Cellule → Lot est remplacée par une navigation à
     onglets avec compteurs, recherche sur le niveau actif, liste principale et fiche contextuelle.
@@ -26,7 +34,8 @@
   - Les API, autorisations, formulaires et règles de lecture seule restent inchangés. Les contrôles
     réussissent : lint frontend, build Vite et 58 tests frontend sur 58.
   - La vérification visuelle automatisée locale est empêchée par l’isolation réseau du navigateur
-    intégré. Cette refonte n’est ni poussée, ni déployée et attend la recette humaine.
+    intégré. Le commit `2ff6144` est poussé sur la branche de travail mais n’est pas déployé ; la
+    refonte attend la recette humaine sur la prévisualisation.
 - **2026-07-21 — T-30A : défaut de syntaxe détecté avant remplacement de la prévisualisation**
   - La reconstruction isolée de la prévisualisation s’est arrêtée pendant le build frontend sur
     une accolade JSX manquante dans `frontend/src/App.jsx` ; aucun conteneur n’a été remplacé.
