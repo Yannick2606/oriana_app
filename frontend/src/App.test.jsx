@@ -1,5 +1,5 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { expect, test, vi } from 'vitest';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { beforeEach, expect, test, vi } from 'vitest';
 import App from './App';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { SessionProvider } from './auth/SessionContext.jsx';
@@ -12,6 +12,12 @@ vi.mock('./api', async (importOriginal) => {
 });
 
 Object.defineProperty(window, 'matchMedia', { writable: true, value: vi.fn().mockImplementation(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() })) });
+
+beforeEach(() => {
+  window.localStorage.clear();
+  document.documentElement.dataset.theme = 'dark';
+  window.history.replaceState({}, '', '/');
+});
 
 function renderApp(role, roles = [role]) {
   const user = { id: 1, prenom: 'Julie', nom: 'Martin', roles, role_actif: role };
@@ -35,6 +41,26 @@ test('le thème foncé validé est utilisé par défaut', async () => {
   renderApp('consultant');
   await waitFor(() => expect(document.documentElement.dataset.theme).toBe('dark'));
   expect(screen.getByRole('button', { name: 'Changer de thème' })).toBeInTheDocument();
+});
+
+test('le thème choisi explicitement est conservé après rechargement', async () => {
+  renderApp('consultant');
+  fireEvent.click(await screen.findByRole('button', { name: 'Changer de thème' }));
+  await waitFor(() => expect(document.documentElement.dataset.theme).toBe('light'));
+  expect(window.localStorage.getItem('oriana-theme')).toBe('light');
+
+  cleanup();
+  document.documentElement.dataset.theme = 'dark';
+  renderApp('consultant');
+  await waitFor(() => expect(document.documentElement.dataset.theme).toBe('light'));
+});
+
+test('le bac à sable désactive réellement les agents IA depuis la navigation', async () => {
+  window.history.replaceState({}, '', '/?sandbox=1');
+  renderApp('consultant');
+  fireEvent.click(await screen.findByRole('button', { name: 'Agents IA' }));
+  expect(await screen.findByText('Agents IA indisponibles dans la prévisualisation')).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Déclencher l’agent' })).not.toBeInTheDocument();
 });
 
 test('un consultant voit les modules métier mais jamais l’administration', async () => {

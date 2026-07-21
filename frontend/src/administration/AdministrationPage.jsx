@@ -117,7 +117,7 @@ function UserDrawer({ item, masters, actorRole, pending, onClose, onSave }) {
   </Drawer>;
 }
 
-export function AdministrationPage({ user, client = utilisateursApi }) {
+export function AdministrationPage({ user, client = utilisateursApi, readOnly = false }) {
   const [usersList, setUsersList] = useState([]);
   const [status, setStatus] = useState('loading');
   const [error, setError] = useState('');
@@ -181,8 +181,9 @@ export function AdministrationPage({ user, client = utilisateursApi }) {
 
   return <div className="space-y-7 animate-enter">
     <Breadcrumb items={['Accueil', 'Administration']}/>
-    <PageHeader eyebrow="Organisation" title={title} description="Pilotez les accès et les rattachements avec les données réellement autorisées par le serveur."/>
+    <PageHeader eyebrow="Organisation" title={title} description={readOnly ? 'Prévisualisez les accès et les rattachements sans modifier les habilitations.' : 'Pilotez les accès et les rattachements avec les données réellement autorisées par le serveur.'}/>
 
+    {readOnly && <Notification title="Administration en lecture seule" description="Les comptes fictifs sont consultables, mais aucune habilitation ne peut être modifiée."/>}
     {notice && <Notification title="Mise à jour enregistrée" description={notice}/>}
     {error && <div role="alert" className="flex flex-col gap-3 rounded-oriana border border-oriana-lavande/40 bg-oriana-surface p-4 sm:flex-row sm:items-center sm:justify-between"><p className="text-sm">{error}</p>{status === 'error' && <Button size="sm" variant="secondary" onClick={load}>Réessayer</Button>}</div>}
 
@@ -223,7 +224,7 @@ export function AdministrationPage({ user, client = utilisateursApi }) {
                 <td className="px-4 py-3"><RoleBadges roles={item.roles}/></td>
                 <td className="px-4 py-3"><MasterAssignment item={item} masters={masters}/></td>
                 <td className="px-4 py-3"><Badge variant={item.actif ? 'accent' : 'default'}>{item.actif ? 'Actif' : 'Bloqué'}</Badge></td>
-                <td className="px-4 py-3 text-right">{canManage(item) ? <Button size="sm" variant="secondary" onClick={() => setSelected(item)}>Gérer</Button> : <Badge>Compte protégé</Badge>}</td>
+                <td className="px-4 py-3 text-right">{canManage(item) && !readOnly ? <Button size="sm" variant="secondary" onClick={() => setSelected(item)}>Gérer</Button> : <Badge>{readOnly && canManage(item) ? 'Lecture seule' : 'Compte protégé'}</Badge>}</td>
               </tr>)}</tbody>
             </table>
           </div>
@@ -231,12 +232,12 @@ export function AdministrationPage({ user, client = utilisateursApi }) {
           <div className="grid gap-3 lg:hidden">{filtered.map((item) => <article key={item.id} className="rounded-oriana border border-oriana-bordure bg-oriana-fond p-4">
             <div className="flex items-start gap-3"><Avatar name={fullName(item)}/><div className="min-w-0 flex-1"><p className="truncate font-semibold">{fullName(item)}</p><p className="truncate text-xs text-oriana-discret">{item.email || `Agence ${item.agence_id || 'non rattachée'}`}</p></div><Badge variant={item.actif ? 'accent' : 'default'}>{item.actif ? 'Actif' : 'Bloqué'}</Badge></div>
             <div className="mt-4"><RoleBadges roles={item.roles}/></div>
-            <div className="mt-4 flex items-center justify-between gap-3 border-t border-oriana-bordure pt-4"><p className="text-xs text-oriana-discret"><MasterAssignment item={item} masters={masters}/></p>{canManage(item) ? <Button size="sm" variant="secondary" onClick={() => setSelected(item)}>Gérer</Button> : <Badge>Compte protégé</Badge>}</div>
+            <div className="mt-4 flex items-center justify-between gap-3 border-t border-oriana-bordure pt-4"><p className="text-xs text-oriana-discret"><MasterAssignment item={item} masters={masters}/></p>{canManage(item) && !readOnly ? <Button size="sm" variant="secondary" onClick={() => setSelected(item)}>Gérer</Button> : <Badge>{readOnly && canManage(item) ? 'Lecture seule' : 'Compte protégé'}</Badge>}</div>
           </article>)}</div>
         </>}
       </Card>
     </>}
 
-    {selected && <UserDrawer key={selected.id} item={selected} masters={masters} actorRole={user.role_actif} pending={pending} onClose={() => setSelected(null)} onSave={update}/>}
+    {selected && !readOnly && <UserDrawer key={selected.id} item={selected} masters={masters} actorRole={user.role_actif} pending={pending} onClose={() => setSelected(null)} onSave={update}/>}
   </div>;
 }

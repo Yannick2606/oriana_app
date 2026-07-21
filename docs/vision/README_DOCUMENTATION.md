@@ -84,6 +84,11 @@ Une contradiction est enregistrée dans STATUS et résolue dans le document qui 
 - [Sources métier et règles d’import](../referentiels/SOURCES_METIER_ET_IMPORT.md)
 - [Audit stratégique du patrimoine](../audit/AUDIT_STRATEGIQUE_PATRIMOINE_ORIANA.md)
 - [Audit interface / charte du 19 juillet 2026](../audit/AUDIT_INTERFACE_CHARTE_2026-07-19.md)
+- [Matrice de recette T-30A](../audit/MATRICE_RECETTE_T30A.md)
+- [Audit de couverture automatisée T-30A](../audit/AUDIT_COUVERTURE_AUTOMATISEE_T30A_2026-07-20.md)
+- [Étude de l’environnement de recette T-30A](../architecture/ETUDE_ENVIRONNEMENT_RECETTE_T30A_2026-07-20.md)
+- [Protocole de capacité et d’isolation du VPS — T-30A](../architecture/PROTOCOLE_CAPACITE_ISOLATION_VPS_T30A.md)
+- [Rapport de capacité et d’isolation du VPS — T-30A](../architecture/RAPPORT_CAPACITE_ISOLATION_VPS_T30A_2026-07-20.md)
 - [Audit PostgreSQL](../POSTGRESQL_AUDIT.md)
 - [Revue de sécurité phase 1](../../SECURITY_REVIEW.md) — preuve historique au 14 juillet 2026
 - [Guide de déploiement](../../deploy/README.md) — procédure d’exploitation, sans autorisation de déployer

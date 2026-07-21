@@ -249,6 +249,15 @@
   sans déplacer les autorisations hors du backend.
 - Ajouter les tests frontend de non-régression couvrant les actions principales, puis réaliser une
   recette humaine guidée sur le bac à sable.
+- La [couverture automatisée T-30A](docs/audit/AUDIT_COUVERTURE_AUTOMATISEE_T30A_2026-07-20.md)
+  est verte et ferme les commandes d’écriture trompeuses de Patrimoine, Administration et Agents
+  IA en prévisualisation. Elle ne remplace pas la recette humaine.
+- Exécuter la [matrice de recette T-30A](docs/audit/MATRICE_RECETTE_T30A.md). La prévisualisation
+  T-32 reste strictement en lecture seule ; les scénarios d’écriture exigent un environnement de
+  recette distinct, réinitialisable et explicitement autorisé avant sa création, conformément à
+  DEC-037 et à la composition progressive DEC-038. L’admissibilité du VPS actuel doit être établie
+  par le [protocole de capacité et d’isolation](docs/architecture/PROTOCOLE_CAPACITE_ISOLATION_VPS_T30A.md)
+  avant toute préparation de R1.
 - **Acceptation** : aucun bouton sans effet, les parcours prioritaires sont réalisables de bout en
   bout au clavier, à la souris et sur smartphone, lint/build/tests sont verts et la recette humaine
   autorise explicitement la préparation de T-30.

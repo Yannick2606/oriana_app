@@ -18,6 +18,70 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-20 — T-30A : lecture seule frontend fermée et couverture automatisée consolidée**
+  - Patrimoine masque les créations et modifications en prévisualisation ; la qualification reste
+    visible avec des champs désactivés et sans commande d’enregistrement.
+  - Administration conserve les comptes fictifs consultables mais remplace toute commande de
+    gestion par un état « Lecture seule ». Agents IA affiche son indisponibilité, sans charger de
+    demande, appeler de connecteur ni simuler de traitement.
+  - Le thème sombre est appliqué avant le montage React ; seule la préférence non sensible
+    `oriana-theme` est conservée dans `localStorage`.
+  - Vérifications réussies : 57 tests frontend sur 57, lint frontend, build Vite, frontières et
+    lint backend, puis 161 tests backend sur 162 avec l’intégration PostgreSQL ignorée comme prévu.
+  - L’audit automatisé est consigné dans
+    `docs/audit/AUDIT_COUVERTURE_AUTOMATISEE_T30A_2026-07-20.md`. Il ne valide pas la recette
+    humaine, l’activité normale ou la pointe VPS, R1/R2 ni le `GO T-30A`.
+  - Aucun secret, `.env`, VPS, ressource externe, commit, push ou déploiement n’a été touché.
+- **2026-07-20 — T-30A : protocole de capacité et d’isolation du VPS spécifié**
+  - Trois campagnes sont requises : repos, activité normale et pointe réelle représentative. Les
+    commandes autorisées observent uniquement CPU, mémoire, disque, I/O, conteneurs, réseaux,
+    volumes, ports et pare-feu.
+  - Le protocole interdit toute installation, mutation, lecture de `.env`, inspection Docker,
+    journal applicatif, dump, test de charge, sortie brute dans le dépôt ou modification distante.
+  - Les seuils bloquants et le budget minimal de R1 conduisent soit à « VPS actuel admissible sous
+    conditions », soit à « VPS dédié obligatoire ». Une mesure incomplète produit un No-Go
+    conservatoire.
+  - Le protocole est prêt mais n’a pas été exécuté. Aucune connexion au VPS, donnée d’exploitation,
+    ressource, secret, commit, push ou opération de déploiement n’a été réalisé.
+  - Une tentative d’authentification SSH non interactive a ensuite été refusée pour les comptes
+    opérateur et administrateur (`publickey`) : la clé protégée n’est pas déverrouillée dans la
+    session Codex. Aucune commande ni mesure n’a atteint le VPS ; l’exécution attend une session
+    SSH ouverte par l’opérateur, sans communication de la phrase secrète.
+  - L’opérateur a exécuté la campagne au repos dans sa session SSH : 2 cœurs, charge
+    `0,00 / 0,01 / 0,00`, CPU inactif moyen corrigé autour de 98,5 %, attente I/O et swap nuls,
+    environ 6,46 Gio de mémoire disponible, 88,5 Gio de disque disponible et 97 % d’inodes libres.
+    Les seuils au repos sont respectés.
+  - Un second contrôle tardif, sans utilisation de l’application, confirme environ 98 % de CPU
+    inactif et l’absence de pression I/O, swap ou file d’exécution. Il reste classé « repos ». Le
+    filtre d’agrégation exclut désormais les en-têtes répétés de `vmstat`.
+  - Les projets Compose sont distincts, Grist et PostgreSQL ne publient pas leurs ports natifs et
+    n8n reste sur la boucle locale. Le volume au nom automatique appartient au conteneur de
+    sauvegarde PostgreSQL de production ; il est hors périmètre de toute remise à zéro T-30A.
+  - `ufw` est inactif, mais le pare-feu Hostinger actif accepte uniquement TCP 22, 80 et 443 avant
+    une règle finale de blocage général. La protection externe est donc prouvée sans modification ;
+    l’ouverture SSH à toute source pourra faire l’objet d’un durcissement séparé.
+  - Activité normale et pointe représentative manquent encore : le No-Go conservatoire R1 reste en
+    vigueur.
+- **2026-07-20 — T-30A : matrice préparée et environnement de recette séparé validé**
+  - La recette est structurée par scénario, rôle, appareil, mode d’interaction, résultat et preuve ;
+    elle couvre connexion, shell, Patrimoine, Offres, CRM, Matching, Agents IA, Auto-formation et
+    Administration.
+  - Les observations historiques restent qualifiées comme partielles. Directeur d’agence et
+    Administrateur d’agence ne disposent pas encore d’une recette consignée ; le périmètre d’équipe
+    du Master consultant reste à vérifier.
+  - La prévisualisation T-32 conserve son isolement et son refus de toute écriture. Les créations,
+    modifications, erreurs métier, rattachements et parcours n8n exigent un environnement de
+    recette distinct, inscriptible et réinitialisable. DEC-037 valide ce principe sans choisir le
+    fournisseur ni autoriser la création du profil.
+  - Référence automatisée du lot : lint, 52 tests frontend et build réussis ; frontières, lint et
+    161 tests backend sur 162 réussis, avec l’intégration PostgreSQL ignorée comme prévu.
+  - DEC-038 valide, sans création, un premier lot sur le VPS actuel sous condition de capacité :
+    backend hors sandbox, Grist métier isolé, PostgreSQL de sessions et Mailpit interne. Un VPS
+    dédié devient obligatoire si la mesure ou l’isolation échoue.
+  - n8n est retenu dans un second lot séparément autorisé pour les seuls scénarios Agents IA ;
+    production, Grist de production, SMTP réel et n8n de production sont exclus de la recette.
+  - Aucun environnement, connecteur, secret, code applicatif, commit, push ou déploiement n’est
+    créé ou autorisé par cette décision. T-30A reste active et T-30 reste bloquée.
 - **2026-07-20 — T-34B : audit documentaire de persistance clos**
   - DEC-033 à DEC-036 possèdent chacune une entrée unique dans la synthèse et le registre détaillé ;
     la matrice ne contient plus de question ouverte.

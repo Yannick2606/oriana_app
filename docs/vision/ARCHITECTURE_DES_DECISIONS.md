@@ -44,6 +44,8 @@ historique : elle est remplacée par une nouvelle entrée qui la référence. St
 | DEC-034 | L’idempotence utilise un registre séparé expirant après 24 heures | cible validée | arbitrage persistance T-34B, 2026-07-20 | empreintes seulement, purge indépendante des Captures |
 | DEC-035 | La pagination utilise un curseur chiffré et authentifié valable 15 minutes | cible validée | arbitrage persistance T-34B, 2026-07-20 | position et périmètre non lisibles, droits revérifiés à chaque page |
 | DEC-036 | La modification d’un brouillon utilise une transaction et un verrou de ligne | cible validée | arbitrage persistance T-34B, 2026-07-20 | mutation unique ou conflit cohérent issu du même état autorisé |
+| DEC-037 | La recette inscriptible utilise un environnement distinct de la prévisualisation et de la production | acceptée | validation T-30A, 2026-07-20 | données fictives réinitialisables ; création et connecteurs soumis à autorisations séparées |
+| DEC-038 | La recette T-30A suit deux lots, d’abord Grist et Mailpit puis n8n isolé | acceptée | cadrage T-30A, 2026-07-20 | VPS actuel sous preuve de capacité ; VPS dédié obligatoire en repli |
 
 Les identifiants `SRC-HIST-*` sont décrits dans
 [l’audit stratégique](../audit/AUDIT_STRATEGIQUE_PATRIMOINE_ORIANA.md).
@@ -313,6 +315,63 @@ limité à la ligne autorisée et à la durée de la transaction. Il n’autoris
 automatique, ni fusion, ni forçage et ne remplace aucun contrôle serveur.
 **Statut.** Cible validée, non implémentée. Cette décision n’autorise ni migration, ni adaptateur,
 ni route et ne change pas le blocage T-30.
+
+### DEC-037 — Environnement de recette inscriptible séparé
+
+**Contexte.** La prévisualisation T-32 est volontairement isolée, sans connecteur externe et sans
+écriture métier. T-30A exige cependant de recetter humainement les créations, modifications,
+erreurs métier, rattachements et traitements asynchrones. Rendre la prévisualisation inscriptible
+affaiblirait une garantie déjà validée ; utiliser la production exposerait des données et des
+opérations réelles à une recette exploratoire.
+
+**Décision.** La recette inscriptible de T-30A utilise un profil distinct, réinitialisable et
+séparé de la prévisualisation comme de la production. Il contient uniquement des identités et
+données fictives. Ses sessions, stockage, volumes, identifiants et secrets lui sont propres. Le
+fournisseur de persistance doit être choisi explicitement : la décision ne suppose ni la bascule
+PostgreSQL acquise, ni la réutilisation du Grist de production.
+
+**Connecteurs.** Les connecteurs externes sont désactivés par défaut. Un éventuel n8n de recette
+est isolé et possède ses propres webhooks et secrets ; sa création et son activation exigent une
+autorisation distincte. Le navigateur ne reçoit aucun secret.
+
+**Exploitation.** La procédure doit prévoir la génération du jeu fictif, la réinitialisation, la
+suppression, l’absence de données réelles et des journaux expurgés. La prévisualisation T-32 reste
+en lecture seule et la production est exclue des essais T-30A.
+
+**Statut.** Décision acceptée, non implémentée. Elle n’autorise ni création d’infrastructure, ni
+choix de fournisseur, ni secret, ni connecteur, ni déploiement. T-30A reste active et T-30 reste
+bloquée jusqu’à la recette et au GO humain explicite.
+
+### DEC-038 — Composition progressive de la recette T-30A
+
+**Contexte.** DEC-037 exige un environnement inscriptible distinct. La recette doit rester fidèle
+à la source opérationnelle Grist sans anticiper T-30, empêcher tout courriel réel et couvrir n8n
+sans rendre ce connecteur obligatoire pour les parcours métier ordinaires. Le VPS actuel porte déjà
+plusieurs services ; son aptitude à recevoir une charge supplémentaire n’est pas démontrée par sa
+seule disponibilité.
+
+**Décision.** Le lot R1 réunit un frontend et un backend hors mode sandbox, un Grist métier isolé,
+un PostgreSQL privé limité aux sessions et structures techniques requises, et un Mailpit interne.
+n8n est absent de R1 et son indisponibilité explicite fait partie de la recette. Le lot R2 ajoute
+ensuite une instance n8n dédiée, son volume, ses webhooks, ses secrets et un workflow borné aux
+données fictives, après une autorisation séparée.
+
+**Hébergement.** Le premier POC R1 peut utiliser le VPS actuel dans un projet Compose, des réseaux,
+volumes, identifiants et noms DNS distincts, uniquement si une mesure préalable confirme les marges
+CPU, mémoire, disque et I/O ainsi que les garde-fous opératoires. Si cette preuve échoue ou si
+l’isolation est jugée insuffisante, R1 est installé sur un VPS dédié ; aucune dégradation de la
+production ou de la prévisualisation n’est acceptée. Le
+[protocole de capacité et d’isolation](../architecture/PROTOCOLE_CAPACITE_ISOLATION_VPS_T30A.md)
+définit cette preuve sans autoriser son exécution.
+
+**Réseau et remise à zéro.** Seuls frontend et backend peuvent rejoindre le réseau Traefik partagé.
+Grist, PostgreSQL, Mailpit et le futur n8n restent sur le réseau interne du projet. La remise à zéro
+reconstruit uniquement les volumes de recette depuis des données fictives maîtrisées, après
+contrôle du nom et des labels du projet.
+
+**Statut.** Décision acceptée, non implémentée. Elle n’autorise ni fichier Compose, ni initialiseur,
+ni mesure distante, ni DNS, ni secret, ni création de conteneur, ni activation n8n, ni déploiement.
+T-30A et le blocage de T-30 restent inchangés.
 
 ## Modèle pour une nouvelle décision
 

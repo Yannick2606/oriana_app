@@ -25,6 +25,16 @@ test('présente les comptes et indicateurs réels dans la charte Administration'
   expect(screen.getAllByText('À rattacher').length).toBeGreaterThan(0);
 });
 
+test('la prévisualisation expose les comptes sans autoriser leur gestion', async () => {
+  const api = client();
+  render(<AdministrationPage user={{ role_actif: 'super_admin' }} client={api} readOnly/>);
+  expect(await screen.findByText('Administration en lecture seule')).toBeInTheDocument();
+  expect(screen.getAllByText('Julie Consultante').length).toBeGreaterThan(0);
+  expect(screen.queryByRole('button', { name: 'Gérer' })).not.toBeInTheDocument();
+  expect(screen.getAllByText('Lecture seule').length).toBeGreaterThan(0);
+  expect(api.update).not.toHaveBeenCalled();
+});
+
 test('recherche et filtre les utilisateurs sans simuler de résultat', async () => {
   render(<AdministrationPage user={{ role_actif: 'super_admin' }} client={client()}/>);
   await screen.findAllByText('Marc Master');

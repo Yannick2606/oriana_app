@@ -15,9 +15,21 @@ const hierarchy = {
 };
 
 beforeEach(() => {
+  vi.clearAllMocks();
   patrimoineApi.listAll.mockResolvedValue(hierarchy);
   patrimoineApi.create.mockResolvedValue({ data: { id: 9 } });
   patrimoineApi.update.mockResolvedValue({ data: hierarchy.lots[0] });
+});
+
+test('la prévisualisation permet de parcourir le patrimoine sans commande d’écriture', async () => {
+  render(<PatrimoinePage readOnly/>);
+  expect(await screen.findByText('Données fictives en lecture seule')).toBeInTheDocument();
+  expect(screen.getAllByText('Parc du Levant').length).toBeGreaterThan(0);
+  expect(screen.queryByRole('button', { name: 'Nouveau site' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: /Créer un/i })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: /Modifier la fiche/i })).not.toBeInTheDocument();
+  expect(patrimoineApi.create).not.toHaveBeenCalled();
+  expect(patrimoineApi.update).not.toHaveBeenCalled();
 });
 
 test('parcourt la hiérarchie complète du site au lot', async () => {
