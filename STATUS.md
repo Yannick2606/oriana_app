@@ -18,6 +18,20 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-22 — Gouvernance : sas de décision fondateur formalisé localement**
+  - Toute décision stratégique, métier, fonctionnelle, UX, architecturale ou relative à l’IA doit
+    désormais être précédée d’une relecture de l’ADN, de la Constitution, de la Charte des dix
+    principes et de BORÉAL, puis d’un contrôle de cohérence avec ORMO et les décisions existantes.
+  - Une contradiction arrête le travail et exige un arbitrage. Les opérations purement techniques
+    ou d’exploitation conservent un contrôle de non-contradiction sans imposer une relecture
+    intégrale qui ne produirait aucune décision.
+  - La règle est ajoutée à `AGENTS.md` et à la gouvernance documentaire. Ce lot n’est pas commité,
+    poussé ni déployé.
+- **2026-07-22 — T-30A : portefeuille Offres déployé en prévisualisation**
+  - Le commit `015179b` a été récupéré et reconstruit uniquement dans le profil isolé
+    `oriana-preview`. Les conteneurs frontend et backend ont été contrôlés `healthy`.
+  - La production n’a pas été modifiée. OFF-01 reste « À exécuter » jusqu’au contrôle humain des
+    quatre rôles, du desktop, du smartphone et du clavier.
 - **2026-07-22 — T-30A : portefeuille Offres restructuré localement**
   - La liste et la fiche sont désormais organisées en maître–détail : recherche par nom, numéro ou
     ville, filtre par nature, compteur de résultats et conservation de la fiche sélectionnée.

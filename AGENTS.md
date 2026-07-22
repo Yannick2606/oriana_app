@@ -17,12 +17,20 @@ validée ; Grist reste la source opérationnelle de production. Ne jamais confon
 ## 2. Avant toute modification
 
 1. Exécuter `git status --short --branch` et préserver tout changement existant.
-2. Lire [l’index documentaire](docs/vision/README_DOCUMENTATION.md) et les documents d’autorité
-   concernés.
-3. Lire la tâche et ses critères dans `PLAN.md`, la spécification correspondante et `STATUS.md`.
-4. Identifier le niveau du changement : Vision, Méthode, Modèle, Architecture, Capacité,
+2. Lire [l’index documentaire](docs/vision/README_DOCUMENTATION.md).
+3. Avant toute décision stratégique, métier, fonctionnelle, UX, architecturale ou relative à
+   l’IA, relire l’[ADN](docs/vision/ADN_ORIANA.md), la
+   [Constitution](docs/vision/CONSTITUTION_ORIANA.md), la
+   [Charte des principes](docs/vision/CHARTE_10_PRINCIPES_ORIANA.md) et la
+   [Méthode BORÉAL](docs/methode/METHODE_BOREAL.md), puis vérifier la cohérence avec
+   [ORMO](docs/modele/ORMO.md) et les décisions existantes. Une contradiction arrête la décision
+   et déclenche un arbitrage avant toute modification.
+4. Pour une opération technique ou d’exploitation sans décision structurante, lire les documents
+   d’autorité concernés et vérifier qu’elle ne contredit pas les invariants fondateurs.
+5. Lire la tâche et ses critères dans `PLAN.md`, la spécification correspondante et `STATUS.md`.
+6. Identifier le niveau du changement : Vision, Méthode, Modèle, Architecture, Capacité,
    Fonctionnel, Technique ou Exploitation.
-5. Planifier un diff limité. Une ambiguïté structurante est signalée ; elle n’est pas comblée par
+7. Planifier un diff limité. Une ambiguïté structurante est signalée ; elle n’est pas comblée par
    invention.
 
 ## 3. Sécurité — non négociable

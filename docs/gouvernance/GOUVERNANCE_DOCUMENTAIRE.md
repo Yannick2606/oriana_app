@@ -24,9 +24,29 @@ métier, architecture et/ou technique.
 | Ordonnancement | PLAN | pilotage |
 | État/preuve | STATUS, audits | responsable de la vérification |
 
+## Sas de décision
+
+Avant toute décision stratégique, métier, fonctionnelle, UX, architecturale ou relative à l’IA,
+le décideur ou l’agent relit obligatoirement :
+
+1. l’ADN, la Constitution et la Charte des dix principes ;
+2. la Méthode BORÉAL ;
+3. ORMO et les référentiels concernés ;
+4. les décisions d’architecture déjà acceptées sur le sujet.
+
+La décision est ensuite confrontée au CDC, à la SPEC, au PLAN, au STATUS et au code selon son
+niveau. Une contradiction avec une fondation n’est jamais résolue silencieusement par le document
+le plus récent ou le plus technique : le travail s’arrête et l’arbitrage requis est demandé.
+
+Une opération technique ou d’exploitation qui n’introduit aucune décision structurante peut se
+limiter aux autorités directement concernées, mais elle vérifie toujours l’absence de contradiction
+avec les invariants et règles de sécurité. Une commande de contrôle, un test ou une exécution déjà
+autorisée ne constitue pas à elle seule une nouvelle décision produit.
+
 ## Cycle de modification
 
-1. lire les documents d’autorité et l’état Git ;
+1. franchir le sas de décision lorsqu’il s’applique, puis lire les autres documents d’autorité et
+   l’état Git ;
 2. identifier source, statut et contradictions ;
 3. enregistrer ou mettre à jour la décision avant l’implémentation ;
 4. modifier le document d’autorité, puis les liens dépendants ;
