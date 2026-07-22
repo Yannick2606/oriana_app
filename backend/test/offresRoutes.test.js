@@ -165,7 +165,7 @@ test('un consultant ne crée pas d’offre sur le lot d’un autre et ne lit pas
   });
 });
 
-test('seuls directeur et admin d’agence suppriment une offre et ses conditions', async () => {
+test('seul le directeur d’agence supprime une offre et ses conditions', async () => {
   const client = memoryClient();
   const agent = await authenticatedAgent(client);
   const offer = await agent.post('/offres').send({ lot_id: 10, nature: 'vente' }).expect(201);

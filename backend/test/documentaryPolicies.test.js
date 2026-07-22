@@ -158,9 +158,12 @@ test('réserve le brouillon privé à son auteur dans son agence', () => {
   assert.equal(canAccessCapture({
     actor: { id: 9, agence_id: 3, role_actif: 'admin_agence' }, capture,
   }), false);
+  assert.equal(canAccessCapture({
+    actor: { id: 7, agence_id: 3, role_actif: 'admin_agence' }, capture, action: 'write',
+  }), false);
 });
 
-test('applique le périmètre soumis sans accès métier implicite du super admin', () => {
+test('applique le périmètre soumis sans accès métier implicite des administrateurs', () => {
   const capture = { auteur_id: 7, agence_id: 3, etat: 'a_valider' };
   assert.equal(canAccessCapture({
     actor: { id: 7, agence_id: 3, role_actif: 'consultant' }, capture,
@@ -176,6 +179,12 @@ test('applique le périmètre soumis sans accès métier implicite du super admi
   }), true);
   assert.equal(canAccessCapture({
     actor: { id: 1, agence_id: 3, role_actif: 'super_admin' }, capture,
+  }), false);
+  assert.equal(canAccessCapture({
+    actor: { id: 9, agence_id: 3, role_actif: 'admin_agence' }, capture,
+  }), false);
+  assert.equal(canAccessCapture({
+    actor: { id: 9, agence_id: 3, role_actif: 'admin_agence' }, capture, action: 'validate',
   }), false);
   assert.equal(canAccessCapture({
     actor: { id: 9, agence_id: 4, role_actif: 'admin_agence' }, capture,

@@ -98,7 +98,8 @@ rôle actif, `agence_id`, le rattachement, la propriété et la version attendue
 |---|---|---|---|
 | Consultant | lecture/écriture de ses brouillons | lecture selon son périmètre | interdit |
 | Master consultant | ses brouillons ; pas ceux de l’équipe | lecture de l’équipe rattachée | interdit |
-| Directeur ou administrateur d’agence | ses brouillons ; pas ceux d’autrui | lecture/validation dans l’agence | interdit |
+| Directeur d’agence | ses brouillons ; pas ceux d’autrui | lecture/validation dans l’agence | interdit |
+| Administrateur d’agence | aucun accès métier implicite | aucun accès métier implicite | interdit |
 | Super administrateur | aucun accès métier implicite | métadonnées techniques non sensibles seulement | aucun accès métier implicite |
 
 Les traitements automatisés sont des tâches backend bornées. Ils ne disposent jamais d’un accès

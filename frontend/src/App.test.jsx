@@ -19,12 +19,12 @@ beforeEach(() => {
   window.history.replaceState({}, '', '/');
 });
 
-function renderApp(role, roles = [role]) {
+function renderApp(role, roles = [role], changeRole) {
   const user = { id: 1, prenom: 'Julie', nom: 'Martin', roles, role_actif: role };
   const client = {
     me: vi.fn().mockResolvedValue({ user }),
     logout: vi.fn().mockResolvedValue({ status: 'ok' }),
-    changeRole: vi.fn().mockImplementation((nextRole) => Promise.resolve({ user: { ...user, role_actif: nextRole } })),
+    changeRole: changeRole || vi.fn().mockImplementation((nextRole) => Promise.resolve({ user: { ...user, role_actif: nextRole } })),
   };
   render(<SessionProvider client={client}><ProtectedRoute><App/></ProtectedRoute></SessionProvider>);
   return client;
@@ -103,6 +103,22 @@ test('un changement vers un rôle administratif quitte une vue métier devenue i
   fireEvent.click(screen.getByRole('menuitemradio', { name: 'Administrateur d’agence' }));
   expect(await screen.findByRole('heading', { name: /Bienvenue, Julie/i })).toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Offres' })).not.toBeInTheDocument();
+});
+
+test('le changement de rôle affiche une erreur sûre et actionnable', async () => {
+  const changeRole = vi.fn().mockRejectedValue({ status: 403, details: { error: 'INVALID_ROLE' } });
+  renderApp('master_consultant', ['master_consultant', 'consultant'], changeRole);
+  fireEvent.click(await screen.findByRole('button', { name: /Master consultant/ }));
+  fireEvent.click(screen.getByRole('menuitemradio', { name: 'Consultant' }));
+  expect(await screen.findByRole('alert')).toHaveTextContent('Ce rôle n’est plus autorisé pour votre compte.');
+});
+
+test('le changement de rôle invite à se reconnecter quand la session a expiré', async () => {
+  const changeRole = vi.fn().mockRejectedValue({ status: 401, details: { error: 'UNAUTHENTICATED' } });
+  renderApp('master_consultant', ['master_consultant', 'consultant'], changeRole);
+  fireEvent.click(await screen.findByRole('button', { name: /Master consultant/ }));
+  fireEvent.click(screen.getByRole('menuitemradio', { name: 'Consultant' }));
+  expect(await screen.findByRole('alert')).toHaveTextContent('Votre session a expiré. Reconnectez-vous.');
 });
 
 test('le sélecteur de rôle se parcourt aux flèches et se ferme avec Échap', async () => {

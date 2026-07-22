@@ -117,6 +117,8 @@
 - DEC-041 précise la matrice actuelle : les administrateurs d'agence et de plateforme voient
   Accueil, Auto-formation et Administration sans modules métier ; le sélecteur de rôle est unique
   dans l'en-tête et le rappel latéral reste non interactif.
+- DEC-042 aligne l'autorité serveur : `admin_agence` administre les utilisateurs de son agence sans
+  périmètre métier implicite ; `directeur_agence` conserve le périmètre métier de l'agence.
 - Un utilisateur multirôle peut changer de rôle actif depuis le profil sans se reconnecter ; le
   backend relit ses rôles actuels avant de mettre la session à jour.
 - **Acceptation** : chaque rôle voit la navigation attendue ; aucun écran admin visible pour un
@@ -165,8 +167,10 @@
   consultant et un master consultant actif de la même agence ; promotion super admin explicite.
 
 ### [x] T-22B : Autorisations équipe, agence et plateforme
-- Consultant : ses données ; master consultant : son équipe ; directeur et admin d'agence :
-  leur agence ; super admin : administration globale sans accès métier implicite.
+- Consultant : ses données ; master consultant : son équipe ; directeur : son agence ; admin
+  d'agence : administration hiérarchique sans métier implicite ; super admin : administration
+  globale sans accès métier implicite. DEC-042 remplace ici l’ancien périmètre métier partagé entre
+  directeur et administrateur d'agence.
 - **Acceptation** : cloisonnements testés par appels API directs pour les cinq rôles.
 
 ### [x] T-22C : Organisation des équipes et blocage hiérarchique

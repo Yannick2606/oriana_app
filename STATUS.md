@@ -18,6 +18,47 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-22 — T-30A : autorité `admin_agence` alignée et changement de rôle instrumenté**
+  - Après relecture de l’ADN, de la Constitution et de la matrice canonique, DEC-042 tranche la
+    contradiction relevée : `admin_agence` administre les comptes et habilitations de son agence,
+    mais ne reçoit aucun périmètre métier implicite, même sur une ressource de la même agence. Le
+    Directeur d’agence conserve le périmètre métier et l’administration autorisée.
+  - Le modèle central des rôles, le middleware de périmètre, les politiques documentaires et les
+    routes du bac à sable appliquent ce refus. Les tests directs couvrent notamment une offre et une
+    capture documentaire de la même agence, tandis que les tests Utilisateurs confirment que les
+    pouvoirs administratifs autorisés sont conservés.
+  - Un test d’intégration HTTP avec le vrai service d’authentification du bac à sable confirme que
+    `master_consultant` peut devenir `consultant` et que `/auth/me` restitue ensuite le nouveau rôle.
+    Le frontend traduit désormais les codes sûrs `UNAUTHENTICATED`, `INVALID_ROLE` et
+    `SANDBOX_READ_ONLY` en messages actionnables sans exposer de détail serveur.
+  - Le refus initial a été reproduit sur une session existante, sans événement correspondant dans
+    les journaux backend ou Traefik consultés. Le pré-vol `OPTIONS /auth/role` observé répondait
+    `204` ; la réponse du `POST` n’a pas été capturée, donc la cause exacte n’est pas démontrée.
+    Après renouvellement de la session, le passage de `master_consultant` à `consultant` a réussi et
+    l’interface a immédiatement exposé les vues Consultant. L’hypothèse d’une session périmée reste
+    plausible mais non prouvée ; aucun correctif spéculatif n’est appliqué.
+  - Vérification générale réussie après ajout du test dédié à l’expiration de session : architecture
+    et lint backend, `163` tests backend réussis (`1` ignoré), lint et build frontend, `70` tests
+    frontend réussis. Aucun commit, push ni déploiement n’a été effectué.
+- **2026-07-22 — T-30A : diagnostic du changement de rôle et contradiction d’autorité consignés**
+  - La recette smartphone à 320 px confirme l’absence de débordement horizontal du document. Le
+    menu de rôle reste utilisable au clavier : les flèches déplacent le focus, `Échap` ferme le menu
+    et restitue le focus au déclencheur.
+  - Dans la prévisualisation isolée, le passage du rôle actif `master_consultant` vers `consultant`
+    échoue de façon reproductible. Le rôle courant est conservé et l’interface affiche seulement
+    « Changement impossible. Réessayez. ». Aucun détail sûr n’est exposé par le navigateur ; la
+    réponse HTTP exacte et la cause serveur restent donc à relever dans un journal expurgé.
+  - La revue statique ne révèle pas de refus intentionnel : `POST /auth/role` précède le verrou
+    métier en lecture seule, le service d’authentification du bac à sable autorise les cinq rôles et
+    la session est explicitement sauvegardée. Le défaut demeure ouvert ; aucun correctif spéculatif
+    n’est appliqué.
+  - Une contradiction structurante est également ouverte. La navigation et la définition du rôle
+    dans `SPEC.md` limitent `admin_agence` aux comptes et habilitations, tandis que le contrat du
+    middleware, `canManageAgencyData` et les tests serveur lui accordent encore le périmètre métier
+    de son agence. Conformément à l’ADN et au moindre privilège, aucun droit n’est modifié avant une
+    décision explicite et sa transcription conjointe dans les documents d’autorité et les tests.
+  - Aucun secret, `.env`, droit, code métier, commit, push ou déploiement n’a été modifié par ce
+    diagnostic.
 - **2026-07-22 — T-30A : contrôle visuel de la navigation par rôle achevé en prévisualisation**
   - La recette manuelle sur le commit `36ba286` confirme, sur Chrome desktop, un unique sélecteur
     de rôle dans l’en-tête et un rappel non interactif dans la barre latérale pour les cinq rôles.

@@ -107,9 +107,25 @@ Administrateur d’agence ramène à Accueil ; Administrateur d’agence et Supe
 n’exposent aucun module métier. Les captures ont été fournies pendant la recette interactive mais
 ne sont pas archivées dans le dépôt.
 
-Ce contrôle est **réussi dans son périmètre visuel**. Il ne suffit pas à passer `SHELL-03` à
-`Réussi` : les flèches, `Échap`, la restauration du focus, le smartphone et les refus par appels
-directs au backend restent à exécuter.
+Ce contrôle est **réussi dans son périmètre visuel**. Les contrôles clavier et smartphone réalisés
+ensuite sont conformes. Le changement effectif de rôle a finalement réussi après renouvellement de
+la session, mais les refus par appels directs au backend restent à exécuter avant de passer
+`SHELL-03` à `Réussi`.
+
+### Anomalies ouvertes après contrôle smartphone — 22 juillet 2026
+
+- À 320 px, aucun débordement horizontal du document n’est observé. Les flèches déplacent le focus
+  dans le menu, et `Échap` ferme le menu en restituant le focus au déclencheur.
+- Le changement effectif de `master_consultant` vers `consultant` a d’abord échoué sur une session
+  existante, sans événement correspondant dans les journaux backend ou Traefik consultés. Le
+  pré-vol `OPTIONS /auth/role` répondait `204`, mais la réponse du `POST` n’a pas été capturée.
+  Après renouvellement de la session, le changement a réussi et les vues Consultant ont été
+  affichées. La cause initiale reste donc non démontrée ; une session périmée est seulement une
+  hypothèse, pas un diagnostic établi.
+- La contradiction d’autorité de `admin_agence` est tranchée par DEC-042 : ce rôle conserve
+  l’administration hiérarchique des utilisateurs de son agence, sans périmètre métier implicite.
+  Le modèle serveur et ses tests directs sont alignés. La preuve sur l’environnement inscrit reste
+  à exécuter avant de clore la recette.
 
 ## 5. Scénarios transverses
 
@@ -124,7 +140,7 @@ directs au backend restent à exécuter.
 | AUTH-07 | Déconnexion | Session détruite et routes protégées de nouveau refusées | Cinq rôles | À exécuter | — |
 | SHELL-01 | Parcourir la navigation ouverte et repliée | Nom accessible, focus visible, aucun débordement | 320 px, 375 px, desktop, zoom 200 % | À exécuter | — |
 | SHELL-02 | Utiliser recherche, notifications, aide et assistant indisponibles | Chaque action explique son état, aucun bouton silencieux | Clavier, souris, tactile | À exécuter | — |
-| SHELL-03 | Changer de rôle | Menu aux flèches, `Échap`, focus restauré, droits recalculés serveur | Compte multirôle | À exécuter | — |
+| SHELL-03 | Changer de rôle | Menu aux flèches, `Échap`, focus restauré, droits recalculés serveur | Compte multirôle | Partiel | Clavier et focus conformes à 320 px ; intégration HTTP locale réussie ; changement déployé `master_consultant` → `consultant` réussi après renouvellement de session ; refus directs des rôles interdits restant à exécuter |
 | SHELL-04 | Basculer le thème et recharger | Sombre par défaut, préférence explicite conservée sans donnée sensible | Desktop et smartphone | À exécuter | — |
 | SHELL-05 | Simuler une API indisponible | État explicite et issue réaliste, aucune affirmation fictive | Desktop et smartphone | À exécuter | — |
 | FORM-01 | Parcourir l’Auto-formation | Dialogue accessible, progression liée au rôle, erreur explicite | Cinq rôles | À exécuter | — |

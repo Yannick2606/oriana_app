@@ -76,10 +76,18 @@ test('bloque toute écriture métier dans la prévisualisation', async () => {
   assert.equal(response.body.error, 'SANDBOX_READ_ONLY');
 });
 
+test('refuse l’administrateur d’agence sans périmètre métier implicite', async () => {
+  const agent = fixture({ user: {
+    ...consultant, roles: ['admin_agence'], role_actif: 'admin_agence',
+  } });
+  await login(agent);
+  await agent.get('/sandbox/offres').expect(403);
+});
+
 test('sert le CRM et les matchings fictifs depuis la persistance isolée', async () => {
   const agent = fixture({ user: {
-    id: 1002, nom: 'Mercier', prenom: 'Samir', roles: ['admin_agence'],
-    role_actif: 'admin_agence', agence_id: 1,
+    id: 1002, nom: 'Mercier', prenom: 'Samir', roles: ['directeur_agence'],
+    role_actif: 'directeur_agence', agence_id: 1,
   } });
   await login(agent);
 

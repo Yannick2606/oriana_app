@@ -49,6 +49,7 @@ historique : elle est remplacée par une nouvelle entrée qui la référence. St
 | DEC-039 | Messagerie, Notification et bot client sont trois responsabilités distinctes | cible validée | cadrage T-46, 2026-07-22 | messages dans des conversations ; événements en notifications ; bot supervisé après T-40/T-42 |
 | DEC-040 | Mandat devient la cinquième cible documentaire de Capture | acceptée | besoin métier constaté dans la fiche Offre, 2026-07-22 | PDF signé versionné, droits hérités du Mandat, activation soumise à T-34 et T-30 |
 | DEC-041 | La navigation est orientée par le rôle actif et le sélecteur de rôle est unique | acceptée | validation UX humaine, 2026-07-22 | vues administratives séparées des vues métier, sans modifier l'autorité serveur |
+| DEC-042 | L'Administrateur d'agence administre les comptes sans périmètre métier implicite | acceptée | arbitrage d'autorité T-30A, 2026-07-22 | refus serveur des ressources métier, même dans son agence ; Directeur inchangé |
 
 Les identifiants `SRC-HIST-*` sont décrits dans
 [l’audit stratégique](../audit/AUDIT_STRATEGIQUE_PATRIMOINE_ORIANA.md).
@@ -443,6 +444,28 @@ autorisée.
 
 **Statut.** Décision acceptée pour T-30A. La recette exige un sélecteur unique, l'actualisation
 immédiate du menu, les matrices visibles attendues et la conservation des contrôles serveur.
+
+### DEC-042 — Autorité administrative sans périmètre métier implicite
+
+**Contexte.** DEC-041 et la définition canonique des rôles réservent l'Administrateur d'agence aux
+comptes et habilitations des niveaux inférieurs de son agence. Le middleware historique lui
+accordait néanmoins le même périmètre de données métier que le Directeur d'agence. Cette
+divergence rendait la navigation plus restrictive que l'autorité serveur et contrevenait au moindre
+privilège.
+
+**Décision.** `admin_agence` conserve l'administration hiérarchique des utilisateurs de son agence,
+mais ne reçoit aucun périmètre implicite sur Patrimoine, Offres, CRM, Matching, Agents IA ou les
+captures documentaires métier. `directeur_agence` conserve le périmètre métier de son agence et
+l'administration autorisée. `super_admin` conserve l'administration globale sans accès métier
+implicite.
+
+**Sécurité.** Une URL directe ou une requête forgée vers une ressource métier est refusée côté
+serveur pour `admin_agence`, y compris lorsque la ressource porte le même `agence_id`. Le masquage
+frontend reste un confort d'orientation et n'est jamais la preuve du refus.
+
+**Statut.** Décision acceptée et transcrite dans le modèle central des rôles, les politiques
+documentaires et les tests d'accès. Sa clôture dans T-30A reste soumise à une recette par appels
+directs sur l'environnement inscrit.
 
 ## Modèle pour une nouvelle décision
 

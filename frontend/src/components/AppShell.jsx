@@ -16,10 +16,24 @@ const roleLabels = {
   client: 'Client',
 };
 
+function roleChangeErrorMessage(error) {
+  const code = error?.details?.error;
+  if (error?.status === 401 || code === 'UNAUTHENTICATED') {
+    return 'Votre session a expiré. Reconnectez-vous.';
+  }
+  if (code === 'INVALID_ROLE') {
+    return 'Ce rôle n’est plus autorisé pour votre compte.';
+  }
+  if (code === 'SANDBOX_READ_ONLY') {
+    return 'Le changement de rôle est indisponible dans cette prévisualisation.';
+  }
+  return 'Changement impossible. Réessayez.';
+}
+
 function RoleSwitcher({ user, onRoleChange }) {
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
   const containerRef = useRef(null);
   const triggerRef = useRef(null);
   const menuRef = useRef(null);
@@ -51,8 +65,8 @@ function RoleSwitcher({ user, onRoleChange }) {
 
   async function selectRole(role) {
     if (role === user.role_actif) { setOpen(false); triggerRef.current?.focus(); return; }
-    setPending(true); setError(false);
-    try { await onRoleChange(role); setOpen(false); triggerRef.current?.focus(); } catch { setError(true); } finally { setPending(false); }
+    setPending(true); setError('');
+    try { await onRoleChange(role); setOpen(false); triggerRef.current?.focus(); } catch (caughtError) { setError(roleChangeErrorMessage(caughtError)); } finally { setPending(false); }
   }
 
   function moveFocus(event, index, role) {
@@ -74,7 +88,7 @@ function RoleSwitcher({ user, onRoleChange }) {
 
   return <div ref={containerRef} className="relative">
     <button ref={triggerRef} type="button" aria-controls={open ? menuId : undefined} aria-expanded={open} aria-haspopup="menu" onClick={() => setOpen((value) => !value)} className="flex items-center gap-1.5 rounded-full bg-oriana-violet/20 px-2.5 py-1 text-xs font-semibold text-oriana-lavandeClair transition hover:bg-oriana-violet/30"><span>{roleLabels[user.role_actif] || user.role_actif}</span><ChevronLeft size={13} className={`-rotate-90 transition ${open ? 'rotate-90' : ''}`}/></button>
-    {open && <div ref={menuRef} id={menuId} role="menu" aria-label="Choisir le rôle actif" className="absolute right-0 top-full z-50 mt-2 max-h-[min(20rem,calc(100vh-2rem))] min-w-48 overflow-y-auto overscroll-contain rounded-oriana border border-oriana-bordure bg-oriana-surface p-1.5 shadow-oriana-lg">{roles.map((role, index) => <button type="button" role="menuitemradio" aria-checked={role === user.role_actif} disabled={pending} key={role} onKeyDown={(event) => moveFocus(event, index, role)} onClick={() => selectRole(role)} className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm hover:bg-oriana-surfaceAlt disabled:opacity-50"><span>{roleLabels[role] || role}</span>{role === user.role_actif && <span aria-hidden="true" className="text-oriana-lavande">●</span>}</button>)}{error && <p role="alert" className="px-3 py-2 text-xs text-oriana-lavandeClair">Changement impossible. Réessayez.</p>}</div>}
+    {open && <div ref={menuRef} id={menuId} role="menu" aria-label="Choisir le rôle actif" className="absolute right-0 top-full z-50 mt-2 max-h-[min(20rem,calc(100vh-2rem))] min-w-48 overflow-y-auto overscroll-contain rounded-oriana border border-oriana-bordure bg-oriana-surface p-1.5 shadow-oriana-lg">{roles.map((role, index) => <button type="button" role="menuitemradio" aria-checked={role === user.role_actif} disabled={pending} key={role} onKeyDown={(event) => moveFocus(event, index, role)} onClick={() => selectRole(role)} className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm hover:bg-oriana-surfaceAlt disabled:opacity-50"><span>{roleLabels[role] || role}</span>{role === user.role_actif && <span aria-hidden="true" className="text-oriana-lavande">●</span>}</button>)}{error && <p role="alert" className="px-3 py-2 text-xs text-oriana-lavandeClair">{error}</p>}</div>}
   </div>;
 }
 

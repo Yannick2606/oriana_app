@@ -1,8 +1,8 @@
 export const ROLE_ALIASES = { manager: 'master_consultant', admin: 'admin_agence' };
 export const ROLES = ['consultant', 'master_consultant', 'directeur_agence', 'admin_agence', 'super_admin', 'client'];
 
-const AGENCY_MANAGEMENT_ROLES = new Set(['directeur_agence', 'admin_agence']);
-const USER_ADMINISTRATION_ROLES = new Set([...AGENCY_MANAGEMENT_ROLES, 'super_admin']);
+const AGENCY_MANAGEMENT_ROLES = new Set(['directeur_agence']);
+const USER_ADMINISTRATION_ROLES = new Set(['directeur_agence', 'admin_agence', 'super_admin']);
 
 export function normalizeRoleNames(value) {
   const values = Array.isArray(value) ? value.filter((item) => item !== 'L') : typeof value === 'string' ? [value] : [];

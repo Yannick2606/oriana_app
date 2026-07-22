@@ -30,7 +30,7 @@ const FILE_TRANSITIONS = Object.freeze({
   purge: [],
 });
 
-const AGENCY_MANAGEMENT_ROLES = new Set(['directeur_agence', 'admin_agence']);
+const AGENCY_MANAGEMENT_ROLES = new Set(['directeur_agence']);
 
 function documentaryError(message, code) {
   return new DocumentaryError(message, DOCUMENTARY_ERROR_CODES[code]);
@@ -140,7 +140,7 @@ function sameIdentifier(left, right) {
 }
 
 export function canAccessCapture({ actor, capture, teamIds = [], action = 'read' } = {}) {
-  if (!actor || !capture || actor.role_actif === 'super_admin') return false;
+  if (!actor || !capture || ['admin_agence', 'super_admin'].includes(actor.role_actif)) return false;
   if (!sameIdentifier(actor.agence_id, capture.agence_id)) return false;
   if (capture.etat === 'purge') return false;
 

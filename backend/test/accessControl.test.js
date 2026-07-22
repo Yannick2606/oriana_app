@@ -57,7 +57,7 @@ test('les périmètres de lecture et écriture sont explicites pour les cinq rô
       write: { agence_id: 3, gestionnaire: 7 },
     },
     { role: 'directeur_agence', access: { agence_id: 3 }, write: { agence_id: 3 } },
-    { role: 'admin_agence', access: { agence_id: 3 }, write: { agence_id: 3 } },
+    { role: 'admin_agence', access: null, write: null },
     { role: 'super_admin', access: null, write: null },
   ];
 
@@ -117,13 +117,13 @@ test('un directeur d’agence reste limité à son agence', async () => {
     .expect(403);
 });
 
-test('un administrateur d’agence lit son agence mais pas une autre', async () => {
+test('un administrateur d’agence ne reçoit aucun périmètre métier implicite', async () => {
   const admin = { id: 3, role_actif: 'admin_agence', agence_id: 3 };
 
   await request(securedOfferApp({
     user: admin,
     offer: { id: 56, fields: { gestionnaire: 7, agence_id: 3 } },
-  })).get('/offres/56').expect(200, { id: 56 });
+  })).get('/offres/56').expect(403);
 
   await request(securedOfferApp({
     user: admin,

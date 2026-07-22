@@ -56,6 +56,10 @@ et DEC-041. Administrateur d'agence et Super administrateur disposent d'Accueil,
 Auto-formation et Administration, sans module métier. Le Directeur d'agence conserve les vues
 métier et Administration. Le sélecteur de rôle interactif est unique dans l'en-tête ; tout rappel
 latéral est non interactif. Cette présentation ne remplace jamais les autorisations serveur.
+DEC-042 impose le même découpage côté serveur : `admin_agence` conserve les routes
+d'administration hiérarchique des utilisateurs, mais son périmètre métier implicite est nul, même
+pour une ressource de sa propre agence. `directeur_agence` conserve le périmètre métier de son
+agence.
 
 **Règle d'or** : le filtrage s'applique **côté serveur**, à chaque requête. Un `consultant`
 n'obtient jamais, via l'API, une donnée dont il n'est pas gestionnaire, même s'il forge la requête.
@@ -171,9 +175,10 @@ les lots T-34A à T-34E et leurs prérequis d'activation ne sont pas satisfaits.
 `criteres_specifiques` · `gestionnaire` FK→Utilisateurs · `donnee_exclusive` bool · `agence_id`.
 
 > Sociétés, Contacts, Demandes et Mandats sont exclusifs à la création. Le gestionnaire peut lever
-> l’exclusivité ; directeur et administrateur d’agence peuvent la lever ou la réactiver dans leur
-> agence. Une donnée non exclusive est lisible dans l’agence, mais reste modifiable par son
-> gestionnaire ou ces deux rôles. Le master consultant n’obtient qu’une lecture de son équipe.
+> l’exclusivité ; le directeur d’agence peut la lever ou la réactiver dans son agence. Une donnée
+> non exclusive est lisible dans l’agence, mais reste modifiable par son gestionnaire ou le
+> directeur. Le master consultant n’obtient qu’une lecture de son équipe et l’administrateur
+> d’agence aucun accès métier implicite.
 
 ### Matching
 `id` PK · `demande_id` FK→Demandes · `lot_id` FK→Lots · `score_global` · `scores_detail`.
@@ -217,9 +222,9 @@ les appels serveur sans en-tête `Origin` restent possibles pour n8n et les cont
 ### Middleware (à appliquer sur toutes les routes protégées)
 - `requireAuth` — rejette 401 si pas de session valide.
 - `scopeByRole` — utilise exclusivement le `role_actif` validé côté serveur : consultant → ses
-  données ; master consultant → ses données et lecture de son équipe ; directeur/admin d’agence →
-  leur agence ; super admin → aucun accès métier implicite. Ce périmètre s’applique à chaque
-  lecture/écriture.
+  données ; master consultant → ses données et lecture de son équipe ; directeur d’agence → son
+  agence ; administrateur d’agence et super administrateur → aucun accès métier implicite. Ce
+  périmètre s’applique à chaque lecture/écriture.
 - `requirePasswordChanged` — bloque avec `PASSWORD_CHANGE_REQUIRED` toutes les routes métier
   d'une session utilisant encore un mot de passe provisoire. Les routes de changement et de
   déconnexion restent accessibles.

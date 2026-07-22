@@ -17,7 +17,7 @@ test('centralise les politiques d’agence et d’administration pour les cinq r
     { role: 'consultant', agency: false, administration: false },
     { role: 'master_consultant', agency: false, administration: false },
     { role: 'directeur_agence', agency: true, administration: true },
-    { role: 'admin_agence', agency: true, administration: true },
+    { role: 'admin_agence', agency: false, administration: true },
     { role: 'super_admin', agency: false, administration: true },
   ];
 

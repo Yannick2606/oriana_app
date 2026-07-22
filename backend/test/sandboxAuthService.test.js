@@ -2,7 +2,11 @@ import assert from 'node:assert/strict';
 import { randomBytes } from 'node:crypto';
 import test from 'node:test';
 
+import request from 'supertest';
+
+import { createApp } from '../src/app.js';
 import { createSandboxAuthService } from '../src/services/sandboxAuthService.js';
+import { createPersistenceDouble } from '../test-helpers/persistenceDouble.js';
 
 const email = 'preview@example.invalid';
 const passwordHash = `$2b$12$${'x'.repeat(53)}`;
@@ -38,6 +42,25 @@ test('ouvre une session fictive et permet de changer de rôle autorisé', async 
   assert.equal(login.user.role_actif, 'consultant');
   assert.equal(changed.role_actif, 'master_consultant');
   assert.equal(changed.agence_id, 1);
+});
+
+test('change le rôle dans la session HTTP de prévisualisation', async () => {
+  const app = createApp({
+    persistenceClient: createPersistenceDouble(),
+    sessionSecret: randomBytes(32).toString('hex'),
+    authService: service(),
+  });
+  const agent = request.agent(app);
+
+  await agent.post('/auth/login').send({
+    email,
+    mot_de_passe: randomBytes(24).toString('hex'),
+    role_actif: 'master_consultant',
+  }).expect(200);
+  const changed = await agent.post('/auth/role').send({ role_actif: 'consultant' }).expect(200);
+
+  assert.equal(changed.body.user.role_actif, 'consultant');
+  assert.equal((await agent.get('/auth/me').expect(200)).body.user.role_actif, 'consultant');
 });
 
 test('refuse un identifiant invalide et toute mutation du compte fictif', async () => {

@@ -187,7 +187,7 @@ test('les champs agence et gestionnaire ne peuvent pas être usurpés', async ()
   }).expect(400, { error: 'SERVER_MANAGED_FIELD' });
 });
 
-test('seuls directeur et admin d’agence peuvent supprimer dans leur agence', async () => {
+test('seul le directeur d’agence peut supprimer dans son agence', async () => {
   const client = memoryClient();
   const ownSite = await client.create('Sites', { nom: 'À moi', agence_id: 3, gestionnaire: 7 });
   const consultantAgent = await authenticatedAgent(client, consultantA);
