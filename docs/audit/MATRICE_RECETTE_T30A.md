@@ -150,6 +150,26 @@ remplace ni le contrôle visuel, ni les quatre rôles, ni le backend effectiveme
 | OFF-04 | Échec d’enregistrement | Formulaire reste ouvert, valeurs préservées, nouvelle tentative possible | Recette inscriptible | Bloqué | Environnement non créé |
 | OFF-05 | Offre d’un autre périmètre | Absence de fuite et refus serveur direct | Cinq rôles par appels directs | Bloqué | Environnement non créé |
 
+#### Fiche guidée OFF-01 — prévisualisation en lecture seule
+
+1. ouvrir **Offres** avec chacun des quatre rôles métier et confirmer l’absence de commande
+   d’écriture dans la prévisualisation ;
+2. sur desktop, rechercher une offre par nom puis par ville et vérifier que la liste et la fiche
+   restent visibles ensemble ;
+3. filtrer successivement sur Vente, Location et Vente & location, puis vérifier le compteur et
+   l’état explicite sans résultat ;
+4. ouvrir une offre, parcourir les huit vues et contrôler que les capacités non disponibles sont
+   annoncées sans bouton simulé ;
+5. au clavier, placer le focus sur **Synthèse**, utiliser les flèches, Début et Fin, puis vérifier le
+   focus, la vue active et le contenu associé ;
+6. sur smartphone, ouvrir une offre depuis la liste, parcourir sa fiche puis utiliser **Retour aux
+   offres** ; la recherche précédente doit rester disponible ;
+7. joindre une preuve expurgée desktop, smartphone et clavier avant de modifier OFF-01.
+
+Support automatisé local au 22 juillet 2026 : recherche et filtre, parcours mobile, navigation
+clavier et lecture seule sont couverts ; la suite frontend compte 64 tests réussis. Cette preuve ne
+remplace ni le contrôle visuel, ni les quatre rôles, ni le backend effectivement recetté.
+
 ### CRM et Matching
 
 | ID | Action | Résultat attendu | Rôles / environnement | Statut | Preuve / anomalie |

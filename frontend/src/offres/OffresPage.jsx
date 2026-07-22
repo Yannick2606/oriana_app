@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
-  BadgeEuro, Building, CalendarDays, FileText, MapPin, Pencil, Plus,
-  RefreshCw, Ruler, Users,
+  ArrowLeft, BadgeEuro, Building, CalendarDays, ChevronRight, FileText, MapPin,
+  Pencil, Plus, RefreshCw, Ruler, Users,
 } from 'lucide-react';
 import { offresApi } from '../api/offres';
 import {
   Badge, Breadcrumb, Button, Card, Drawer, EmptyState, Field, Input, Loader,
-  Notification, PageHeader, Select, Tabs,
+  Notification, PageHeader, SearchBar, Select, Tabs,
 } from '../components/ui';
 
 const natureLabels = { vente: 'Vente', location: 'Location', vente_et_location: 'Vente & location' };
@@ -161,6 +161,9 @@ export function OffresPage() {
   const [data, setData] = useState(emptyData);
   const [selectedId, setSelectedId] = useState(null);
   const [activeTab, setActiveTab] = useState('synthese');
+  const [query, setQuery] = useState('');
+  const [natureFilter, setNatureFilter] = useState('toutes');
+  const [mobileDetail, setMobileDetail] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [editor, setEditor] = useState(null);
@@ -170,7 +173,8 @@ export function OffresPage() {
     try {
       const result = await offresApi.listAll({ sandbox });
       setData({ ...emptyData, ...result });
-      setSelectedId((current) => current || result.offers[0]?.id || null);
+      setSelectedId((current) => result.offers.some((offer) => offer.id === current)
+        ? current : result.offers[0]?.id || null);
     } catch {
       setError(sandbox ? 'Le bac à sable n’est pas disponible sur ce backend.' : 'Les offres n’ont pas pu être chargées.');
     } finally { setLoading(false); }
@@ -185,6 +189,15 @@ export function OffresPage() {
     }).finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, [sandbox]);
+  const visibleOffers = useMemo(() => {
+    const normalizedQuery = query.trim().toLocaleLowerCase('fr');
+    return data.offers.filter((offer) => {
+      const matchesNature = natureFilter === 'toutes' || offer.nature === natureFilter;
+      const searchable = [offer.nom, offer.numero, offer.ville, offer.code_postal]
+        .filter(Boolean).join(' ').toLocaleLowerCase('fr');
+      return matchesNature && (!normalizedQuery || searchable.includes(normalizedQuery));
+    });
+  }, [data.offers, natureFilter, query]);
   const selected = data.offers.find((offer) => offer.id === selectedId);
   const relations = useMemo(() => {
     const lot = data.lots.find((item) => Number(item.id) === Number(selected?.lot_id));
@@ -199,7 +212,11 @@ export function OffresPage() {
       media: data.media.filter((item) => Number(item.offre_id) === Number(selected?.id)),
     };
   }, [data, selected]);
-  function chooseOffer(id) { setSelectedId(id); setActiveTab('synthese'); }
+  function chooseOffer(id) {
+    setSelectedId(id);
+    setActiveTab('synthese');
+    setMobileDetail(true);
+  }
   async function saveOffer(payload) {
     setPending(true);
     try {
@@ -212,13 +229,33 @@ export function OffresPage() {
     <PageHeader eyebrow={sandbox ? 'Démonstration fictive' : 'Commercialisation'} title="Offres" description={sandbox ? 'Explorez cinq offres fictives du Val-d’Oise et du nord de la Seine-et-Marne.' : 'Pilotez chaque offre et ses conditions de vente ou de location depuis une fiche unique.'} actions={<><Button variant="secondary" onClick={load} disabled={loading}><RefreshCw size={16}/>Actualiser</Button>{!sandbox && <Button onClick={() => setEditor({})}><Plus size={17}/>Nouvelle offre</Button>}</>}/>
     {sandbox && <Notification title="Bac à sable en lecture seule" description="Toutes les offres, identités, adresses précises, photographies et valeurs présentées sont fictives."/>}
     {error && <Notification title="Action impossible" description={error}/>}
-    {loading ? <Loader label="Chargement des offres…"/> : data.offers.length === 0 ? <EmptyState title="Aucune offre dans votre périmètre" description="Créez une offre à partir d’un lot patrimonial." action={!sandbox && <Button onClick={() => setEditor({})}><Plus size={16}/>Créer une offre</Button>}/> : <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)]">
-      <Card className="h-fit p-3"><div className="space-y-2">{data.offers.map((offer) => <button key={offer.id} aria-pressed={offer.id === selectedId} onClick={() => chooseOffer(offer.id)} className={`w-full overflow-hidden rounded-oriana border text-left ${offer.id === selectedId ? 'border-oriana-lavande bg-oriana-violet/15' : 'border-oriana-bordure hover:bg-oriana-surfaceAlt'}`}>{offer.photo && <img className="aspect-[3/1] w-full object-cover" src={offer.photo} alt=""/>}<span className="block p-3"><span className="flex items-center gap-2 text-sm font-semibold"><BadgeEuro size={16} className="shrink-0 text-oriana-lavande"/><span className="truncate">{offer.nom || offer.numero || `Offre #${offer.id}`}</span></span><span className="mt-2 flex items-center justify-between gap-2 text-xs text-oriana-discret"><span>{natureLabels[offer.nature]}</span><span>{offer.ville}</span></span></span></button>)}</div></Card>
-      {selected && <div className="min-w-0 space-y-5">
-        <Card className="overflow-hidden p-0"><div className="grid md:grid-cols-[minmax(240px,38%)_1fr]">{selected.photo ? <img className="h-full min-h-56 w-full object-cover" src={selected.photo} alt={selected.photo_alt || ''}/> : <div className="grid min-h-48 place-items-center bg-oriana-surfaceAlt text-oriana-discret"><Building size={36}/></div>}<div className="p-5 md:p-6"><div className="flex flex-wrap gap-2"><Badge variant="accent">{natureLabels[selected.nature]}</Badge>{selected.numero && <Badge>{selected.numero}</Badge>}{sandbox && <Badge>Données fictives</Badge>}</div><h2 className="mt-3 font-titre text-3xl">{selected.nom || `Offre #${selected.id}`}</h2><p className="mt-2 flex items-center gap-2 text-sm text-oriana-discret"><MapPin size={15}/>{selected.ville ? `${selected.code_postal} ${selected.ville}` : relations.lot?.nom || `Lot #${selected.lot_id}`}</p><div className="mt-5 flex flex-wrap items-center gap-3"><span className="inline-flex items-center gap-2 text-sm"><Users size={16} className="text-oriana-lavande"/>Gestion fictive anonymisée</span>{!sandbox && <Button variant="secondary" onClick={() => setEditor(selected)}><Pencil size={16}/>Modifier l’offre</Button>}</div></div></div></Card>
-        <Card><Tabs tabs={tabItems} active={activeTab} onChange={setActiveTab} ariaLabel="Vues de la fiche Offre"><OfferTabPanel active={activeTab} selected={selected} relations={relations} data={data} load={load} sandbox={sandbox}/></Tabs></Card>
-      </div>}
-    </div>}
+    {loading ? <Loader label="Chargement des offres…"/> : data.offers.length === 0 ? <EmptyState title="Aucune offre dans votre périmètre" description="Créez une offre à partir d’un lot patrimonial." action={!sandbox && <Button onClick={() => setEditor({})}><Plus size={16}/>Créer une offre</Button>}/> : <Card className="p-0">
+      <div className="grid gap-4 p-3 lg:grid-cols-[minmax(18rem,0.72fr)_minmax(0,2fr)] lg:p-4">
+        <section aria-label="Liste des offres" className={mobileDetail ? 'hidden self-start lg:block' : 'self-start'}>
+          <div className="mb-4 flex items-start justify-between gap-3">
+            <div><p className="text-xs font-bold uppercase tracking-[.16em] text-oriana-lavande">Portefeuille commercial</p><h2 className="mt-1 font-titre text-2xl">Offres</h2></div>
+            <Badge>{visibleOffers.length} sur {data.offers.length}</Badge>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_10rem] lg:grid-cols-1">
+            <SearchBar value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Nom, numéro ou ville"/>
+            <Select aria-label="Filtrer par nature" value={natureFilter} onChange={(event) => setNatureFilter(event.target.value)}>
+              <option value="toutes">Toutes les natures</option><option value="vente">Vente</option>
+              <option value="location">Location</option><option value="vente_et_location">Vente & location</option>
+            </Select>
+          </div>
+          <div className="mt-3 max-h-[42rem] space-y-2 overflow-y-auto pr-1">
+            {visibleOffers.map((offer) => <button type="button" key={offer.id} aria-pressed={offer.id === selectedId} onClick={() => chooseOffer(offer.id)} className={`w-full overflow-hidden rounded-oriana border text-left transition ${offer.id === selectedId ? 'border-oriana-lavande bg-oriana-violet/15 shadow-oriana' : 'border-oriana-bordure bg-oriana-surface hover:bg-oriana-surfaceAlt'}`}>{offer.photo && <img className="aspect-[4/1] w-full object-cover" src={offer.photo} alt=""/>}<span className="flex items-start gap-3 p-3"><span className="mt-0.5 rounded-lg bg-oriana-violet/15 p-2 text-oriana-lavande"><BadgeEuro size={17}/></span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-semibold">{offer.nom || offer.numero || `Offre #${offer.id}`}</span><span className="mt-1 block truncate text-xs text-oriana-discret">{[natureLabels[offer.nature], offer.ville].filter(Boolean).join(' · ')}</span></span><ChevronRight className="mt-2 shrink-0 text-oriana-discret" size={15}/></span></button>)}
+            {visibleOffers.length === 0 && <p className="rounded-lg border border-dashed border-oriana-bordure p-6 text-center text-sm text-oriana-discret">Aucune offre ne correspond à ces critères.</p>}
+          </div>
+        </section>
+        <section aria-label="Fiche de l’offre sélectionnée" className={mobileDetail ? 'min-w-0 space-y-5' : 'hidden min-w-0 space-y-5 lg:block'}>
+          {selected ? <>
+            <Card className="overflow-hidden p-0"><div className="grid md:grid-cols-[minmax(240px,38%)_1fr]">{selected.photo ? <img className="h-full min-h-56 w-full object-cover" src={selected.photo} alt={selected.photo_alt || ''}/> : <div className="grid min-h-48 place-items-center bg-oriana-surfaceAlt text-oriana-discret"><Building size={36}/></div>}<div className="p-5 md:p-6"><div className="flex flex-wrap gap-2"><Badge variant="accent">{natureLabels[selected.nature]}</Badge>{selected.numero && <Badge>{selected.numero}</Badge>}{sandbox && <Badge>Données fictives</Badge>}</div><h2 className="mt-3 font-titre text-3xl">{selected.nom || `Offre #${selected.id}`}</h2><p className="mt-2 flex items-center gap-2 text-sm text-oriana-discret"><MapPin size={15}/>{selected.ville ? `${selected.code_postal} ${selected.ville}` : relations.lot?.nom || `Lot #${selected.lot_id}`}</p><div className="mt-5 flex flex-wrap items-center gap-3"><span className="inline-flex items-center gap-2 text-sm"><Users size={16} className="text-oriana-lavande"/>Gestion fictive anonymisée</span>{!sandbox && <Button variant="secondary" onClick={() => setEditor(selected)}><Pencil size={16}/>Modifier l’offre</Button>}</div></div></div></Card>
+            <Card><Button className="mb-4 lg:hidden" variant="ghost" size="sm" onClick={() => setMobileDetail(false)}><ArrowLeft size={15}/>Retour aux offres</Button><Tabs tabs={tabItems} active={activeTab} onChange={setActiveTab} ariaLabel="Vues de la fiche Offre"><OfferTabPanel active={activeTab} selected={selected} relations={relations} data={data} load={load} sandbox={sandbox}/></Tabs></Card>
+          </> : <EmptyState title="Sélectionnez une offre" description="Sa fiche commerciale apparaîtra ici sans perdre votre recherche."/>}
+        </section>
+      </div>
+    </Card>}
     <Drawer open={Boolean(editor)} onClose={() => !pending && setEditor(null)} title={editor?.id ? `Modifier ${editor.nom || 'l’offre'}` : 'Créer une offre'}>{editor && <OfferEditor record={editor.id ? editor : null} lots={data.lots} pending={pending} onCancel={() => setEditor(null)} onSave={saveOffer}/>}</Drawer>
   </div>;
 }

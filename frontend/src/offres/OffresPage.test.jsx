@@ -11,10 +11,13 @@ vi.mock('../api/offres', () => ({
 }));
 
 const data = {
-  lots: [{ id: 10, nom: 'Lot Horizon' }],
+  lots: [{ id: 10, nom: 'Lot Horizon' }, { id: 11, nom: 'Lot Atlas' }],
   offers: [{
     id: 20, numero: 'OFF-20', nom: 'Horizon flexible', lot_id: 10,
-    nature: 'vente_et_location', occupation: 'libre',
+    nature: 'vente_et_location', occupation: 'libre', ville: 'Gonesse', code_postal: '95500',
+  }, {
+    id: 21, numero: 'OFF-21', nom: 'Atlas logistique', lot_id: 11,
+    nature: 'location', occupation: 'libre', ville: 'Mitry-Mory', code_postal: '77290',
   }],
   conditions: [
     { id: 30, offre_id: 20, type: 'vente', prix_vente: 1250000, disponibilite: 'Immédiate' },
@@ -81,6 +84,46 @@ test('crée une offre sur un lot avec la nature choisie', async () => {
   await waitFor(() => expect(offresApi.createOffer).toHaveBeenCalledWith(expect.objectContaining({
     nom: 'Nouvelle location', lot_id: 10, nature: 'location',
   })));
+});
+
+test('recherche et filtre le portefeuille sans perdre la fiche sélectionnée', async () => {
+  render(<OffresPage/>);
+  await screen.findByRole('heading', { name: 'Horizon flexible' });
+
+  fireEvent.change(screen.getByRole('searchbox', { name: 'Recherche' }), { target: { value: 'Mitry' } });
+  expect(screen.queryByRole('button', { name: /Horizon flexible/ })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: /Atlas logistique/ }));
+  expect(screen.getByRole('heading', { name: 'Atlas logistique' })).toBeInTheDocument();
+
+  fireEvent.change(screen.getByRole('combobox', { name: 'Filtrer par nature' }), { target: { value: 'vente' } });
+  expect(screen.getByText('Aucune offre ne correspond à ces critères.')).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Atlas logistique' })).toBeInTheDocument();
+});
+
+test('propose un parcours liste puis fiche avec retour explicite sur mobile', async () => {
+  render(<OffresPage/>);
+  await screen.findByRole('heading', { name: 'Horizon flexible' });
+  const list = screen.getByRole('region', { name: 'Liste des offres' });
+  const detail = screen.getByRole('region', { name: 'Fiche de l’offre sélectionnée' });
+  expect(list).not.toHaveClass('hidden');
+  expect(detail).toHaveClass('hidden');
+
+  fireEvent.click(screen.getByRole('button', { name: /Atlas logistique/ }));
+  expect(list).toHaveClass('hidden');
+  expect(detail).not.toHaveClass('hidden');
+  fireEvent.click(screen.getByRole('button', { name: 'Retour aux offres' }));
+  expect(list).not.toHaveClass('hidden');
+  expect(detail).toHaveClass('hidden');
+});
+
+test('navigue au clavier entre les vues de la fiche', async () => {
+  render(<OffresPage/>);
+  await screen.findByRole('heading', { name: 'Horizon flexible' });
+  const synthesisTab = screen.getByRole('tab', { name: 'Synthèse' });
+  synthesisTab.focus();
+  fireEvent.keyDown(synthesisTab, { key: 'ArrowRight' });
+  expect(screen.getByRole('tab', { name: 'Bien & surfaces' })).toHaveAttribute('aria-selected', 'true');
+  expect(screen.getByRole('heading', { name: 'Patrimoine rattaché' })).toBeInTheDocument();
 });
 
 test('affiche les photographies et les huit vues du bac à sable en lecture seule', async () => {

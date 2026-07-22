@@ -18,6 +18,18 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-22 — T-30A : portefeuille Offres restructuré localement**
+  - La liste et la fiche sont désormais organisées en maître–détail : recherche par nom, numéro ou
+    ville, filtre par nature, compteur de résultats et conservation de la fiche sélectionnée.
+  - Sur smartphone, la liste précède la fiche et un retour explicite ramène au portefeuille ; sur
+    desktop, la liste et la fiche restent visibles ensemble. Les huit vues et leurs contrats métier
+    sont inchangés.
+  - Trois non-régressions couvrent la recherche et le filtre, le parcours mobile et la navigation
+    clavier entre onglets. La lecture seule du bac à sable reste couverte.
+  - Vérifications réussies : lint frontend, build Vite de production et 64 tests frontend sur 64.
+    OFF-01 reste « À exécuter » jusqu’à la recette humaine sur la prévisualisation.
+  - Ce lot est local : aucun commit, push, déploiement, secret, `.env`, VPS ou production n’a été
+    touché.
 - **2026-07-21 — T-30A : preuves de navigation Patrimoine renforcées localement**
   - Trois non-régressions couvrent désormais l’ouverture guidée du niveau suivant, le retour
     explicite fiche → liste sur smartphone et la reprise après indisponibilité du chargement.
