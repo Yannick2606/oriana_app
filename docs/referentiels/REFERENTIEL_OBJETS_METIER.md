@@ -24,7 +24,8 @@ cellules d’un lot, co-gestionnaires, familles d’une demande et portées d’
 
 Connaissance, Source, Signal, Capacité, Mission, Proposition, Décision métier, Action, Résultat,
 Retour d’expérience, Audit, Consentement, Préférence, Notification, Fichier, Tâche, Capture,
-Interaction, Tunnel, Étape, Publication et Abonnement de veille.
+Interaction, Tunnel, Étape, Publication, Abonnement de veille, Conversation, Participant de
+conversation, Message et Accusé de lecture.
 
 Cette liste exprime un besoin de modélisation, pas une autorisation de créer des tables. Chaque
 objet doit recevoir une définition ORMO, une autorité, un cycle de vie, des droits, une politique de
@@ -34,6 +35,11 @@ Les contrats cibles T-33E pour Audit, Consentement, Préférence, Notification, 
 Capture sont validés et consignés dans les
 [contrats des objets transverses](../architecture/CONTRATS_OBJETS_TRANSVERSES.md). Leur
 implémentation reste affectée aux tâches propriétaires et exige leur paramétrage applicable.
+
+Les objets Conversation, Participant de conversation, Message et Accusé de lecture sont cadrés par
+[`CADRAGE_T46_MESSAGERIE_BOT_CLIENT.md`](../architecture/CADRAGE_T46_MESSAGERIE_BOT_CLIENT.md).
+Ils restent des cibles non implémentées. Le bot est une identité de service participante et auditée,
+pas un rôle humain ni une autorité métier.
 
 ## Invariants transverses
 

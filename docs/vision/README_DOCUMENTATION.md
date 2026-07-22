@@ -69,6 +69,7 @@ Une contradiction est enregistrée dans STATUS et résolue dans le document qui 
 - [Fiches métier à développer](../referentiels/FICHES_METIER_A_DEVELOPPER.md)
 - [Architecture du socle applicatif](../architecture/ARCHITECTURE_SOCLE_APPLICATIF.md)
 - [Contrats des objets transverses](../architecture/CONTRATS_OBJETS_TRANSVERSES.md)
+- [Cadrage T-46 — Messagerie relationnelle et bot client](../architecture/CADRAGE_T46_MESSAGERIE_BOT_CLIENT.md)
 - [Architecture documentaire](../architecture/ARCHITECTURE_DOCUMENTAIRE.md)
 - [Cadrage T-34 — Capture mobile](../architecture/CADRAGE_T34_CAPTURE_MOBILE.md)
 - [Spécification T-34A — Socle documentaire](../architecture/SPEC_T34A_SOCLE_DOCUMENTAIRE.md)

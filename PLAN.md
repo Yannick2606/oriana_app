@@ -555,6 +555,23 @@
   parcours propres aux fonds de commerce sans dupliquer le CRM, le marketing ou les tâches.
 - **Acceptation** : périmètre métier validé et composants communs effectivement réutilisés.
 
+## Jalon 11 — Relation client augmentée
+
+### [ ] T-46 : Messagerie relationnelle, notifications et bot client
+- Implémenter après les développements déjà planifiés une messagerie humaine cloisonnée, ses
+  compteurs de non-lus et ses notifications dans l'application.
+- Ouvrir ensuite les conversations autorisées au portail prospect/client T-40, avec partage minimal,
+  consentements applicables et reprise humaine explicite.
+- N'activer le bot client supervisé qu'au travers de l'AI Gateway T-42. Il répond uniquement depuis
+  les informations accessibles au client, s'identifie comme IA et ne réalise aucune action métier
+  engageante.
+- Suivre le séquencement et les frontières de
+  `docs/architecture/CADRAGE_T46_MESSAGERIE_BOT_CLIENT.md` ; les pièces jointes et canaux externes
+  restent hors du premier lot.
+- **Acceptation** : droits serveur et isolement testés par appels directs, historique restaurable,
+  non-lus cohérents, notifications non sensibles, reprise humaine sans perte de contexte et
+  messagerie humaine disponible sans IA.
+
 ## Backlog d’architecture à planifier après arbitrage
 
 Ces décisions sont validées mais ne reçoivent pas ici de numéro ni de priorité arbitraire :

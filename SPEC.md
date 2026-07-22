@@ -339,6 +339,15 @@ Elle est validée comme contrat de socle, mais chaque capacité reste non exécu
 catalogues métier et paramètres de conservation applicables ne sont pas définis. Aucune table ni
 route n’est réputée implémentée par cette validation documentaire.
 
+### Cadrage futur T-46 — messagerie relationnelle et bot client
+
+Les responsabilités, objets cibles, droits, contrats API indicatifs, expérience, limites du bot et
+séquencement futur sont définis dans
+[`docs/architecture/CADRAGE_T46_MESSAGERIE_BOT_CLIENT.md`](docs/architecture/CADRAGE_T46_MESSAGERIE_BOT_CLIENT.md).
+Ce cadrage est positionné après les développements déjà inscrits dans la roadmap. Il ne rend aucune
+route exécutable et ne modifie ni le contrat Notification T-33E, ni les dépendances T-40/T-42, ni le
+blocage de production T-30.
+
 ## 11. Cadrage technique de la capture mobile
 
 Le séquencement, les conditions d’activation, les limites du hors-ligne et la place de l’IA sont

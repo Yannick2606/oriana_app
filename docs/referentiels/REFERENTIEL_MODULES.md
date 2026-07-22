@@ -21,6 +21,8 @@
 | AI Gateway | fournisseurs, coûts, quotas, secours | planifié | T-42 |
 | Immobilier enrichi | baux, diagnostics, documents, transactions | planifié | T-44 |
 | Fonds de commerce | objets et parcours spécifiques | planifié | T-45 |
+| Messagerie relationnelle | conversations humaines, lectures et notifications | cible cadrée, après roadmap courante | T-46 |
+| Bot client | assistance supervisée dans le portail et reprise humaine | cible cadrée, après T-40/T-42 | T-46 |
 
 ## Règles de modularité
 

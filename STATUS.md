@@ -18,6 +18,17 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-22 — T-46 : messagerie relationnelle, notifications et bot client cadrés**
+  - La capacité est positionnée après les développements déjà inscrits dans la roadmap. Son
+    implémentation dépend notamment du portail T-40, de l'AI Gateway T-42, du paramétrage Notification
+    T-33E et du Go T-30 pour toute persistance de production.
+  - Conversation, Participant, Message et Accusé de lecture sont séparés de Notification. Le bot est
+    un participant de service supervisé, borné aux données accessibles au client, sans rôle humain ni
+    autorité d'écriture métier ; la messagerie humaine doit fonctionner sans IA.
+  - Le premier lot futur reste textuel et interne à orIAna. Pièces jointes, voix, WhatsApp, email,
+    SMS, push et autres canaux externes sont différés jusqu'à un cadrage et un arbitrage propres.
+  - Ce lot est exclusivement documentaire : aucun code, schéma, route, fournisseur, secret, commit,
+    push ou déploiement n'a été ajouté ou effectué.
 - **2026-07-22 — T-30A : sélecteur de rôle corrigé localement**
   - Dans la barre latérale, le menu s’ouvre au-dessus de son déclencheur au lieu de déborder sous la
     fenêtre. Sa hauteur est bornée à l’espace visible et son contenu reste défilable.

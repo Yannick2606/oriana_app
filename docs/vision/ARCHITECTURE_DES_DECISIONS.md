@@ -46,6 +46,7 @@ historique : elle est remplacée par une nouvelle entrée qui la référence. St
 | DEC-036 | La modification d’un brouillon utilise une transaction et un verrou de ligne | cible validée | arbitrage persistance T-34B, 2026-07-20 | mutation unique ou conflit cohérent issu du même état autorisé |
 | DEC-037 | La recette inscriptible utilise un environnement distinct de la prévisualisation et de la production | acceptée | validation T-30A, 2026-07-20 | données fictives réinitialisables ; création et connecteurs soumis à autorisations séparées |
 | DEC-038 | La recette T-30A suit deux lots, d’abord Grist et Mailpit puis n8n isolé | acceptée | cadrage T-30A, 2026-07-20 | VPS actuel sous preuve de capacité ; VPS dédié obligatoire en repli |
+| DEC-039 | Messagerie, Notification et bot client sont trois responsabilités distinctes | cible validée | cadrage T-46, 2026-07-22 | messages dans des conversations ; événements en notifications ; bot supervisé après T-40/T-42 |
 
 Les identifiants `SRC-HIST-*` sont décrits dans
 [l’audit stratégique](../audit/AUDIT_STRATEGIQUE_PATRIMOINE_ORIANA.md).
@@ -372,6 +373,26 @@ contrôle du nom et des labels du projet.
 **Statut.** Décision acceptée, non implémentée. Elle n’autorise ni fichier Compose, ni initialiseur,
 ni mesure distante, ni DNS, ni secret, ni création de conteneur, ni activation n8n, ni déploiement.
 T-30A et le blocage de T-30 restent inchangés.
+
+### DEC-039 — Séparation de la messagerie, des notifications et du bot client
+
+**Contexte.** Le portail T-40 prévoit des échanges et des alertes, tandis que T-33E définit déjà
+l'objet Notification et T-42 la future passerelle IA. Confondre conversation, événement et réponse
+générative créerait une autorité ambiguë, des fuites de périmètre et une dépendance inutile à l'IA.
+
+**Décision.** Une Conversation contient des Messages échangés par des Participants autorisés. Une
+Notification signale un événement et recharge son détail depuis la source après contrôle des droits.
+Le bot client est un participant de service clairement identifié, borné aux données accessibles au
+client et soumis à une reprise humaine. Il ne possède aucun rôle humain et n'agit pas sur les données
+métier. La messagerie humaine fonctionne sans fournisseur IA.
+
+**Séquencement.** L'implémentation est affectée à T-46 après la roadmap courante. L'ouverture aux
+clients dépend de T-40 ; toute génération dépend de T-42 ; la production dépend du Go T-30 et des
+politiques d'audit, de consentement et de conservation applicables.
+
+**Statut.** Cible validée, non implémentée. Le
+[`cadrage T-46`](../architecture/CADRAGE_T46_MESSAGERIE_BOT_CLIENT.md) ne crée aucune table, route,
+identité externe, notification active ou connexion à un fournisseur.
 
 ## Modèle pour une nouvelle décision
 
