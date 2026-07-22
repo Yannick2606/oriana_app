@@ -18,6 +18,45 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-22 — T-30A : sélecteur de rôle corrigé localement**
+  - Dans la barre latérale, le menu s’ouvre au-dessus de son déclencheur au lieu de déborder sous la
+    fenêtre. Sa hauteur est bornée à l’espace visible et son contenu reste défilable.
+  - Entrée et Espace activent explicitement le rôle focalisé ; les flèches, Début, Fin et Échap
+    conservent leur comportement. Deux non-régressions couvrent le placement latéral, les cinq
+    options et l’activation clavier.
+  - Vérifications réussies : lint frontend, build Vite de production et 67 tests frontend sur 67.
+    Le correctif n’est pas déployé : OFF-01 reste « À exécuter » jusqu’au rejeu en prévisualisation
+    du profil Administrateur d’agence.
+  - Aucun commit, push ou déploiement n’a été effectué par ce lot.
+- **2026-07-22 — T-30A : recette humaine OFF-01 étendue, anomalie du sélecteur de rôle détectée**
+  - Avec le rôle Directeur d’agence, les huit vues de la fiche Offre, leurs contenus et les états
+    indisponibles explicites ont été contrôlés sur desktop. La navigation clavier par Flèche droite,
+    Début et Fin active la vue attendue.
+  - Sur smartphone, le passage liste → fiche → retour conserve la recherche « Mitry » et son
+    compteur. La lecture seule et l’absence de commande d’écriture sont confirmées.
+  - Consultant et Master consultant accèdent à Offres sans commande d’écriture ni accès au module
+    Administration. Le contrôle Administrateur d’agence n’a pas pu être achevé : dans la barre
+    latérale déployée, les dernières options du sélecteur de rôle débordent sous la fenêtre et ne
+    sont pas activables à la souris. OFF-01 reste donc « À exécuter » jusqu’au correctif et au rejeu
+    du quatrième rôle.
+  - Aucun commit, push, déploiement ou changement de données n’a été effectué par cette recette.
+- **2026-07-22 — T-30A : preuves automatiques OFF-01 complétées localement**
+  - Les huit vues sont désormais ouvertes et contrôlées dans le test du bac à sable ; les vues sans
+    capacité livrée affichent chacune un état indisponible explicite.
+  - La navigation clavier couvre Flèche droite, Début et Fin. Le parcours mobile vérifie maintenant
+    que la recherche et son compteur sont conservés après le retour de la fiche vers la liste.
+  - Vérifications réussies : lint frontend, build Vite de production et 65 tests frontend sur 65.
+    La session distante étant revenue à l’écran de connexion, la preuve visuelle multi-rôles reste
+    à réaliser et OFF-01 conserve le statut « À exécuter ».
+  - Aucun commit, push ou déploiement n’a été effectué par ce lot.
+- **2026-07-22 — T-30A : preuve humaine partielle OFF-01 sur la prévisualisation**
+  - Le commit `266b854` a été déployé uniquement dans le profil isolé `oriana-preview` ; les
+    conteneurs frontend et backend ont été contrôlés `healthy`. La production n’a pas été modifiée.
+  - Avec le rôle Directeur d’agence sur desktop, la recherche, le compteur « X offre(s) trouvée(s)
+    sur Y », le filtre par type de bien, les filtres combinés, l’état sans résultat et la
+    réinitialisation ont été validés visuellement. La fiche active reste cohérente avec la liste.
+  - OFF-01 reste « À exécuter » : les huit vues, la navigation clavier, le parcours smartphone et
+    les autres rôles métier doivent encore être contrôlés avec des preuves expurgées.
 - **2026-07-22 — T-30A : recherche du portefeuille Offres renforcée localement**
   - Le contrôle humain a révélé que la liste filtrée sur Mitry-Mory conservait à tort la fiche de
     Gonesse. La fiche active est désormais dérivée des résultats visibles et reste donc cohérente

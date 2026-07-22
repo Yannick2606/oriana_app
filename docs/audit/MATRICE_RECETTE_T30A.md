@@ -166,8 +166,22 @@ remplace ni le contrôle visuel, ni les quatre rôles, ni le backend effectiveme
    offres** ; la recherche précédente doit rester disponible ;
 7. joindre une preuve expurgée desktop, smartphone et clavier avant de modifier OFF-01.
 
-Support automatisé local au 22 juillet 2026 : recherche et filtre, parcours mobile, navigation
-clavier et lecture seule sont couverts ; la suite frontend compte 64 tests réussis. Cette preuve ne
+Preuve humaine partielle du 22 juillet 2026 : avec le rôle Directeur d’agence, la recherche, le
+compteur, les filtres combinés, l’état sans résultat, la réinitialisation et les huit vues ont été
+validés sur desktop. Flèche droite, Début et Fin activent au clavier la vue et le contenu attendus.
+Sur smartphone, le parcours liste → fiche → retour conserve la recherche et son compteur. Les
+profils Consultant et Master consultant accèdent à Offres en lecture seule, sans commande
+d’écriture ni accès Administration. La fiche reste cohérente avec la liste filtrée et les capacités
+non livrées ont un état explicite. Une anomalie empêche toutefois la clôture : les dernières options
+du sélecteur de rôle latéral débordent sous la fenêtre et ne sont pas activables à la souris ; le
+profil Administrateur d’agence n’a donc pas été rejoué. OFF-01 reste « À exécuter » jusqu’au
+contrôle du quatrième rôle. Le correctif local ouvre désormais ce menu vers le haut, borne sa
+hauteur et autorise son défilement ; il reste à le publier dans la prévisualisation et à le recetter.
+
+Support automatisé local au 22 juillet 2026 : recherche et filtres combinés, comptage, ouverture
+effective des huit vues, états indisponibles explicites, parcours mobile avec conservation de la
+recherche, navigation clavier par Flèche droite, Début et Fin, et lecture seule sont couverts ; la
+suite frontend compte 67 tests réussis. Cette preuve ne
 remplace ni le contrôle visuel, ni les quatre rôles, ni le backend effectivement recetté.
 
 ### CRM et Matching

@@ -123,6 +123,8 @@ test('combine le type de bien aux autres filtres et permet de retirer chaque fil
 test('propose un parcours liste puis fiche avec retour explicite sur mobile', async () => {
   render(<OffresPage/>);
   await screen.findByRole('heading', { name: 'Horizon flexible' });
+  const search = screen.getByRole('searchbox', { name: 'Recherche' });
+  fireEvent.change(search, { target: { value: 'Atlas' } });
   const list = screen.getByRole('region', { name: 'Liste des offres' });
   const detail = screen.getByRole('region', { name: 'Fiche de l’offre sélectionnée' });
   expect(list).not.toHaveClass('hidden');
@@ -134,6 +136,8 @@ test('propose un parcours liste puis fiche avec retour explicite sur mobile', as
   fireEvent.click(screen.getByRole('button', { name: 'Retour aux offres' }));
   expect(list).not.toHaveClass('hidden');
   expect(detail).toHaveClass('hidden');
+  expect(search).toHaveValue('Atlas');
+  expect(screen.getByText('1 offre trouvée sur 2')).toBeInTheDocument();
 });
 
 test('navigue au clavier entre les vues de la fiche', async () => {
@@ -144,6 +148,12 @@ test('navigue au clavier entre les vues de la fiche', async () => {
   fireEvent.keyDown(synthesisTab, { key: 'ArrowRight' });
   expect(screen.getByRole('tab', { name: 'Bien & surfaces' })).toHaveAttribute('aria-selected', 'true');
   expect(screen.getByRole('heading', { name: 'Patrimoine rattaché' })).toBeInTheDocument();
+  fireEvent.keyDown(screen.getByRole('tab', { name: 'Bien & surfaces' }), { key: 'End' });
+  expect(screen.getByRole('tab', { name: 'Transactions' })).toHaveAttribute('aria-selected', 'true');
+  expect(screen.getByRole('heading', { name: 'Transactions non encore disponibles' })).toBeInTheDocument();
+  fireEvent.keyDown(screen.getByRole('tab', { name: 'Transactions' }), { key: 'Home' });
+  expect(synthesisTab).toHaveAttribute('aria-selected', 'true');
+  expect(screen.getByText('Localisation')).toBeInTheDocument();
 });
 
 test('affiche les photographies et les huit vues du bac à sable en lecture seule', async () => {
@@ -166,7 +176,21 @@ test('affiche les photographies et les huit vues du bac à sable en lecture seul
   expect(await screen.findByRole('heading', { name: 'Horizon flexible' })).toBeInTheDocument();
   expect(screen.getAllByRole('tab')).toHaveLength(8);
   expect(screen.queryByRole('button', { name: 'Nouvelle offre' })).not.toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('tab', { name: 'Bien & surfaces' }));
+  expect(screen.getByRole('heading', { name: 'Patrimoine rattaché' })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('tab', { name: 'Finances' }));
+  expect(screen.getByRole('heading', { name: 'Conditions de vente' })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Conditions de location' })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('tab', { name: 'Mandats' }));
+  expect(screen.getByRole('heading', { name: 'Aucun mandat lié' })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('tab', { name: 'Actions' }));
+  expect(screen.getByRole('heading', { name: 'Actions non encore disponibles' })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('tab', { name: 'Visites' }));
+  expect(screen.getByRole('heading', { name: 'Visites non encore disponibles' })).toBeInTheDocument();
   fireEvent.click(screen.getByRole('tab', { name: 'Documents' }));
   expect(screen.getAllByRole('img', { name: 'Bâtiment fictif' })).toHaveLength(2);
+  fireEvent.click(screen.getByRole('tab', { name: 'Transactions' }));
+  expect(screen.getByRole('heading', { name: 'Transactions non encore disponibles' })).toBeInTheDocument();
   expect(offresApi.listAll).toHaveBeenCalledWith({ sandbox: true });
 });

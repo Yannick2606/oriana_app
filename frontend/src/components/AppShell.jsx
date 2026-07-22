@@ -16,7 +16,7 @@ const roleLabels = {
   client: 'Client',
 };
 
-function RoleSwitcher({ user, onRoleChange }) {
+function RoleSwitcher({ user, onRoleChange, placement = 'down' }) {
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState(false);
@@ -55,8 +55,13 @@ function RoleSwitcher({ user, onRoleChange }) {
     try { await onRoleChange(role); setOpen(false); triggerRef.current?.focus(); } catch { setError(true); } finally { setPending(false); }
   }
 
-  function moveFocus(event, index) {
+  function moveFocus(event, index, role) {
     const items = [...(menuRef.current?.querySelectorAll('[role="menuitemradio"]') || [])];
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      selectRole(role);
+      return;
+    }
     let nextIndex = null;
     if (event.key === 'ArrowDown') nextIndex = (index + 1) % items.length;
     if (event.key === 'ArrowUp') nextIndex = (index - 1 + items.length) % items.length;
@@ -69,7 +74,7 @@ function RoleSwitcher({ user, onRoleChange }) {
 
   return <div ref={containerRef} className="relative">
     <button ref={triggerRef} type="button" aria-controls={open ? menuId : undefined} aria-expanded={open} aria-haspopup="menu" onClick={() => setOpen((value) => !value)} className="flex items-center gap-1.5 rounded-full bg-oriana-violet/20 px-2.5 py-1 text-xs font-semibold text-oriana-lavandeClair transition hover:bg-oriana-violet/30"><span>{roleLabels[user.role_actif] || user.role_actif}</span><ChevronLeft size={13} className={`-rotate-90 transition ${open ? 'rotate-90' : ''}`}/></button>
-    {open && <div ref={menuRef} id={menuId} role="menu" aria-label="Choisir le rôle actif" className="absolute right-0 top-full z-50 mt-2 min-w-48 rounded-oriana border border-oriana-bordure bg-oriana-surface p-1.5 shadow-oriana-lg">{roles.map((role, index) => <button type="button" role="menuitemradio" aria-checked={role === user.role_actif} disabled={pending} key={role} onKeyDown={(event) => moveFocus(event, index)} onClick={() => selectRole(role)} className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm hover:bg-oriana-surfaceAlt disabled:opacity-50"><span>{roleLabels[role] || role}</span>{role === user.role_actif && <span aria-hidden="true" className="text-oriana-lavande">●</span>}</button>)}{error && <p role="alert" className="px-3 py-2 text-xs text-oriana-lavandeClair">Changement impossible. Réessayez.</p>}</div>}
+    {open && <div ref={menuRef} id={menuId} role="menu" aria-label="Choisir le rôle actif" className={`absolute right-0 z-50 max-h-[min(20rem,calc(100vh-2rem))] min-w-48 overflow-y-auto overscroll-contain rounded-oriana border border-oriana-bordure bg-oriana-surface p-1.5 shadow-oriana-lg ${placement === 'up' ? 'bottom-full mb-2' : 'top-full mt-2'}`}>{roles.map((role, index) => <button type="button" role="menuitemradio" aria-checked={role === user.role_actif} disabled={pending} key={role} onKeyDown={(event) => moveFocus(event, index, role)} onClick={() => selectRole(role)} className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm hover:bg-oriana-surfaceAlt disabled:opacity-50"><span>{roleLabels[role] || role}</span>{role === user.role_actif && <span aria-hidden="true" className="text-oriana-lavande">●</span>}</button>)}{error && <p role="alert" className="px-3 py-2 text-xs text-oriana-lavandeClair">Changement impossible. Réessayez.</p>}</div>}
   </div>;
 }
 
@@ -106,7 +111,7 @@ export function AppShell({ children, theme, onToggleTheme, collapsed, onToggleCo
         {navigation.map(({ id, label, icon }) => { const Icon = navigationIcons[icon]; const active = activePage === id; const entry = <button type="button" aria-label={collapsed ? label : undefined} aria-current={active ? 'page' : undefined} onClick={() => { onNavigate(id); if (mobileOpen) onToggleMobile(); }} className={`flex w-full items-center gap-3 rounded-oriana px-3 py-2.5 text-sm font-semibold transition ${active ? 'bg-oriana-violet/25 text-oriana-lavandeClair' : 'text-oriana-navigationMuted hover:bg-oriana-navigationSurface hover:text-oriana-navigationText'} ${collapsed ? 'md:justify-center' : ''}`}><Icon size={18}/><span className={collapsed ? 'md:hidden' : ''}>{label}</span></button>; return <Tooltip key={id} label={collapsed ? label : null} placement="right" className="w-full">{entry}</Tooltip>; })}
       </nav>
       <div className="mt-auto space-y-3">
-        <div className={`rounded-oriana border border-oriana-navigationBorder bg-oriana-navigationSurface p-3 ${collapsed ? 'md:hidden' : ''}`}><RoleSwitcher user={user} onRoleChange={onRoleChange}/><p className="mt-2 text-xs leading-5 text-oriana-navigationMuted">Les droits sont contrôlés côté serveur pour cette session.</p></div>
+        <div className={`rounded-oriana border border-oriana-navigationBorder bg-oriana-navigationSurface p-3 ${collapsed ? 'md:hidden' : ''}`}><RoleSwitcher user={user} onRoleChange={onRoleChange} placement="up"/><p className="mt-2 text-xs leading-5 text-oriana-navigationMuted">Les droits sont contrôlés côté serveur pour cette session.</p></div>
         <Button variant="ghost" className="w-full text-oriana-navigationMuted hover:bg-oriana-navigationSurface hover:text-oriana-navigationText sm:hidden" onClick={onLogout}><LogOut size={17}/><span className={collapsed ? 'md:hidden' : ''}>Se déconnecter</span></Button>
         <Button variant="ghost" className="hidden w-full text-oriana-navigationMuted hover:bg-oriana-navigationSurface hover:text-oriana-navigationText md:inline-flex" onClick={onToggleCollapsed} aria-label={collapsed ? 'Déployer la barre latérale' : 'Replier la barre latérale'}>{collapsed ? <ChevronLeft className="rotate-180" size={18}/> : <><PanelLeftClose size={18}/>Replier</>}</Button>
       </div>

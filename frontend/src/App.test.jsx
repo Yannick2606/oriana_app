@@ -107,6 +107,28 @@ test('le sélecteur de rôle se parcourt aux flèches et se ferme avec Échap', 
   expect(trigger).toHaveFocus();
 });
 
+test('le sélecteur latéral s’ouvre vers le haut et reste défilable', async () => {
+  renderApp('consultant', ['consultant', 'master_consultant', 'directeur_agence', 'admin_agence', 'super_admin']);
+  const switchers = await screen.findAllByRole('button', { name: /Consultant/ });
+  fireEvent.click(switchers[1]);
+  const menu = screen.getByRole('menu', { name: 'Choisir le rôle actif' });
+  expect(menu).toHaveClass('bottom-full', 'overflow-y-auto');
+  expect(screen.getByRole('menuitemradio', { name: 'Super administrateur' })).toBeInTheDocument();
+});
+
+test('un rôle focalisé peut être activé au clavier', async () => {
+  const client = renderApp('consultant', ['consultant', 'admin_agence']);
+  const trigger = (await screen.findAllByRole('button', { name: /Consultant/ }))[0];
+  fireEvent.click(trigger);
+  const consultant = screen.getByRole('menuitemradio', { name: 'Consultant' });
+  const admin = screen.getByRole('menuitemradio', { name: 'Administrateur d’agence' });
+  await waitFor(() => expect(consultant).toHaveFocus());
+  fireEvent.keyDown(consultant, { key: 'ArrowDown' });
+  fireEvent.keyDown(admin, { key: 'Enter' });
+  await waitFor(() => expect(client.changeRole).toHaveBeenCalledWith('admin_agence'));
+  expect(await screen.findByRole('button', { name: 'Administration' })).toBeInTheDocument();
+});
+
 test('les raccourcis du tableau de bord ouvrent un parcours réel', async () => {
   renderApp('consultant');
   fireEvent.click(await screen.findByRole('button', { name: 'Ouvrir Patrimoine' }));
