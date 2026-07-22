@@ -143,6 +143,11 @@ portail T-40 sera spécifié séparément.
 `date_debut` · `date_fin` · `honoraires_mode` · `honoraires_montant` · `honoraires_charge` ·
 `gestionnaire` FK→Utilisateurs · `donnee_exclusive` bool · `agence_id`.
 
+L'original signé n'est ni un champ binaire ni une URL du Mandat. La cible documentaire validée par
+DEC-040 le rattache au futur socle Capture/Fichier, avec versions, droits hérités et stockage privé.
+Le parcours initial accepte uniquement un PDF de 20 Mo maximum ; il reste non implémenté tant que
+les lots T-34A à T-34E et leurs prérequis d'activation ne sont pas satisfaits.
+
 ### Societes
 `id` PK · `raison_sociale` · `enseigne` · `siren` · `siret` · `code_ape` · `libelle_ape` ·
 `forme_juridique` · `capital` · `effectif_salarie` · `adresse_siege` FK→Adresses ·
@@ -373,7 +378,8 @@ donnée métier sans une commande humaine de validation.
 La proposition détaillée du socle documentaire est décrite dans
 [`docs/architecture/SPEC_T34A_SOCLE_DOCUMENTAIRE.md`](docs/architecture/SPEC_T34A_SOCLE_DOCUMENTAIRE.md).
 Elle encadre le lot T-34A. Le profil vocal, les quotas, la conservation, les rattachements initiaux
-et l’antivirus de preuve sont acceptés par DEC-018 à DEC-022. Le noyau métier pur est implémenté ;
+et l’antivirus de preuve sont acceptés par DEC-018 à DEC-022. DEC-040 ajoute Mandat comme cinquième
+cible documentaire sans modifier encore le noyau métier pur implémenté ;
 le choix du stockage objet reste différé avant toute persistance ou activation de la capacité.
 
 Le contrat validé des brouillons multi-appareil est décrit dans

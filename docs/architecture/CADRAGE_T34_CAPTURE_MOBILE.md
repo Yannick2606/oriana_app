@@ -45,6 +45,11 @@ masquer une dépendance absente.
 Les originaux ne séjournent jamais durablement sur le disque applicatif. Une référence de stockage
 opaque n’est pas une autorisation ; le backend recontrôle le parent, l’agence et le rôle actif.
 
+DEC-040 ajoute Mandat comme cinquième parent documentaire. Son premier parcours, limité au PDF
+signé, est détaillé dans le
+[`cadrage de la pièce jointe du mandat`](CADRAGE_T34_MANDAT_PIECE_JOINTE.md) sans autoriser encore
+de route, de stockage ou d'interface active.
+
 ### T-34B — Brouillons multi-appareil
 
 La Capture reste `brouillon_prive` jusqu’à soumission explicite. Chaque modification fournit une

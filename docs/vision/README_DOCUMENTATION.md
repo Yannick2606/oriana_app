@@ -72,6 +72,7 @@ Une contradiction est enregistrée dans STATUS et résolue dans le document qui 
 - [Cadrage T-46 — Messagerie relationnelle et bot client](../architecture/CADRAGE_T46_MESSAGERIE_BOT_CLIENT.md)
 - [Architecture documentaire](../architecture/ARCHITECTURE_DOCUMENTAIRE.md)
 - [Cadrage T-34 — Capture mobile](../architecture/CADRAGE_T34_CAPTURE_MOBILE.md)
+- [Cadrage T-34 — Pièce jointe du mandat](../architecture/CADRAGE_T34_MANDAT_PIECE_JOINTE.md)
 - [Spécification T-34A — Socle documentaire](../architecture/SPEC_T34A_SOCLE_DOCUMENTAIRE.md)
 - [Arbitrages T-34A — Options et recommandations](../architecture/ARBITRAGES_T34A_SOCLE_DOCUMENTAIRE.md)
 - [Étude T-34A — Stockage objet compatible S3](../architecture/ETUDE_STOCKAGE_OBJET_T34A_2026-07-20.md)

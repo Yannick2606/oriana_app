@@ -98,7 +98,10 @@ Une action prévoit auteur, nature, type, statut, date et heure, responsable, li
 ### Mandats
 
 La vue présente notamment numéro de fiche, numéro de registre, type, nature, avancement, dates de
-début et de fin, archivage et responsable.
+début et de fin, archivage et responsable. Elle devra aussi permettre à un utilisateur autorisé de
+déposer l'original signé en PDF, d'en suivre la quarantaine, de consulter la version courante et
+l'historique des versions, sans exposer d'URL permanente. Ce parcours dépend du socle documentaire
+T-34 et reste absent de la prévisualisation en lecture seule.
 
 ### Transactions
 

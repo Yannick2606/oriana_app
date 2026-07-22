@@ -20,6 +20,9 @@ Le noyau T-34A fournit les catalogues, les droits purs et le port `captureReposi
 `createDraft`, `getById` et `updateWithExpectedVersion`. Il ne fournit encore ni schéma PostgreSQL,
 ni adaptateur, ni route `/socle/captures`, ni interface.
 
+Le catalogue implémenté reste antérieur à DEC-040 et ne contient pas encore `mandat`. Son extension,
+ses validations et leurs tests appartiennent à un lot de code distinct soumis à autorisation.
+
 Le port possède désormais l’opération contractuelle `listByAuthor`, sans adaptateur ni lecture
 réelle. Le module pur `drafts.js` porte les bornes, la validation des commandes et l’incrément de
 version. Grist ne reçoit aucune table Capture et ne devient pas un stockage transitoire de T-34B.
@@ -34,8 +37,8 @@ Une création de brouillon accepte seulement :
   soit tous deux fournis ; le type appartient à `VALID_ATTACHMENT_TARGETS` et l’objet est visible
   par l’auteur.
 
-DEC-033 fixe sa future représentation PostgreSQL : quatre références facultatives vers Société,
-Contact, Demande et Offre, avec au plus une cible renseignée. L’adaptateur conserve le
+DEC-033 fixe sa représentation PostgreSQL initiale ; DEC-040 l'étend à cinq références facultatives
+vers Société, Contact, Demande, Offre et Mandat, avec au plus une cible renseignée. L’adaptateur conserve le
 contrat `{ type, id }`. La suppression autorisée de la cible détache la proposition sans supprimer
 la Capture. Cette cible relationnelle reste non implémentée et n’autorise aucune migration.
 

@@ -18,6 +18,19 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-22 — T-34 : pièce jointe du Mandat cadrée**
+  - La revue de l'ADN, de la Constitution et de la Charte confirme que l'original signé doit rester
+    une source gouvernée, versionnée et traçable du socle, distincte des champs métier du Mandat.
+  - DEC-040 ajoute Mandat comme cinquième cible documentaire et étend la future représentation
+    relationnelle de DEC-033, sans réécrire les preuves historiques. Le premier parcours est limité
+    au PDF signé de 20 Mo maximum et hérite des droits du Mandat.
+  - Le parcours futur couvre ajout explicite, transfert, quarantaine antivirus, disponibilité,
+    téléchargement contrôlé et nouvelle version sans écrasement. La prévisualisation reste en
+    lecture seule et ne doit afficher aucun bouton sans effet.
+  - État réel inchangé : le noyau pur reconnaît encore quatre cibles ; aucun code, migration, route,
+    stockage, fournisseur, secret, commit, push ou déploiement n'est ajouté par ce cadrage. La mise
+    en œuvre reste distribuée entre T-34A et T-34E, soumise au choix du stockage, à la restauration
+    vérifiée, à la recette des droits et au Go T-30.
 - **2026-07-22 — T-46 : messagerie relationnelle, notifications et bot client cadrés**
   - La capacité est positionnée après les développements déjà inscrits dans la roadmap. Son
     implémentation dépend notamment du portail T-40, de l'AI Gateway T-42, du paramétrage Notification

@@ -28,7 +28,8 @@ doubles de test, une base isolée et un stockage privé de préproduction peuven
 
 ### Rattachements proposés
 
-DEC-021 autorise le premier lot à rattacher une capture à Société, Contact, Demande ou Offre. Le
+DEC-021 autorise le premier lot à rattacher une capture à Société, Contact, Demande ou Offre.
+DEC-040 étend la cible validée à Mandat pour conserver notamment son original signé. Le
 backend vérifie que la cible existe et qu’elle est visible et autorisée pour le rôle actif, l’agence
 et les rattachements de l’utilisateur.
 
@@ -43,6 +44,10 @@ Les formats acceptés sont PDF, XLS, XLSX, JPG/JPEG, PNG, WEBP et HEIC, avec une
 fichier. Le backend vérifie conjointement extension, type déclaré, signature détectée et taille.
 Le nom fourni est conservé pour l’affichage après neutralisation ; il ne devient jamais une clé de
 stockage.
+
+Le premier parcours « mandat signé » est plus restrictif : il accepte uniquement un PDF de 20 Mo
+maximum, rattaché directement au Mandat. Cette restriction métier n'élargit pas les formats du
+socle et n'autorise aucune conversion silencieuse d'une image en original contractuel.
 
 La capture vocale accepte `audio/webm` et `audio/mp4`, dans la limite de 5 minutes et 20 Mo. Le
 backend contrôle le type réel, conserve l’original et produit la version de travail de façon

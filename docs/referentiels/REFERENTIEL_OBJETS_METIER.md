@@ -36,6 +36,11 @@ Capture sont validés et consignés dans les
 [contrats des objets transverses](../architecture/CONTRATS_OBJETS_TRANSVERSES.md). Leur
 implémentation reste affectée aux tâches propriétaires et exige leur paramétrage applicable.
 
+DEC-040 valide Mandat comme cinquième parent documentaire de Capture. L'original signé reste un
+Fichier privé, versionné et gouverné par T-34 ; il ne devient ni une colonne binaire ni une URL du
+Mandat. Le parcours est décrit dans le
+[`cadrage de la pièce jointe du mandat`](../architecture/CADRAGE_T34_MANDAT_PIECE_JOINTE.md).
+
 Les objets Conversation, Participant de conversation, Message et Accusé de lecture sont cadrés par
 [`CADRAGE_T46_MESSAGERIE_BOT_CLIENT.md`](../architecture/CADRAGE_T46_MESSAGERIE_BOT_CLIENT.md).
 Ils restent des cibles non implémentées. Le bot est une identité de service participante et auditée,

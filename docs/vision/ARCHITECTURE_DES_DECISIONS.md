@@ -47,6 +47,7 @@ historique : elle est remplacée par une nouvelle entrée qui la référence. St
 | DEC-037 | La recette inscriptible utilise un environnement distinct de la prévisualisation et de la production | acceptée | validation T-30A, 2026-07-20 | données fictives réinitialisables ; création et connecteurs soumis à autorisations séparées |
 | DEC-038 | La recette T-30A suit deux lots, d’abord Grist et Mailpit puis n8n isolé | acceptée | cadrage T-30A, 2026-07-20 | VPS actuel sous preuve de capacité ; VPS dédié obligatoire en repli |
 | DEC-039 | Messagerie, Notification et bot client sont trois responsabilités distinctes | cible validée | cadrage T-46, 2026-07-22 | messages dans des conversations ; événements en notifications ; bot supervisé après T-40/T-42 |
+| DEC-040 | Mandat devient la cinquième cible documentaire de Capture | acceptée | besoin métier constaté dans la fiche Offre, 2026-07-22 | PDF signé versionné, droits hérités du Mandat, activation soumise à T-34 et T-30 |
 
 Les identifiants `SRC-HIST-*` sont décrits dans
 [l’audit stratégique](../audit/AUDIT_STRATEGIQUE_PATRIMOINE_ORIANA.md).
@@ -393,6 +394,33 @@ politiques d'audit, de consentement et de conservation applicables.
 **Statut.** Cible validée, non implémentée. Le
 [`cadrage T-46`](../architecture/CADRAGE_T46_MESSAGERIE_BOT_CLIENT.md) ne crée aucune table, route,
 identité externe, notification active ou connexion à un fournisseur.
+
+### DEC-040 — Rattachement documentaire au Mandat
+
+**Contexte.** La fiche Offre expose les données structurées du Mandat mais ne permet pas de conserver
+son original signé. DEC-021 limitait le premier lot documentaire à Société, Contact, Demande et
+Offre, et DEC-033 traduisait ces quatre cibles en références relationnelles exclusives. Le Mandat est
+désormais un objet métier implémenté, doté de droits d'agence et d'exclusivité ; son absence parmi
+les parents documentaires empêche un parcours contractuel attendu.
+
+**Décision.** `mandat` devient la cinquième cible de rattachement d'une Capture. La future
+persistance étend DEC-033 par une cinquième référence facultative protégée par clé étrangère, sans
+modifier la contrainte « zéro ou une cible » ni le contrat `{ type, id }`. Le premier usage métier
+est l'original signé au format PDF, limité à 20 Mo, versionné et conservé comme Fichier du socle ;
+aucun contenu binaire, chemin ou URL de stockage n'est ajouté au Mandat.
+
+**Droits.** L'ajout et le remplacement exigent le droit d'écriture sur le Mandat. Lecture et
+téléchargement héritent de sa visibilité et sont revérifiés côté serveur. Le super administrateur
+n'obtient aucun accès métier implicite. Un fichier n'est disponible qu'après verdict antivirus
+`sain` et validation du rattachement.
+
+**Séquencement.** Cette extension traverse T-34A à T-34E et est détaillée dans le
+[`cadrage de la pièce jointe du mandat`](../architecture/CADRAGE_T34_MANDAT_PIECE_JOINTE.md).
+Elle précède l'implémentation future de T-46, mais ne change pas l'ordre des travaux déjà actifs.
+
+**Statut.** Décision acceptée, non implémentée. Elle complète DEC-021 et DEC-033 sans réécrire leurs
+preuves historiques. Elle n'autorise ni modification du noyau, ni migration, ni route, ni bouton,
+ni fournisseur, ni stockage, ni déploiement et ne lève aucun prérequis T-34 ou T-30.
 
 ## Modèle pour une nouvelle décision
 

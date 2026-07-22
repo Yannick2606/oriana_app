@@ -384,6 +384,8 @@
   doublons et maintenir chaque capture en brouillon privé jusqu'à validation humaine.
 - Prévoir masquage des données de tiers inutiles, rétention limitée des médias bruts et rattachement
   à un territoire, client, opportunité, tâche ou idée éditoriale.
+- Permettre de conserver l'original signé d'un Mandat comme Fichier versionné du socle, sans champ
+  binaire ni URL permanente dans l'objet métier.
 - **Acceptation** : aucune donnée extraite n'est publiée ou versée définitivement sans validation ;
   les erreurs de faible confiance sont signalées et la source reste traçable.
 - **Prérequis d’activation** : développement isolé autorisé, mais production interdite avant le Go
@@ -398,7 +400,8 @@
   limite de 20 Mo testés, restauration documentée.
 - **État** : proposition de spécification et matrice de recommandations rédigées le 20 juillet
   2026 ; le profil audio, les quotas, la conservation et les rattachements initiaux sont acceptés
-  par DEC-018 à DEC-021. DEC-022 retient un adaptateur ClamAV isolé pour la preuve, avec POC avant
+  par DEC-018 à DEC-021. DEC-040 ajoute Mandat comme cinquième cible future, avec un premier parcours
+  PDF signé borné à 20 Mo. DEC-022 retient un adaptateur ClamAV isolé pour la preuve, avec POC avant
   activation. Le stockage reste reporté à la qualification Qaegis et constitue l’arbitrage restant.
   L’audit d’implémentation délimite un premier lot pur : catalogues, politiques, erreurs et contrats
   de ports, sans route, migration, fournisseur ou activation. Ce premier lot est implémenté et
@@ -423,8 +426,8 @@
   la géolocalisation du premier contrat. Les dix arbitrages et le lot pur sont validés ; toute
   persistance, route, interface ou activation reste soumise à une validation explicite distincte.
   L’audit statique du socle PostgreSQL est consigné : mécanismes de migration, CI et restauration
-  réutilisables. DEC-033 retient quatre références facultatives avec une cible au maximum et
-  détachement lors de sa suppression. DEC-034 retient un registre d’idempotence séparé, limité aux
+  réutilisables. DEC-033, étendue par DEC-040, retient cinq références facultatives avec une cible
+  au maximum et détachement lors de sa suppression. DEC-034 retient un registre d’idempotence séparé, limité aux
   empreintes, borné par auteur et agence et expirant après 24 heures. DEC-035 fixe un curseur
   chiffré et authentifié valable 15 minutes, lié au périmètre et sans valeur sensible dans le dépôt.
   DEC-036 fixe une transaction courte et un verrou de ligne pour produire une mutation unique ou un
@@ -436,6 +439,8 @@
   déjà reçues ; isoler tout fichier incomplet ou refusé.
 - **Acceptation** : coupure réseau simulée, reprise réussie, empreinte vérifiée et aucun fichier
   partiel exposé comme document valide.
+- **Premier cas métier** : PDF signé de Mandat, 20 Mo maximum, envoyé sans doublon puis placé en
+  quarantaine avant toute consultation.
 
 #### [ ] T-34D : Analyse asynchrone
 - Orchestrer antivirus, OCR et IA en arrière-plan avec états visibles, provenance, confiance,
@@ -450,6 +455,8 @@
   humaine avant écriture métier ou publication.
 - **Acceptation** : parcours tactile et clavier validé ; refus, correction et validation sont
   tracés ; test de capacité réalisé avec 30 utilisateurs simultanés.
+- La fiche Offre/Mandat expose l'ajout, les états, la version courante et les versions antérieures
+  uniquement lorsque la capacité documentaire réelle est disponible et autorisée.
 
 ### [ ] T-35 : CRM par tunnels configurables
 - Permettre plusieurs tunnels de vente, leurs étapes, règles de passage, motifs de perte et KPI.
