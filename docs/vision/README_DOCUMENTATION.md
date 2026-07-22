@@ -65,6 +65,7 @@ Une contradiction est enregistrée dans STATUS et résolue dans le document qui 
 - [Référentiel des modules](../referentiels/REFERENTIEL_MODULES.md)
 - [Référentiel des objets métier](../referentiels/REFERENTIEL_OBJETS_METIER.md)
 - [Guide UX/UI](../ux/GUIDE_UX_UI.md)
+- [Matrice de navigation par rôle](../ux/MATRICE_NAVIGATION_ROLES.md)
 - [Charte d’interface](../ux/CHARTE_INTERFACE_ORIANA.md)
 - [Fiches métier à développer](../referentiels/FICHES_METIER_A_DEVELOPPER.md)
 - [Architecture du socle applicatif](../architecture/ARCHITECTURE_SOCLE_APPLICATIF.md)

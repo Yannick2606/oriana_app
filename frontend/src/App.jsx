@@ -27,7 +27,11 @@ function Dashboard({ user, onHelp, onNavigate, onCreateOpportunity, readOnly = f
     ? 'vos données'
     : ['manager', 'master_consultant'].includes(user.role_actif)
       ? 'votre activité et celle de votre équipe'
-      : 'les données et référentiels de votre agence';
+      : user.role_actif === 'admin_agence'
+        ? 'les comptes et habilitations de votre agence'
+        : user.role_actif === 'super_admin'
+          ? 'la gouvernance et les habilitations de la plateforme'
+          : 'les données et référentiels de votre agence';
   const shortcuts = [
     { id: 'patrimoine', title: 'Patrimoine', description: 'Parcourir et qualifier les sites, bâtiments, cellules et lots.', icon: Building2 },
     { id: 'offres', title: 'Offres', description: 'Gérer les offres et leurs conditions financières.', icon: BriefcaseBusiness },
@@ -37,7 +41,7 @@ function Dashboard({ user, onHelp, onNavigate, onCreateOpportunity, readOnly = f
   ].filter(({ id }) => canNavigateTo(user.role_actif, id));
   return <div className="space-y-7 animate-enter">
     <Breadcrumb items={['Accueil']}/>
-    <PageHeader eyebrow="Vue d’ensemble" title={`Bienvenue, ${user.prenom || 'à vous'}\u00a0👋`} description={`Voici les informations utiles pour suivre ${scope} et identifier la prochaine action.`} actions={<><HelpButton onClick={onHelp}/>{!readOnly && <Button onClick={onCreateOpportunity}><Plus size={17}/>Nouvelle opportunité</Button>}</>}/>
+    <PageHeader eyebrow="Vue d’ensemble" title={`Bienvenue, ${user.prenom || 'à vous'}\u00a0👋`} description={`Voici les informations utiles pour suivre ${scope} et identifier la prochaine action.`} actions={<><HelpButton onClick={onHelp}/>{!readOnly && canNavigateTo(user.role_actif, 'crm') && <Button onClick={onCreateOpportunity}><Plus size={17}/>Nouvelle opportunité</Button>}</>}/>
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {shortcuts.map(({ id, title, description, icon: Icon }) => <Card key={id} className="flex flex-col"><Icon className="text-oriana-lavande" size={20}/><h2 className="mt-4 font-titre text-xl">{title}</h2><p className="mt-2 flex-1 text-sm leading-6 text-oriana-discret">{description}</p><Button className="mt-5 w-full" variant="secondary" onClick={() => onNavigate(id)}>Ouvrir {title}<ArrowRight size={15}/></Button></Card>)}
     </div>

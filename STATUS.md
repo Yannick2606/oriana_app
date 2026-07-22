@@ -18,6 +18,18 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-22 — T-30A : navigation recentrée selon le rôle actif**
+  - La revue préalable de l’ADN, de la Constitution, de la Charte et des décisions d’architecture
+    confirme que le rôle actif doit réduire la navigation sans devenir une autorité de sécurité.
+    DEC-041 et la matrice UX associée consignent désormais le périmètre visible des cinq rôles.
+  - Le sélecteur de rôle est unique et reste dans l’en-tête. La barre latérale affiche seulement un
+    rappel non interactif du rôle actif, supprimant le doublon observé en prévisualisation.
+  - Consultant et Master consultant conservent les modules métier ; Directeur d’agence y ajoute
+    Administration. Administrateur d’agence et Super administrateur sont recentrés sur Accueil,
+    Auto-formation et Administration, sans accès métier implicite.
+  - Vérifications réussies : lint et build frontend, 68 tests frontend sur 68, frontières
+    d’architecture, lint backend et suite backend complète (162 tests, 161 réussis, 1 test
+    PostgreSQL explicitement ignoré). Aucun commit, push ou déploiement n’a été effectué.
 - **2026-07-22 — T-34A : Mandat ajouté au contrat documentaire pur**
   - Après relecture de l'ADN, de la Constitution, de la Charte et de DEC-040, `mandat` devient la
     cinquième valeur de `VALID_ATTACHMENT_TARGETS` avec Société, Contact, Demande et Offre.

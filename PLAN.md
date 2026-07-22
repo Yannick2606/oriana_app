@@ -114,6 +114,9 @@
 ### [x] T-15 : Navigation par rôle
 - Menu et écrans visibles selon le rôle (consultant / manager / admin). Rappel : le frontend
   masque par confort, la sécurité reste au backend.
+- DEC-041 précise la matrice actuelle : les administrateurs d'agence et de plateforme voient
+  Accueil, Auto-formation et Administration sans modules métier ; le sélecteur de rôle est unique
+  dans l'en-tête et le rappel latéral reste non interactif.
 - Un utilisateur multirôle peut changer de rôle actif depuis le profil sans se reconnecter ; le
   backend relit ses rôles actuels avant de mettre la session à jour.
 - **Acceptation** : chaque rôle voit la navigation attendue ; aucun écran admin visible pour un

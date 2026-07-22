@@ -51,6 +51,12 @@ Les cinq rôles canoniques actuels sont :
 | admin_agence | interne | comptes et habilitations des niveaux inférieurs de son agence |
 | super_admin | interne | administration globale, sans accès métier implicite |
 
+La navigation frontend suit [la matrice de navigation par rôle](docs/ux/MATRICE_NAVIGATION_ROLES.md)
+et DEC-041. Administrateur d'agence et Super administrateur disposent d'Accueil,
+Auto-formation et Administration, sans module métier. Le Directeur d'agence conserve les vues
+métier et Administration. Le sélecteur de rôle interactif est unique dans l'en-tête ; tout rappel
+latéral est non interactif. Cette présentation ne remplace jamais les autorisations serveur.
+
 **Règle d'or** : le filtrage s'applique **côté serveur**, à chaque requête. Un `consultant`
 n'obtient jamais, via l'API, une donnée dont il n'est pas gestionnaire, même s'il forge la requête.
 Le `agence_id`, les rattachements et le rôle actif sont relus/appliqués côté serveur. Les alias

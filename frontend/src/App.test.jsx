@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { beforeEach, expect, test, vi } from 'vitest';
 import App from './App';
 import { ProtectedRoute } from './auth/ProtectedRoute';
@@ -80,6 +80,8 @@ test('un master consultant voit le périmètre équipe sans écran admin', async
 test('un admin d’agence accède à l’administration et peut ouvrir sa vue', async () => {
   renderApp('admin_agence');
   const administration = await screen.findByRole('button', { name: 'Administration' });
+  expect(screen.queryByRole('button', { name: 'Nouvelle opportunité' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Ouvrir CRM' })).not.toBeInTheDocument();
   fireEvent.click(administration);
   expect(screen.getByRole('heading', { name: 'Administration' })).toBeInTheDocument();
 });
@@ -91,6 +93,16 @@ test('un utilisateur multirôle change de rôle sans nouvelle connexion', async 
   fireEvent.click(screen.getByRole('menuitemradio', { name: 'Administrateur d’agence' }));
   expect(await screen.findByRole('button', { name: 'Administration' })).toBeInTheDocument();
   expect(client.changeRole).toHaveBeenCalledWith('admin_agence');
+});
+
+test('un changement vers un rôle administratif quitte une vue métier devenue interdite', async () => {
+  renderApp('consultant', ['consultant', 'admin_agence']);
+  fireEvent.click(await screen.findByRole('button', { name: 'Offres' }));
+  expect(await screen.findByRole('heading', { name: 'Offres' })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: /Consultant/ }));
+  fireEvent.click(screen.getByRole('menuitemradio', { name: 'Administrateur d’agence' }));
+  expect(await screen.findByRole('heading', { name: /Bienvenue, Julie/i })).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Offres' })).not.toBeInTheDocument();
 });
 
 test('le sélecteur de rôle se parcourt aux flèches et se ferme avec Échap', async () => {
@@ -107,12 +119,16 @@ test('le sélecteur de rôle se parcourt aux flèches et se ferme avec Échap', 
   expect(trigger).toHaveFocus();
 });
 
-test('le sélecteur latéral s’ouvre vers le haut et reste défilable', async () => {
+test('le sélecteur de rôle est unique dans l’en-tête et le rappel latéral reste non interactif', async () => {
   renderApp('consultant', ['consultant', 'master_consultant', 'directeur_agence', 'admin_agence', 'super_admin']);
   const switchers = await screen.findAllByRole('button', { name: /Consultant/ });
-  fireEvent.click(switchers[1]);
+  expect(switchers).toHaveLength(1);
+  const sidebar = screen.getByLabelText('Navigation latérale');
+  expect(within(sidebar).queryByRole('button', { name: /Consultant/ })).not.toBeInTheDocument();
+  expect(within(sidebar).getByText('Consultant')).toBeInTheDocument();
+  fireEvent.click(switchers[0]);
   const menu = screen.getByRole('menu', { name: 'Choisir le rôle actif' });
-  expect(menu).toHaveClass('bottom-full', 'overflow-y-auto');
+  expect(menu).toHaveClass('top-full', 'overflow-y-auto');
   expect(screen.getByRole('menuitemradio', { name: 'Super administrateur' })).toBeInTheDocument();
 });
 
@@ -159,15 +175,15 @@ test('les utilitaires visibles expliquent leur disponibilité au lieu de rester 
 });
 
 test.each([
-  ['consultant', false],
-  ['master_consultant', false],
-  ['directeur_agence', true],
-  ['admin_agence', true],
-  ['super_admin', true],
-])('la navigation du rôle %s respecte son périmètre', async (role, hasAdministration) => {
+  ['consultant', ['Accueil', 'Patrimoine', 'Offres', 'CRM', 'Matching', 'Agents IA', 'Auto-formation']],
+  ['master_consultant', ['Accueil', 'Patrimoine', 'Offres', 'CRM', 'Matching', 'Agents IA', 'Auto-formation']],
+  ['directeur_agence', ['Accueil', 'Patrimoine', 'Offres', 'CRM', 'Matching', 'Agents IA', 'Auto-formation', 'Administration']],
+  ['admin_agence', ['Accueil', 'Auto-formation', 'Administration']],
+  ['super_admin', ['Accueil', 'Auto-formation', 'Administration']],
+])('la navigation du rôle %s respecte exactement son périmètre', async (role, expectedLabels) => {
   renderApp(role);
-  await screen.findByRole('navigation', { name: 'Navigation principale' });
-  expect(Boolean(screen.queryByRole('button', { name: 'Administration' }))).toBe(hasAdministration);
+  const nav = await screen.findByRole('navigation', { name: 'Navigation principale' });
+  expect(within(nav).getAllByRole('button').map((button) => button.textContent)).toEqual(expectedLabels);
 });
 
 test('un rôle inconnu affiche une issue explicite au lieu de produire un écran blanc', async () => {

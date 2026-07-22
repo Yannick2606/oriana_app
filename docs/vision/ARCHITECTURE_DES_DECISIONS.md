@@ -48,6 +48,7 @@ historique : elle est remplacée par une nouvelle entrée qui la référence. St
 | DEC-038 | La recette T-30A suit deux lots, d’abord Grist et Mailpit puis n8n isolé | acceptée | cadrage T-30A, 2026-07-20 | VPS actuel sous preuve de capacité ; VPS dédié obligatoire en repli |
 | DEC-039 | Messagerie, Notification et bot client sont trois responsabilités distinctes | cible validée | cadrage T-46, 2026-07-22 | messages dans des conversations ; événements en notifications ; bot supervisé après T-40/T-42 |
 | DEC-040 | Mandat devient la cinquième cible documentaire de Capture | acceptée | besoin métier constaté dans la fiche Offre, 2026-07-22 | PDF signé versionné, droits hérités du Mandat, activation soumise à T-34 et T-30 |
+| DEC-041 | La navigation est orientée par le rôle actif et le sélecteur de rôle est unique | acceptée | validation UX humaine, 2026-07-22 | vues administratives séparées des vues métier, sans modifier l'autorité serveur |
 
 Les identifiants `SRC-HIST-*` sont décrits dans
 [l’audit stratégique](../audit/AUDIT_STRATEGIQUE_PATRIMOINE_ORIANA.md).
@@ -421,6 +422,27 @@ Elle précède l'implémentation future de T-46, mais ne change pas l'ordre des 
 **Statut.** Décision acceptée, non implémentée. Elle complète DEC-021 et DEC-033 sans réécrire leurs
 preuves historiques. Elle n'autorise ni modification du noyau, ni migration, ni route, ni bouton,
 ni fournisseur, ni stockage, ni déploiement et ne lève aucun prérequis T-34 ou T-30.
+
+### DEC-041 — Navigation orientée par le rôle actif
+
+**Contexte.** Le shell proposait le changement de rôle à la fois dans l'en-tête et au bas de la
+barre latérale. Il exposait aussi les modules métier à l'Administrateur d'agence, alors que son
+périmètre canonique porte sur les comptes et habilitations des niveaux inférieurs. Cette duplication
+alourdissait l'interface et brouillait le prochain geste utile.
+
+**Décision.** Le sélecteur interactif du rôle actif réside uniquement dans le profil de l'en-tête.
+La barre latérale peut afficher un rappel non interactif. Consultant, Master consultant et Directeur
+d'agence conservent les modules métier ; seul le Directeur accède en plus à Administration.
+Administrateur d'agence et Super administrateur voient Accueil, Auto-formation et Administration,
+sans module métier. L'Auto-formation reste commune aux cinq rôles conformément à T-22D.
+
+**Sécurité.** Cette matrice est une aide d'orientation frontend. Elle n'accorde aucun droit et ne
+remplace aucun contrôle backend. Le Super administrateur conserve l'absence d'accès métier
+implicite et une page devenue interdite après bascule de rôle est remplacée par la première vue
+autorisée.
+
+**Statut.** Décision acceptée pour T-30A. La recette exige un sélecteur unique, l'actualisation
+immédiate du menu, les matrices visibles attendues et la conservation des contrôles serveur.
 
 ## Modèle pour une nouvelle décision
 
