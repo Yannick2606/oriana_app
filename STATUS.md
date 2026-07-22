@@ -18,6 +18,19 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-22 — T-30A : recherche du portefeuille Offres renforcée localement**
+  - Le contrôle humain a révélé que la liste filtrée sur Mitry-Mory conservait à tort la fiche de
+    Gonesse. La fiche active est désormais dérivée des résultats visibles et reste donc cohérente
+    avec la recherche et les filtres combinés.
+  - Le compteur explicite « X offre(s) trouvée(s) sur Y » remplace l’indication ambiguë « X sur Y ».
+    Un filtre complémentaire par type de bien s’appuie sur les cellules patrimoniales existantes ;
+    les filtres actifs sont visibles, supprimables séparément et réinitialisables ensemble.
+  - L’absence de résultat possède maintenant une explication et une issue réelle. Aucun contrat API,
+    droit, rôle, fournisseur externe ou source de vérité n’est modifié par ce lot.
+  - Vérifications réussies : lint frontend, build Vite de production et 65 tests frontend sur 65,
+    dont la synchronisation liste–fiche, le comptage, les filtres combinés et leur remise à zéro.
+  - Aucun commit, push ou déploiement n’a été effectué ; la prévisualisation et la production ne sont
+    pas modifiées.
 - **2026-07-22 — Gouvernance : sas de décision fondateur formalisé localement**
   - Toute décision stratégique, métier, fonctionnelle, UX, architecturale ou relative à l’IA doit
     désormais être précédée d’une relecture de l’ADN, de la Constitution, de la Charte des dix

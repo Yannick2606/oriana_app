@@ -11,7 +11,8 @@ vi.mock('../api/offres', () => ({
 }));
 
 const data = {
-  lots: [{ id: 10, nom: 'Lot Horizon' }, { id: 11, nom: 'Lot Atlas' }],
+  lots: [{ id: 10, nom: 'Lot Horizon', cellules: ['L', 40] }, { id: 11, nom: 'Lot Atlas', cellules: ['L', 41] }],
+  cells: [{ id: 40, type_bien: 'activite' }, { id: 41, type_bien: 'logistique' }],
   offers: [{
     id: 20, numero: 'OFF-20', nom: 'Horizon flexible', lot_id: 10,
     nature: 'vente_et_location', occupation: 'libre', ville: 'Gonesse', code_postal: '95500',
@@ -86,18 +87,37 @@ test('crée une offre sur un lot avec la nature choisie', async () => {
   })));
 });
 
-test('recherche et filtre le portefeuille sans perdre la fiche sélectionnée', async () => {
+test('recherche et filtre le portefeuille en synchronisant la fiche sélectionnée', async () => {
   render(<OffresPage/>);
   await screen.findByRole('heading', { name: 'Horizon flexible' });
 
   fireEvent.change(screen.getByRole('searchbox', { name: 'Recherche' }), { target: { value: 'Mitry' } });
   expect(screen.queryByRole('button', { name: /Horizon flexible/ })).not.toBeInTheDocument();
-  fireEvent.click(screen.getByRole('button', { name: /Atlas logistique/ }));
-  expect(screen.getByRole('heading', { name: 'Atlas logistique' })).toBeInTheDocument();
+  expect(await screen.findByRole('heading', { name: 'Atlas logistique' })).toBeInTheDocument();
+  expect(screen.getByText('1 offre trouvée sur 2')).toBeInTheDocument();
 
   fireEvent.change(screen.getByRole('combobox', { name: 'Filtrer par nature' }), { target: { value: 'vente' } });
-  expect(screen.getByText('Aucune offre ne correspond à ces critères.')).toBeInTheDocument();
-  expect(screen.getByRole('heading', { name: 'Atlas logistique' })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Aucune offre trouvée' })).toBeInTheDocument();
+  expect(screen.queryByRole('heading', { name: 'Atlas logistique' })).not.toBeInTheDocument();
+  fireEvent.click(screen.getAllByRole('button', { name: 'Réinitialiser les filtres' })[0]);
+  expect(await screen.findByRole('heading', { name: 'Horizon flexible' })).toBeInTheDocument();
+  expect(screen.getByText('2 offres trouvées sur 2')).toBeInTheDocument();
+});
+
+test('combine le type de bien aux autres filtres et permet de retirer chaque filtre actif', async () => {
+  render(<OffresPage/>);
+  await screen.findByRole('heading', { name: 'Horizon flexible' });
+
+  fireEvent.change(screen.getByRole('combobox', { name: 'Filtrer par type de bien' }), { target: { value: 'logistique' } });
+  expect(await screen.findByRole('heading', { name: 'Atlas logistique' })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Type : Logistique ×' })).toBeInTheDocument();
+
+  fireEvent.change(screen.getByRole('combobox', { name: 'Filtrer par nature' }), { target: { value: 'location' } });
+  expect(screen.getByRole('button', { name: 'Nature : Location ×' })).toBeInTheDocument();
+  expect(screen.getByText('1 offre trouvée sur 2')).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: 'Type : Logistique ×' }));
+  expect(screen.getByText('1 offre trouvée sur 2')).toBeInTheDocument();
 });
 
 test('propose un parcours liste puis fiche avec retour explicite sur mobile', async () => {

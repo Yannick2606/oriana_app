@@ -10,6 +10,9 @@ import {
 } from '../components/ui';
 
 const natureLabels = { vente: 'Vente', location: 'Location', vente_et_location: 'Vente & location' };
+const typeBienLabels = {
+  activite: 'Activité', bureaux: 'Bureaux', commerce: 'Commerce', logistique: 'Logistique', terrain: 'Terrain',
+};
 const tabItems = [
   { id: 'synthese', label: 'Synthèse' },
   { id: 'bien', label: 'Bien & surfaces' },
@@ -30,6 +33,16 @@ const money = (value) => value || value === 0 ? `${Number(value).toLocaleString(
 const surface = (value) => value || value === 0 ? `${Number(value).toLocaleString('fr-FR')} m²` : 'À renseigner';
 const optionalNumber = (value) => value === '' ? undefined : Number(value);
 const listIds = (value) => Array.isArray(value) ? value.filter((item) => item !== 'L').map(Number) : [];
+const normalizeTypeBien = (value) => typeof value === 'string' ? value.trim().toLocaleLowerCase('fr') : '';
+
+function offerTypeBiens(offer, data) {
+  const lot = data.lots.find((item) => Number(item.id) === Number(offer.lot_id));
+  const cellIds = listIds(lot?.cellules);
+  return [...new Set(data.cells
+    .filter((cell) => cellIds.includes(Number(cell.id)))
+    .map((cell) => normalizeTypeBien(cell.type_bien))
+    .filter(Boolean))];
+}
 
 function OfferEditor({ record, lots, pending, onCancel, onSave }) {
   const [form, setForm] = useState({
@@ -163,6 +176,7 @@ export function OffresPage() {
   const [activeTab, setActiveTab] = useState('synthese');
   const [query, setQuery] = useState('');
   const [natureFilter, setNatureFilter] = useState('toutes');
+  const [typeBienFilter, setTypeBienFilter] = useState('tous');
   const [mobileDetail, setMobileDetail] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -193,12 +207,19 @@ export function OffresPage() {
     const normalizedQuery = query.trim().toLocaleLowerCase('fr');
     return data.offers.filter((offer) => {
       const matchesNature = natureFilter === 'toutes' || offer.nature === natureFilter;
+      const matchesTypeBien = typeBienFilter === 'tous' || offerTypeBiens(offer, data).includes(typeBienFilter);
       const searchable = [offer.nom, offer.numero, offer.ville, offer.code_postal]
         .filter(Boolean).join(' ').toLocaleLowerCase('fr');
-      return matchesNature && (!normalizedQuery || searchable.includes(normalizedQuery));
+      return matchesNature && matchesTypeBien && (!normalizedQuery || searchable.includes(normalizedQuery));
     });
-  }, [data.offers, natureFilter, query]);
-  const selected = data.offers.find((offer) => offer.id === selectedId);
+  }, [data, natureFilter, query, typeBienFilter]);
+  const availableTypeBiens = useMemo(() => [...new Set(data.offers.flatMap(
+    (offer) => offerTypeBiens(offer, data),
+  ))].filter((type) => typeBienLabels[type]).sort((a, b) => typeBienLabels[a].localeCompare(typeBienLabels[b], 'fr')), [data]);
+  const hasActiveFilters = Boolean(query.trim()) || natureFilter !== 'toutes' || typeBienFilter !== 'tous';
+  const effectiveSelectedId = visibleOffers.some((offer) => offer.id === selectedId)
+    ? selectedId : visibleOffers[0]?.id || null;
+  const selected = data.offers.find((offer) => offer.id === effectiveSelectedId);
   const relations = useMemo(() => {
     const lot = data.lots.find((item) => Number(item.id) === Number(selected?.lot_id));
     const cellIds = listIds(lot?.cellules);
@@ -217,6 +238,11 @@ export function OffresPage() {
     setActiveTab('synthese');
     setMobileDetail(true);
   }
+  function resetFilters() {
+    setQuery('');
+    setNatureFilter('toutes');
+    setTypeBienFilter('tous');
+  }
   async function saveOffer(payload) {
     setPending(true);
     try {
@@ -234,18 +260,28 @@ export function OffresPage() {
         <section aria-label="Liste des offres" className={mobileDetail ? 'hidden self-start lg:block' : 'self-start'}>
           <div className="mb-4 flex items-start justify-between gap-3">
             <div><p className="text-xs font-bold uppercase tracking-[.16em] text-oriana-lavande">Portefeuille commercial</p><h2 className="mt-1 font-titre text-2xl">Offres</h2></div>
-            <Badge>{visibleOffers.length} sur {data.offers.length}</Badge>
+            <Badge><span aria-live="polite">{visibleOffers.length} {visibleOffers.length === 1 ? 'offre trouvée' : 'offres trouvées'} sur {data.offers.length}</span></Badge>
           </div>
-          <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_10rem] lg:grid-cols-1">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
             <SearchBar value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Nom, numéro ou ville"/>
             <Select aria-label="Filtrer par nature" value={natureFilter} onChange={(event) => setNatureFilter(event.target.value)}>
               <option value="toutes">Toutes les natures</option><option value="vente">Vente</option>
               <option value="location">Location</option><option value="vente_et_location">Vente & location</option>
             </Select>
+            <Select aria-label="Filtrer par type de bien" value={typeBienFilter} onChange={(event) => setTypeBienFilter(event.target.value)}>
+              <option value="tous">Tous les types de bien</option>
+              {availableTypeBiens.map((type) => <option key={type} value={type}>{typeBienLabels[type]}</option>)}
+            </Select>
           </div>
+          {hasActiveFilters && <div aria-label="Filtres actifs" className="mt-3 flex flex-wrap items-center gap-2">
+            {query.trim() && <button type="button" className="rounded-full border border-oriana-bordure bg-oriana-surfaceAlt px-3 py-1 text-xs hover:border-oriana-lavande" onClick={() => setQuery('')}>Recherche : {query.trim()} ×</button>}
+            {natureFilter !== 'toutes' && <button type="button" className="rounded-full border border-oriana-bordure bg-oriana-surfaceAlt px-3 py-1 text-xs hover:border-oriana-lavande" onClick={() => setNatureFilter('toutes')}>Nature : {natureLabels[natureFilter]} ×</button>}
+            {typeBienFilter !== 'tous' && <button type="button" className="rounded-full border border-oriana-bordure bg-oriana-surfaceAlt px-3 py-1 text-xs hover:border-oriana-lavande" onClick={() => setTypeBienFilter('tous')}>Type : {typeBienLabels[typeBienFilter]} ×</button>}
+            <button type="button" className="px-2 py-1 text-xs font-semibold text-oriana-lavande hover:underline" onClick={resetFilters}>Réinitialiser les filtres</button>
+          </div>}
           <div className="mt-3 max-h-[42rem] space-y-2 overflow-y-auto pr-1">
-            {visibleOffers.map((offer) => <button type="button" key={offer.id} aria-pressed={offer.id === selectedId} onClick={() => chooseOffer(offer.id)} className={`w-full overflow-hidden rounded-oriana border text-left transition ${offer.id === selectedId ? 'border-oriana-lavande bg-oriana-violet/15 shadow-oriana' : 'border-oriana-bordure bg-oriana-surface hover:bg-oriana-surfaceAlt'}`}>{offer.photo && <img className="aspect-[4/1] w-full object-cover" src={offer.photo} alt=""/>}<span className="flex items-start gap-3 p-3"><span className="mt-0.5 rounded-lg bg-oriana-violet/15 p-2 text-oriana-lavande"><BadgeEuro size={17}/></span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-semibold">{offer.nom || offer.numero || `Offre #${offer.id}`}</span><span className="mt-1 block truncate text-xs text-oriana-discret">{[natureLabels[offer.nature], offer.ville].filter(Boolean).join(' · ')}</span></span><ChevronRight className="mt-2 shrink-0 text-oriana-discret" size={15}/></span></button>)}
-            {visibleOffers.length === 0 && <p className="rounded-lg border border-dashed border-oriana-bordure p-6 text-center text-sm text-oriana-discret">Aucune offre ne correspond à ces critères.</p>}
+            {visibleOffers.map((offer) => <button type="button" key={offer.id} aria-pressed={offer.id === effectiveSelectedId} onClick={() => chooseOffer(offer.id)} className={`w-full overflow-hidden rounded-oriana border text-left transition ${offer.id === effectiveSelectedId ? 'border-oriana-lavande bg-oriana-violet/15 shadow-oriana' : 'border-oriana-bordure bg-oriana-surface hover:bg-oriana-surfaceAlt'}`}>{offer.photo && <img className="aspect-[4/1] w-full object-cover" src={offer.photo} alt=""/>}<span className="flex items-start gap-3 p-3"><span className="mt-0.5 rounded-lg bg-oriana-violet/15 p-2 text-oriana-lavande"><BadgeEuro size={17}/></span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-semibold">{offer.nom || offer.numero || `Offre #${offer.id}`}</span><span className="mt-1 block truncate text-xs text-oriana-discret">{[natureLabels[offer.nature], offer.ville].filter(Boolean).join(' · ')}</span></span><ChevronRight className="mt-2 shrink-0 text-oriana-discret" size={15}/></span></button>)}
+            {visibleOffers.length === 0 && <div className="rounded-lg border border-dashed border-oriana-bordure p-6 text-center"><h3 className="text-sm font-semibold">Aucune offre trouvée</h3><p className="mt-1 text-xs text-oriana-discret">Modifiez la recherche ou les filtres pour retrouver une offre.</p><Button className="mt-4" variant="secondary" size="sm" onClick={resetFilters}>Réinitialiser les filtres</Button></div>}
           </div>
         </section>
         <section aria-label="Fiche de l’offre sélectionnée" className={mobileDetail ? 'min-w-0 space-y-5' : 'hidden min-w-0 space-y-5 lg:block'}>
