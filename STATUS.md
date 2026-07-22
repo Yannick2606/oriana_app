@@ -18,6 +18,16 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-22 — T-34A : Mandat ajouté au contrat documentaire pur**
+  - Après relecture de l'ADN, de la Constitution, de la Charte et de DEC-040, `mandat` devient la
+    cinquième valeur de `VALID_ATTACHMENT_TARGETS` avec Société, Contact, Demande et Offre.
+  - Les politiques de rattachement et les commandes de brouillon acceptent ce type canonique ; les
+    tests de catalogue, de politique et de brouillon couvrent explicitement l'extension.
+  - Vérifications réussies : frontières d'architecture, ESLint, 23 tests documentaires ciblés et
+    suite backend complète (162 tests, 161 réussis, 1 test PostgreSQL explicitement ignoré).
+  - Le changement reste un contrat pur : aucune route, migration, persistance, interface d'import,
+    donnée, variable d'environnement, connexion fournisseur, activation de stockage ou bascule de
+    source de vérité n'est ajoutée.
 - **2026-07-22 — T-34 : pièce jointe du Mandat cadrée**
   - La revue de l'ADN, de la Constitution et de la Charte confirme que l'original signé doit rester
     une source gouvernée, versionnée et traçable du socle, distincte des champs métier du Mandat.
@@ -27,10 +37,10 @@
   - Le parcours futur couvre ajout explicite, transfert, quarantaine antivirus, disponibilité,
     téléchargement contrôlé et nouvelle version sans écrasement. La prévisualisation reste en
     lecture seule et ne doit afficher aucun bouton sans effet.
-  - État réel inchangé : le noyau pur reconnaît encore quatre cibles ; aucun code, migration, route,
-    stockage, fournisseur, secret, commit, push ou déploiement n'est ajouté par ce cadrage. La mise
-    en œuvre reste distribuée entre T-34A et T-34E, soumise au choix du stockage, à la restauration
-    vérifiée, à la recette des droits et au Go T-30.
+  - État observé lors du cadrage : le noyau pur reconnaissait encore quatre cibles ; aucun code,
+    migration, route, stockage, fournisseur, secret, commit, push ou déploiement n'avait alors été
+    ajouté. La mise en œuvre reste distribuée entre T-34A et T-34E, soumise au choix du stockage,
+    à la restauration vérifiée, à la recette des droits et au Go T-30.
 - **2026-07-22 — T-46 : messagerie relationnelle, notifications et bot client cadrés**
   - La capacité est positionnée après les développements déjà inscrits dans la roadmap. Son
     implémentation dépend notamment du portail T-40, de l'AI Gateway T-42, du paramétrage Notification

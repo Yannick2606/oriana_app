@@ -85,8 +85,8 @@ test('applique le profil audio DEC-018 sans accepter WAV', () => {
   }), (error) => error.code === 'INVALID_DOCUMENT_TYPE');
 });
 
-test('autorise uniquement les quatre cibles DEC-021', () => {
-  for (const target of ['societe', 'contact', 'demande', 'offre']) {
+test('autorise uniquement les cinq cibles DEC-021 et DEC-040', () => {
+  for (const target of ['societe', 'contact', 'demande', 'offre', 'mandat']) {
     assert.equal(validateAttachmentTarget(target), target);
   }
   for (const target of ['client', 'opportunite', 'territoire', 'tache']) {

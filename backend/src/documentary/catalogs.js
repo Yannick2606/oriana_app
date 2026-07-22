@@ -20,6 +20,7 @@ export const VALID_ATTACHMENT_TARGETS = deepFreeze([
   'contact',
   'demande',
   'offre',
+  'mandat',
 ]);
 
 export const FILE_CATEGORIES = deepFreeze([

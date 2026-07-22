@@ -43,6 +43,10 @@ réseau, filesystem, environnement ou SDK fournisseur.
 Les valeurs sont exportées sans lecture de configuration. Les seuils de production resteront
 injectables plus tard ; ce premier lot fournit seulement les valeurs par défaut validées.
 
+> **Extension du 22 juillet 2026 — DEC-040.** La preuve ci-dessus conserve les quatre cibles du
+> lot initial. Le catalogue pur reconnaît désormais aussi `mandat`, cinquième cible validable, sans
+> ajouter de route, de persistance, de stockage objet ni de téléversement.
+
 ### 2. Politiques pures
 
 `backend/src/documentary/policies.js` contient uniquement des fonctions déterministes :

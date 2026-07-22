@@ -17,7 +17,9 @@ import {
 
 test('expose les catalogues fermés validés pour T-34A', () => {
   assert.deepEqual(CAPTURE_TYPES, ['signal_terrain', 'article_document', 'carte_visite']);
-  assert.deepEqual(VALID_ATTACHMENT_TARGETS, ['societe', 'contact', 'demande', 'offre']);
+  assert.deepEqual(VALID_ATTACHMENT_TARGETS, [
+    'societe', 'contact', 'demande', 'offre', 'mandat',
+  ]);
   assert.deepEqual(FILE_CATEGORIES, ['original_document', 'photo_originale', 'apercu']);
   assert.deepEqual(MALWARE_VERDICTS, ['sain', 'infecte', 'non_analysable', 'erreur', 'indisponible']);
 

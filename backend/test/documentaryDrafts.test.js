@@ -93,6 +93,10 @@ test('valide un rattachement complet ou sa suppression explicite', () => {
     type: 'carte_visite',
     rattachement_propose: null,
   }).rattachement_propose, null);
+  assert.deepEqual(validateCreateDraftCommand({
+    type: 'article_document',
+    rattachement_propose: { type: 'mandat', id: 31 },
+  }).rattachement_propose, { type: 'mandat', id: 31 });
 
   for (const rattachement_propose of [
     {},
