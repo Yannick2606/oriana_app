@@ -77,20 +77,39 @@ puis 161 tests backend sur 162 passent, avec l’intégration PostgreSQL ignoré
 preuves et limites sont détaillées dans l’[audit de couverture automatisée](AUDIT_COUVERTURE_AUTOMATISEE_T30A_2026-07-20.md).
 Cette référence ne valide aucun scénario humain de la matrice.
 
+Le 22 juillet 2026, le commit `36ba286` a également passé lint et build frontend, 68 tests
+frontend sur 68, les frontières d’architecture et le lint backend, puis 161 tests backend sur 162,
+avec l’intégration PostgreSQL ignorée comme prévu. Il a ensuite été publié sur la branche
+`agent/t30a-interactions` et installé uniquement dans la prévisualisation isolée, où les deux
+conteneurs ont été observés `healthy`. Cette preuve n’autorise ni la production ni la bascule T-30.
+
 ## 4. Accès attendu par rôle
 
 | Module | Consultant | Master consultant | Directeur d’agence | Administrateur d’agence | Super administrateur |
 |---|---:|---:|---:|---:|---:|
-| Accueil | Oui | Oui | Oui | Oui | Non |
-| Patrimoine | Oui, périmètre propre | Oui, équipe active en lecture | Oui, agence | Oui, agence | Non, aucun accès métier implicite |
-| Offres | Oui, périmètre propre | Oui, équipe active en lecture | Oui, agence | Oui, agence | Non, aucun accès métier implicite |
-| CRM et Matching | Oui, périmètre propre ou partagé | Oui, équipe active | Oui, agence | Oui, agence | Non, aucun accès métier implicite |
-| Agents IA | Oui, sur demande autorisée | Oui, sur demande autorisée | Oui, agence | Oui, agence | Non |
+| Accueil | Oui | Oui | Oui | Oui | Oui |
+| Patrimoine | Oui, périmètre propre | Oui, équipe active en lecture | Oui, agence | Non | Non, aucun accès métier implicite |
+| Offres | Oui, périmètre propre | Oui, équipe active en lecture | Oui, agence | Non | Non, aucun accès métier implicite |
+| CRM et Matching | Oui, périmètre propre ou partagé | Oui, équipe active | Oui, agence | Non | Non, aucun accès métier implicite |
+| Agents IA | Oui, sur demande autorisée | Oui, sur demande autorisée | Oui, agence | Non | Non |
 | Auto-formation | Oui | Oui | Oui | Oui | Oui |
 | Administration | Non | Non | Rattachement et état autorisés | Comptes de niveau inférieur de l’agence | Inter-agences et rôles selon politiques serveur |
 
 Toute divergence entre cette visibilité et la réponse du backend est un échec. Une entrée masquée
 dans le frontend doit aussi être refusée par appel direct au backend.
+
+### Contrôle visuel ciblé de DEC-041 — 22 juillet 2026
+
+Sur le commit `36ba286`, dans la prévisualisation isolée et avec Chrome desktop à la souris, les
+cinq rôles ont été rejoués manuellement. Le menu, les raccourcis d’accueil, le sélecteur unique et
+le rappel latéral correspondent à la matrice ci-dessus. Le passage d’une vue métier vers
+Administrateur d’agence ramène à Accueil ; Administrateur d’agence et Super administrateur
+n’exposent aucun module métier. Les captures ont été fournies pendant la recette interactive mais
+ne sont pas archivées dans le dépôt.
+
+Ce contrôle est **réussi dans son périmètre visuel**. Il ne suffit pas à passer `SHELL-03` à
+`Réussi` : les flèches, `Échap`, la restauration du focus, le smartphone et les refus par appels
+directs au backend restent à exécuter.
 
 ## 5. Scénarios transverses
 
@@ -116,7 +135,7 @@ dans le frontend doit aussi être refusée par appel direct au backend.
 
 | ID | Action | Résultat attendu | Rôles / environnement | Statut | Preuve / anomalie |
 |---|---|---|---|---|---|
-| PAT-01 | Parcourir Site → Bâtiment → Cellule → Lot | Hiérarchie lisible et retour mobile sans perte de contexte | Quatre rôles métier, prévisualisation | À exécuter | — |
+| PAT-01 | Parcourir Site → Bâtiment → Cellule → Lot | Hiérarchie lisible et retour mobile sans perte de contexte | Trois rôles métier, prévisualisation | À exécuter | — |
 | PAT-02 | Créer un bâtiment puis un lot | Données créées dans le bon périmètre et relues | Rôles autorisés, recette inscriptible | Bloqué | Environnement non créé |
 | PAT-03 | Modifier un lot et sa qualification | Validation typée, succès puis relecture | Rôles autorisés, recette inscriptible | Bloqué | Environnement non créé |
 | PAT-04 | Tenter une écriture hors périmètre | Refus serveur sans donnée de l’autre périmètre | Cinq rôles par appels directs | Bloqué | Environnement non créé |
@@ -125,7 +144,7 @@ dans le frontend doit aussi être refusée par appel direct au backend.
 #### Fiche guidée PAT-01 — à exécuter après mise à jour de la prévisualisation
 
 Cette fiche prépare la recette humaine du commit `2ff6144` sans la déclarer réussie. Pour chacun
-des quatre rôles métier, consigner séparément l’appareil, le navigateur et le mode d’interaction :
+des trois rôles métier, consigner séparément l’appareil, le navigateur et le mode d’interaction :
 
 1. ouvrir Patrimoine et vérifier que **Sites** est le niveau actif avec son compteur ;
 2. sélectionner un site, utiliser **Explorer les bâtiments**, puis poursuivre jusqu’au lot ;
@@ -138,13 +157,13 @@ des quatre rôles métier, consigner séparément l’appareil, le navigateur et
 
 Support automatisé local au 21 juillet 2026 : le parcours guidé, le retour mobile et la reprise
 après indisponibilité sont couverts ; la suite frontend compte 61 tests réussis. Cette preuve ne
-remplace ni le contrôle visuel, ni les quatre rôles, ni le backend effectivement recetté.
+remplace ni le contrôle visuel, ni les trois rôles métier, ni le backend effectivement recetté.
 
 ### Offres
 
 | ID | Action | Résultat attendu | Rôles / environnement | Statut | Preuve / anomalie |
 |---|---|---|---|---|---|
-| OFF-01 | Ouvrir une offre et ses huit vues | Onglets utilisables au clavier et tactile, états indisponibles explicites | Quatre rôles métier, prévisualisation | À exécuter | — |
+| OFF-01 | Ouvrir une offre et ses huit vues | Onglets utilisables au clavier et tactile, états indisponibles explicites | Trois rôles métier, prévisualisation | À exécuter | — |
 | OFF-02 | Créer une offre simple ou double nature | Offre et conditions cohérentes, rattachement autorisé seulement | Recette inscriptible | Bloqué | Environnement non créé |
 | OFF-03 | Modifier séparément vente et location | Valeurs exactes relues, aucune condition écrasée | Recette inscriptible | Bloqué | Environnement non créé |
 | OFF-04 | Échec d’enregistrement | Formulaire reste ouvert, valeurs préservées, nouvelle tentative possible | Recette inscriptible | Bloqué | Environnement non créé |
@@ -152,7 +171,7 @@ remplace ni le contrôle visuel, ni les quatre rôles, ni le backend effectiveme
 
 #### Fiche guidée OFF-01 — prévisualisation en lecture seule
 
-1. ouvrir **Offres** avec chacun des quatre rôles métier et confirmer l’absence de commande
+1. ouvrir **Offres** avec chacun des trois rôles métier et confirmer l’absence de commande
    d’écriture dans la prévisualisation ;
 2. sur desktop, rechercher une offre par nom puis par ville et vérifier que la liste et la fiche
    restent visibles ensemble ;
@@ -172,26 +191,25 @@ validés sur desktop. Flèche droite, Début et Fin activent au clavier la vue e
 Sur smartphone, le parcours liste → fiche → retour conserve la recherche et son compteur. Les
 profils Consultant et Master consultant accèdent à Offres en lecture seule, sans commande
 d’écriture ni accès Administration. La fiche reste cohérente avec la liste filtrée et les capacités
-non livrées ont un état explicite. Une anomalie empêche toutefois la clôture : les dernières options
-du sélecteur de rôle latéral débordent sous la fenêtre et ne sont pas activables à la souris ; le
-profil Administrateur d’agence n’a donc pas été rejoué. OFF-01 reste « À exécuter » jusqu’au
-contrôle du quatrième rôle. Le correctif local ouvre désormais ce menu vers le haut, borne sa
-hauteur et autorise son défilement ; il reste à le publier dans la prévisualisation et à le recetter.
+non livrées ont un état explicite. L’ancienne anomalie du second sélecteur latéral est résolue par
+DEC-041 : le sélecteur interactif est désormais unique dans l’en-tête et les rôles administratifs
+sans accès métier implicite ne font plus partie du périmètre d’OFF-01. OFF-01 reste néanmoins
+« À exécuter » jusqu’à l’archivage de preuves complètes et au contrôle du backend recetté.
 
 Support automatisé local au 22 juillet 2026 : recherche et filtres combinés, comptage, ouverture
 effective des huit vues, états indisponibles explicites, parcours mobile avec conservation de la
 recherche, navigation clavier par Flèche droite, Début et Fin, et lecture seule sont couverts ; la
-suite frontend compte 67 tests réussis. Cette preuve ne
-remplace ni le contrôle visuel, ni les quatre rôles, ni le backend effectivement recetté.
+suite frontend compte désormais 68 tests réussis. Cette preuve ne remplace ni le contrôle visuel,
+ni les trois rôles métier, ni le backend effectivement recetté.
 
 ### CRM et Matching
 
 | ID | Action | Résultat attendu | Rôles / environnement | Statut | Preuve / anomalie |
 |---|---|---|---|---|---|
-| CRM-01 | Rechercher puis ouvrir une société | Liste puis fiche, sans vue en trois colonnes sur smartphone | Quatre rôles métier, prévisualisation | À exécuter | — |
-| CRM-02 | Parcourir Société → Contact → Demande | Contexte et retour conservés sur desktop et smartphone | Quatre rôles métier, prévisualisation | À exécuter | — |
+| CRM-01 | Rechercher puis ouvrir une société | Liste puis fiche, sans vue en trois colonnes sur smartphone | Trois rôles métier, prévisualisation | À exécuter | — |
+| CRM-02 | Parcourir Société → Contact → Demande | Contexte et retour conservés sur desktop et smartphone | Trois rôles métier, prévisualisation | À exécuter | — |
 | CRM-03 | Créer société, contact et demande | Relations cohérentes, propriété imposée par le serveur | Recette inscriptible | Bloqué | Environnement non créé |
-| CRM-04 | Afficher le Matching d’une demande | Résultats triés reçus du backend, sans recalcul frontend | Quatre rôles métier | À exécuter | — |
+| CRM-04 | Afficher le Matching d’une demande | Résultats triés reçus du backend, sans recalcul frontend | Trois rôles métier | À exécuter | — |
 | CRM-05 | Tenter une relation inter-agences incohérente | Refus serveur et aucune donnée étrangère affichée | Recette inscriptible | Bloqué | Environnement non créé |
 | CRM-06 | Erreur de chargement ou sauvegarde | Message utile, contexte préservé et réessai possible | Desktop et smartphone | Bloqué | Environnement non créé |
 
@@ -199,7 +217,7 @@ remplace ni le contrôle visuel, ni les quatre rôles, ni le backend effectiveme
 
 | ID | Action | Résultat attendu | Rôles / environnement | Statut | Preuve / anomalie |
 |---|---|---|---|---|---|
-| AGT-01 | Ouvrir Agents IA sans connecteur | Indisponibilité explicite, aucune capacité simulée | Quatre rôles métier, prévisualisation | À exécuter | — |
+| AGT-01 | Ouvrir Agents IA sans connecteur | Indisponibilité explicite, aucune capacité simulée | Trois rôles métier, prévisualisation | À exécuter | — |
 | AGT-02 | Déclencher un agent sur une demande autorisée | Réponse immédiate, interface utilisable, statut en attente | Recette inscriptible et connecteur isolé autorisé | Bloqué | Environnement et connecteur non créés |
 | AGT-03 | Recevoir le callback puis le résultat | Progression et résultat proposés, aucun secret navigateur | Recette inscriptible et connecteur isolé autorisé | Bloqué | Environnement et connecteur non créés |
 | AGT-04 | Faux callback, agent inconnu ou demande interdite | Refus authentifié et absence de fuite | Appels directs backend | Bloqué | Connecteur de recette non créé |
@@ -223,11 +241,11 @@ l’accueil ne suffit pas.
 
 | Rôle | Desktop clavier | Desktop souris | Smartphone tactile | Particularité à prouver | Statut global |
 |---|---|---|---|---|---|
-| Consultant | À exécuter | À exécuter | À exécuter | Périmètre propre, aucun accès Administration | Partiel historique |
-| Master consultant | À exécuter | À exécuter | À exécuter | Équipe active en lecture, aucun accès Administration | Partiel historique ; périmètre équipe manquant |
-| Directeur d’agence | À exécuter | À exécuter | À exécuter | Agence et rattachements autorisés seulement | Non recetté |
-| Administrateur d’agence | À exécuter | À exécuter | À exécuter | Gestion des niveaux inférieurs de son agence | Non recetté |
-| Super administrateur | À exécuter | À exécuter | À exécuter | Administration inter-agences, aucun métier implicite | Partiel historique |
+| Consultant | À exécuter | Contrôle DEC-041 réussi | À exécuter | Périmètre propre, aucun accès Administration | Partiel ; accueil et menu validés |
+| Master consultant | À exécuter | Contrôle DEC-041 réussi | À exécuter | Équipe active en lecture, aucun accès Administration | Partiel ; accueil et menu validés |
+| Directeur d’agence | À exécuter | Contrôle DEC-041 réussi | À exécuter | Agence et rattachements autorisés seulement | Partiel ; accueil et menu validés |
+| Administrateur d’agence | À exécuter | Contrôle DEC-041 réussi | À exécuter | Administration des niveaux inférieurs, aucun métier implicite | Partiel ; accueil et menu validés |
+| Super administrateur | À exécuter | Contrôle DEC-041 réussi | À exécuter | Administration inter-agences, aucun métier implicite | Partiel ; accueil et menu validés |
 
 Les validations historiques consignées dans `STATUS.md` servent de contexte, mais doivent être
 rejouées sur le commit et l’environnement inscrits dans la preuve finale.
@@ -236,6 +254,7 @@ rejouées sur le commit et l’environnement inscrits dans la preuve finale.
 
 | Date | Commit | Environnement | Testeur | Rôle | Appareil / navigateur | IDs exécutés | Résultat | Preuve / anomalie |
 |---|---|---|---|---|---|---|---|---|
+| 2026-07-22 | `36ba286` | Prévisualisation T-32 | Validation humaine utilisateur | Cinq rôles | Desktop / Chrome / souris | DEC-041, visibilité seulement | Réussi | Captures interactives non archivées ; clavier, smartphone et refus serveur restant à exécuter |
 | — | — | — | — | — | — | — | À exécuter | — |
 
 ## 9. Critères de clôture et autorisation humaine

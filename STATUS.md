@@ -18,6 +18,20 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-22 — T-30A : contrôle visuel de la navigation par rôle achevé en prévisualisation**
+  - La recette manuelle sur le commit `36ba286` confirme, sur Chrome desktop, un unique sélecteur
+    de rôle dans l’en-tête et un rappel non interactif dans la barre latérale pour les cinq rôles.
+  - Consultant et Master consultant disposent des vues métier sans Administration ; le Directeur
+    d’agence dispose des vues métier et d’Administration ; Administrateur d’agence et Super
+    administrateur ne disposent que d’Accueil, Auto-formation et Administration.
+  - Le changement d’un rôle métier vers un rôle administratif ramène vers Accueil lorsque la vue
+    courante n’est plus autorisée. Les textes d’accueil distinguent le périmètre personnel, équipe,
+    agence et plateforme.
+  - Le commit a été poussé sur `agent/t30a-interactions`, puis déployé uniquement dans la
+    prévisualisation isolée `oriana-preview.boreal.immo` ; frontend et backend y ont été observés
+    `healthy`. La production n’a pas été modifiée.
+  - Cette preuve clôt le contrôle visuel ciblé de DEC-041, mais pas T-30A : navigation clavier,
+    smartphone, appels directs de refus serveur et scénarios métier complets restent à exécuter.
 - **2026-07-22 — T-30A : navigation recentrée selon le rôle actif**
   - La revue préalable de l’ADN, de la Constitution, de la Charte et des décisions d’architecture
     confirme que le rôle actif doit réduire la navigation sans devenir une autorité de sécurité.
