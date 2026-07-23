@@ -18,6 +18,21 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-23 — T-30A : rejeu des cinq rôles confirmé dans la prévisualisation**
+  - Sur le commit `0360537`, la recette humaine desktop du bac à sable confirme que le changement
+    effectif de rôle est accepté pour Consultant, Master consultant, Directeur d’agence,
+    Administrateur d’agence et Super administrateur. Le rôle actif et son accueil sont actualisés
+    après chaque changement.
+  - Consultant et Master consultant voient Patrimoine, Offres, CRM, Matching, Agents IA et
+    Auto-formation, sans Administration. Directeur d’agence voit ces modules et Administration.
+    Administrateur d’agence et Super administrateur voient uniquement Accueil, Auto-formation et
+    Administration, sans module métier implicite.
+  - Un seul sélecteur de rôle interactif est présent et l’API est signalée disponible. Le dialogue
+    d’accueil propre à la prévisualisation a été fermé pendant le parcours sans bloquer les
+    changements de rôle.
+  - Cette preuve valide le rejeu visuel et fonctionnel ciblé de DEC-041/DEC-042 sur desktop. Elle ne
+    remplace pas les appels directs de refus serveur, ni la recette complète au clavier et sur
+    smartphone ; T-30A reste active et T-30 reste bloquée.
 - **2026-07-22 — T-30A : autorité `admin_agence` alignée et changement de rôle instrumenté**
   - Après relecture de l’ADN, de la Constitution et de la matrice canonique, DEC-042 tranche la
     contradiction relevée : `admin_agence` administre les comptes et habilitations de son agence,

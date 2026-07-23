@@ -112,6 +112,26 @@ ensuite sont conformes. Le changement effectif de rôle a finalement réussi apr
 la session, mais les refus par appels directs au backend restent à exécuter avant de passer
 `SHELL-03` à `Réussi`.
 
+### Rejeu ciblé de DEC-041 et DEC-042 — 23 juillet 2026
+
+Sur le commit `0360537`, dans la prévisualisation isolée et avec le bac à sable ouvert sur
+desktop, les cinq changements de rôle ont été acceptés et l’interface a actualisé le rôle actif,
+son texte d’accueil et sa navigation :
+
+| Rôle actif | Modules observés en plus d’Accueil | Résultat |
+|---|---|---|
+| Consultant | Patrimoine, Offres, CRM, Matching, Agents IA, Auto-formation | Conforme ; Administration absente |
+| Master consultant | Patrimoine, Offres, CRM, Matching, Agents IA, Auto-formation | Conforme ; Administration absente |
+| Directeur d’agence | Patrimoine, Offres, CRM, Matching, Agents IA, Auto-formation, Administration | Conforme |
+| Administrateur d’agence | Auto-formation, Administration | Conforme ; aucun module métier implicite |
+| Super administrateur | Auto-formation, Administration | Conforme ; aucun module métier implicite |
+
+Un seul sélecteur de rôle interactif est présent et l’interface signale l’API disponible. Le
+dialogue d’accueil propre à la prévisualisation a été fermé pendant le parcours sans empêcher les
+changements de rôle. Ce rejeu est **réussi dans son périmètre desktop et navigation**. Aucun appel
+direct destiné à prouver les refus du backend n’a été exécuté pendant cette passe ; `SHELL-03` et
+la clôture de T-30A restent donc ouverts.
+
 ### Anomalies ouvertes après contrôle smartphone — 22 juillet 2026
 
 - À 320 px, aucun débordement horizontal du document n’est observé. Les flèches déplacent le focus
@@ -270,6 +290,7 @@ rejouées sur le commit et l’environnement inscrits dans la preuve finale.
 
 | Date | Commit | Environnement | Testeur | Rôle | Appareil / navigateur | IDs exécutés | Résultat | Preuve / anomalie |
 |---|---|---|---|---|---|---|---|---|
+| 2026-07-23 | `0360537` | Prévisualisation T-32 | Validation humaine utilisateur | Cinq rôles | Desktop / navigateur intégré / souris | DEC-041 et DEC-042, changement de rôle et visibilité | Réussi | Cinq changements acceptés, navigation conforme et sélecteur unique ; refus serveur directs non rejoués |
 | 2026-07-22 | `36ba286` | Prévisualisation T-32 | Validation humaine utilisateur | Cinq rôles | Desktop / Chrome / souris | DEC-041, visibilité seulement | Réussi | Captures interactives non archivées ; clavier, smartphone et refus serveur restant à exécuter |
 | — | — | — | — | — | — | — | À exécuter | — |
 
