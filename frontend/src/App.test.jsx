@@ -212,11 +212,26 @@ test('un rôle inconnu affiche une issue explicite au lieu de produire un écran
 test('la navigation mobile s’ouvre, navigue puis se referme', async () => {
   renderApp('consultant');
   const menu = await screen.findByRole('button', { name: 'Ouvrir la navigation' });
+  expect(menu).toHaveAttribute('aria-expanded', 'false');
   fireEvent.click(menu);
+  expect(menu).toHaveAttribute('aria-expanded', 'true');
   expect(screen.getByRole('button', { name: 'Fermer la navigation' })).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: 'CRM' }));
   expect(await screen.findByRole('heading', { name: 'CRM' })).toBeInTheDocument();
   expect(screen.queryByRole('button', { name: 'Fermer la navigation' })).not.toBeInTheDocument();
+});
+
+test('Échap ferme la navigation mobile et restitue le focus à son déclencheur', async () => {
+  renderApp('consultant');
+  const menu = await screen.findByRole('button', { name: 'Ouvrir la navigation' });
+  fireEvent.click(menu);
+  expect(screen.getByRole('button', { name: 'Fermer la navigation' })).toBeInTheDocument();
+
+  fireEvent.keyDown(document, { key: 'Escape' });
+
+  expect(screen.queryByRole('button', { name: 'Fermer la navigation' })).not.toBeInTheDocument();
+  expect(menu).toHaveAttribute('aria-expanded', 'false');
+  expect(menu).toHaveFocus();
 });
 
 test('la marque complète et les noms accessibles restent présents lorsque la navigation est repliée', async () => {

@@ -132,6 +132,48 @@ changements de rôle. Ce rejeu est **réussi dans son périmètre desktop et nav
 direct destiné à prouver les refus du backend n’a été exécuté pendant cette passe ; `SHELL-03` et
 la clôture de T-30A restent donc ouverts.
 
+### Contrôle automatisé ciblé des autorisations — 23 juillet 2026
+
+Quatre suites backend ont été exécutées directement sur la branche
+`agent/t30a-interactions` synchronisée au commit `321b6f0` :
+
+```text
+node --test test/accessControl.test.js test/sandboxRoutes.test.js \
+  test/utilisateursRoutes.test.js test/roleModel.test.js
+```
+
+Résultat : `31` tests réussis, aucun échec. La preuve couvre les cinq rôles, les refus métier de
+`admin_agence` et `super_admin`, les périmètres consultant, master consultant et directeur
+d’agence, ainsi que les limites d’administration des comptes.
+
+Une session authentifiée « Super administrateur » a également été retrouvée sur la
+prévisualisation, où seuls Auto-formation et Administration sont exposés. L’outil de navigateur
+utilisé pour la recette bloque toutefois les appels inter-hôtes vers l’API sans donner accès aux
+cookies de session. Aucun secret n’a été lu et aucun contournement n’a été tenté. Ces tests
+constituent donc une **preuve technique locale du contrat serveur**, pas encore la preuve des codes
+HTTP effectivement renvoyés par l’API déployée. `SHELL-03` et la clôture de T-30A restent ouverts
+jusqu’à ce constat direct.
+
+### Contrôle interactif du shell et du smartphone — 23 juillet 2026
+
+Sur la prévisualisation synchronisée au commit `321b6f0`, une session « Super administrateur » a
+été exercée sans écriture métier. La recherche globale, les notifications, l’aide et l’assistant
+indisponible expliquent tous leur état dans un dialogue, fermé avec `Échap`. Le thème sombre est
+initial ; le thème clair choisi explicitement survit à un rechargement, puis le thème sombre a été
+restauré.
+
+Les viewports `375 × 812` et `320 × 568` ne présentent aucun débordement horizontal du document.
+Auto-formation affiche un parcours de deux étapes adapté au rôle et précise que la progression
+n’est pas enregistrée en prévisualisation. La déconnexion ramène à l’écran d’authentification.
+
+L’anomalie observée sur le commit `321b6f0` a été corrigée dans l’arbre local : `Échap` masque
+désormais le tiroir, met `aria-expanded` à `false` et restitue le focus au bouton d’ouverture. Un
+test frontend dédié couvre cette séquence ; lint, build Vite et les `71` tests frontend réussissent.
+La prévisualisation déployée n’embarque pas encore ce correctif. Une nouvelle passe à
+`320 × 568` confirme l’absence de débordement horizontal sur le socle déployé, mais le zoom
+navigateur natif à `200 %`, le tactile réel, la confirmation visuelle après déploiement, le refus
+d’une route protégée après déconnexion et l’état API indisponible restent à couvrir.
+
 ### Anomalies ouvertes après contrôle smartphone — 22 juillet 2026
 
 - À 320 px, aucun débordement horizontal du document n’est observé. Les flèches déplacent le focus
@@ -157,13 +199,13 @@ la clôture de T-30A restent donc ouverts.
 | AUTH-04 | Compte multirôle | Choix obligatoire d’un rôle attribué seulement | Clavier, souris, tactile | À exécuter | — |
 | AUTH-05 | Première connexion | Remplacement obligatoire du mot de passe provisoire | Environnement inscriptible | Bloqué | Environnement non créé |
 | AUTH-06 | Mot de passe oublié et lien de réinitialisation | Réponse neutre, lien utilisable une seule fois | Environnement inscriptible avec messagerie de recette | Bloqué | Environnement et messagerie non créés |
-| AUTH-07 | Déconnexion | Session détruite et routes protégées de nouveau refusées | Cinq rôles | À exécuter | — |
-| SHELL-01 | Parcourir la navigation ouverte et repliée | Nom accessible, focus visible, aucun débordement | 320 px, 375 px, desktop, zoom 200 % | À exécuter | — |
-| SHELL-02 | Utiliser recherche, notifications, aide et assistant indisponibles | Chaque action explique son état, aucun bouton silencieux | Clavier, souris, tactile | À exécuter | — |
-| SHELL-03 | Changer de rôle | Menu aux flèches, `Échap`, focus restauré, droits recalculés serveur | Compte multirôle | Partiel | Clavier et focus conformes à 320 px ; intégration HTTP locale réussie ; changement déployé `master_consultant` → `consultant` réussi après renouvellement de session ; refus directs des rôles interdits restant à exécuter |
-| SHELL-04 | Basculer le thème et recharger | Sombre par défaut, préférence explicite conservée sans donnée sensible | Desktop et smartphone | À exécuter | — |
+| AUTH-07 | Déconnexion | Session détruite et routes protégées de nouveau refusées | Cinq rôles | Partiel | Super administrateur ramené à la connexion ; refus d’une route protégée et quatre rôles restant à constater |
+| SHELL-01 | Parcourir la navigation ouverte et repliée | Nom accessible, focus visible, aucun débordement | 320 px, 375 px, desktop, zoom 200 % | Partiel | Aucun débordement à 320/375 px ; correction locale d’`Échap` couverte par test avec focus restitué et tiroir masqué ; confirmation visuelle après déploiement, zoom 200 % natif et tactile restant à exécuter |
+| SHELL-02 | Utiliser recherche, notifications, aide et assistant indisponibles | Chaque action explique son état, aucun bouton silencieux | Clavier, souris, tactile | Partiel | Quatre états explicites et dialogues fermables avec `Échap` ; tactile réel restant à exécuter |
+| SHELL-03 | Changer de rôle | Menu aux flèches, `Échap`, focus restauré, droits recalculés serveur | Compte multirôle | Partiel | Clavier et focus conformes à 320 px ; rejeu visuel des cinq rôles réussi ; 31 tests backend ciblés verts ; codes de refus de l’API déployée restant à constater |
+| SHELL-04 | Basculer le thème et recharger | Sombre par défaut, préférence explicite conservée sans donnée sensible | Desktop et smartphone | Réussi | Sombre initial ; clair conservé après rechargement ; sombre restauré et constaté à 320 px |
 | SHELL-05 | Simuler une API indisponible | État explicite et issue réaliste, aucune affirmation fictive | Desktop et smartphone | À exécuter | — |
-| FORM-01 | Parcourir l’Auto-formation | Dialogue accessible, progression liée au rôle, erreur explicite | Cinq rôles | À exécuter | — |
+| FORM-01 | Parcourir l’Auto-formation | Dialogue accessible, progression liée au rôle, erreur explicite | Cinq rôles | Partiel | Parcours Super administrateur de deux étapes et progression non enregistrée explicitement annoncée ; quatre rôles restant à exécuter |
 
 ## 6. Scénarios métier
 
@@ -263,7 +305,7 @@ ni les trois rôles métier, ni le backend effectivement recetté.
 
 | ID | Action | Résultat attendu | Rôles / environnement | Statut | Preuve / anomalie |
 |---|---|---|---|---|---|
-| ADM-01 | Ouvrir Administration ou appeler ses routes | Module visible uniquement aux trois rôles autorisés ; refus serveur sinon | Cinq rôles | À exécuter | — |
+| ADM-01 | Ouvrir Administration ou appeler ses routes | Module visible uniquement aux trois rôles autorisés ; refus serveur sinon | Cinq rôles | Partiel | Visibilité des cinq rôles conforme ; refus local de `/utilisateurs` vérifié par tests ciblés ; code HTTP de l’API déployée restant à constater |
 | ADM-02 | Rechercher et filtrer les comptes | Résultats réels du périmètre, états vide et erreur explicites | Directeur, admin d’agence, super admin | À exécuter | — |
 | ADM-03 | Rattacher un consultant à un master | Master éligible de la même agence ; compte courant protégé | Directeur et rôles autorisés, recette inscriptible | Bloqué | Environnement non créé |
 | ADM-04 | Modifier rôles, agence ou état | Champs disponibles selon le rôle ; contrôles répétés par le serveur | Admin d’agence et super admin, recette inscriptible | Bloqué | Environnement non créé |
@@ -290,6 +332,8 @@ rejouées sur le commit et l’environnement inscrits dans la preuve finale.
 
 | Date | Commit | Environnement | Testeur | Rôle | Appareil / navigateur | IDs exécutés | Résultat | Preuve / anomalie |
 |---|---|---|---|---|---|---|---|---|
+| 2026-07-23 | Arbre local basé sur `321b6f0` | Tests frontend + prévisualisation T-32 non redéployée | Codex | Consultant simulé / session non requise pour le reflow | Vitest et navigateur intégré à 320 × 568 | SHELL-01 | Partiel | `Échap` couvert par test : tiroir masqué, `aria-expanded=false`, focus restitué ; lint, build et 71 tests frontend réussis ; aucun débordement à 320 px sur le socle déployé ; preuve visuelle du correctif, zoom 200 % natif et tactile ouverts |
+| 2026-07-23 | `321b6f0` | Prévisualisation T-32 | Codex / navigateur intégré | Super administrateur | Desktop, 375 px et 320 px / clavier et souris | AUTH-07, SHELL-01, SHELL-02, SHELL-04, FORM-01 | Partiel | Thème et états explicites validés, déconnexion effective, aucun débordement ; tiroir non masqué par `Échap`, zoom 200 %, tactile, refus protégé et quatre rôles ouverts |
 | 2026-07-23 | `0360537` | Prévisualisation T-32 | Validation humaine utilisateur | Cinq rôles | Desktop / navigateur intégré / souris | DEC-041 et DEC-042, changement de rôle et visibilité | Réussi | Cinq changements acceptés, navigation conforme et sélecteur unique ; refus serveur directs non rejoués |
 | 2026-07-22 | `36ba286` | Prévisualisation T-32 | Validation humaine utilisateur | Cinq rôles | Desktop / Chrome / souris | DEC-041, visibilité seulement | Réussi | Captures interactives non archivées ; clavier, smartphone et refus serveur restant à exécuter |
 | — | — | — | — | — | — | — | À exécuter | — |

@@ -94,6 +94,8 @@ function RoleSwitcher({ user, onRoleChange }) {
 
 export function AppShell({ children, theme, onToggleTheme, collapsed, onToggleCollapsed, mobileOpen, onToggleMobile, backendStatus = 'checking', user, onLogout, onRoleChange, navigation, activePage, onNavigate }) {
   const [utility, setUtility] = useState(null);
+  const mobileMenuTriggerRef = useRef(null);
+  const mobileNavigationId = useId();
   const backendStates = {
     checking: { label: 'Vérification…', dot: 'bg-oriana-bordure animate-pulse' },
     available: { label: 'Disponible', dot: 'bg-oriana-lavandeMoyen' },
@@ -105,10 +107,23 @@ export function AppShell({ children, theme, onToggleTheme, collapsed, onToggleCo
     notifications: ['Notifications', 'Aucune notification non lue. Les alertes métier seront ajoutées avec les tunnels CRM et la veille territoriale.'],
     assistant: ['Assistant IA', 'L’assistant conversationnel sera activé dans une tâche dédiée avec suivi des coûts, validation humaine et choix du fournisseur IA.'],
   };
+
+  useEffect(() => {
+    if (!mobileOpen) return undefined;
+    const closeMobileNavigationOnEscape = (event) => {
+      if (event.key !== 'Escape') return;
+      event.preventDefault();
+      onToggleMobile();
+      mobileMenuTriggerRef.current?.focus();
+    };
+    document.addEventListener('keydown', closeMobileNavigationOnEscape);
+    return () => document.removeEventListener('keydown', closeMobileNavigationOnEscape);
+  }, [mobileOpen, onToggleMobile]);
+
   return <div className="min-h-screen bg-oriana-fond text-oriana-texte">
     <a href="#contenu" className="sr-only fixed left-3 top-3 z-[60] rounded-oriana bg-oriana-surface px-4 py-2 text-sm font-semibold text-oriana-texte shadow-oriana-lg focus:not-sr-only">Aller au contenu</a>
     <header className={`fixed inset-x-0 top-0 z-30 flex h-16 min-w-0 items-center gap-2 border-b border-oriana-bordure bg-oriana-fond/90 px-3 backdrop-blur-xl transition-all duration-oriana sm:px-4 ${collapsed ? 'md:left-20' : 'md:left-64'}`}>
-      <button type="button" className="grid h-10 w-10 shrink-0 place-items-center rounded-oriana text-oriana-discret hover:bg-oriana-surfaceAlt hover:text-oriana-texte md:hidden" onClick={onToggleMobile} aria-label="Ouvrir la navigation"><Menu/></button>
+      <button ref={mobileMenuTriggerRef} type="button" className="grid h-10 w-10 shrink-0 place-items-center rounded-oriana text-oriana-discret hover:bg-oriana-surfaceAlt hover:text-oriana-texte md:hidden" onClick={onToggleMobile} aria-label="Ouvrir la navigation" aria-controls={mobileNavigationId} aria-expanded={mobileOpen}><Menu/></button>
       <div className="min-w-0 flex-1 md:hidden"><Logo compact/></div>
       <button type="button" aria-haspopup="dialog" onClick={() => setUtility('search')} className="mx-auto hidden h-10 w-full max-w-xl items-center gap-3 rounded-oriana border border-oriana-bordure bg-oriana-fond px-3 text-left text-sm text-oriana-discret transition hover:bg-oriana-surfaceAlt focus:border-oriana-lavande focus:outline-none md:flex"><Search size={17}/><span>Rechercher un bien, une société, un contact…</span></button>
       <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:gap-1.5">
@@ -119,7 +134,7 @@ export function AppShell({ children, theme, onToggleTheme, collapsed, onToggleCo
       </div>
     </header>
     {mobileOpen && <button className="fixed inset-0 z-40 bg-oriana-fondAlt/75 md:hidden" onClick={onToggleMobile} aria-label="Fermer la navigation"/>}
-    <aside aria-label="Navigation latérale" className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-oriana-navigationBorder bg-oriana-navigation/92 p-3 text-oriana-navigationText backdrop-blur-md transition-all duration-oriana ${collapsed ? 'md:w-20' : 'md:w-64'} ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+    <aside id={mobileNavigationId} aria-label="Navigation latérale" className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-oriana-navigationBorder bg-oriana-navigation/92 p-3 text-oriana-navigationText backdrop-blur-md transition-all duration-oriana ${collapsed ? 'md:w-20' : 'md:w-64'} ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
       <div className="flex h-10 items-center px-2"><Logo compact={collapsed} inverse/></div>
       <nav aria-label="Navigation principale" className="mt-3 space-y-1">
         {navigation.map(({ id, label, icon }) => { const Icon = navigationIcons[icon]; const active = activePage === id; const entry = <button type="button" aria-label={collapsed ? label : undefined} aria-current={active ? 'page' : undefined} onClick={() => { onNavigate(id); if (mobileOpen) onToggleMobile(); }} className={`flex w-full items-center gap-3 rounded-oriana px-3 py-2.5 text-sm font-semibold transition ${active ? 'bg-oriana-violet/25 text-oriana-lavandeClair' : 'text-oriana-navigationMuted hover:bg-oriana-navigationSurface hover:text-oriana-navigationText'} ${collapsed ? 'md:justify-center' : ''}`}><Icon size={18}/><span className={collapsed ? 'md:hidden' : ''}>{label}</span></button>; return <Tooltip key={id} label={collapsed ? label : null} placement="right" className="w-full">{entry}</Tooltip>; })}

@@ -18,6 +18,45 @@
 - CIBLE : réservé (ne pas coder).
 
 ## Journal (le plus récent en haut)
+- **2026-07-23 — T-30A : fermeture du tiroir mobile corrigée et vérifiée localement**
+  - Après relecture des autorités UX et sans modifier les droits ni les données métier, le shell
+    ferme maintenant le tiroir mobile avec `Échap`, met `aria-expanded` à `false` et restitue le
+    focus au bouton d’ouverture.
+  - Un test frontend dédié couvre cette séquence. La vérification complète réussit : lint
+    frontend, build Vite et `71` tests frontend.
+  - La prévisualisation actuellement déployée n’embarque pas encore ce correctif. Une passe à
+    `320 × 568` confirme néanmoins l’absence de débordement horizontal sur le socle déployé.
+    Le zoom navigateur natif à `200 %`, le tactile réel et la confirmation visuelle du correctif
+    après déploiement restent à recetter.
+  - Aucun secret, `.env`, commit, push ou déploiement n’a été effectué.
+- **2026-07-23 — T-30A : shell, smartphone et déconnexion recettés sur la prévisualisation**
+  - Après relecture des autorités du projet et sans écriture métier, la session
+    « Super administrateur » du commit `321b6f0` a permis d’exercer le shell réel du bac à sable.
+  - La recherche globale, les notifications, l’aide et l’assistant indisponible présentent chacun
+    un état explicite. Les dialogues se ferment avec `Échap`. Le thème sombre est initial, le
+    passage explicite au thème clair survit à un rechargement, puis le thème sombre a été restauré.
+  - À `375 × 812` et `320 × 568`, aucun débordement horizontal du document n’a été constaté.
+    Auto-formation expose un parcours Super administrateur de deux étapes et indique explicitement
+    que la progression de prévisualisation n’est pas enregistrée.
+  - La déconnexion ramène à l’écran d’authentification sans exposer de donnée métier. Le refus
+    subséquent d’une route protégée et le rejeu sur les quatre autres rôles restent à constater.
+  - Anomalie ouverte : dans le tiroir mobile, `Échap` restitue le focus au bouton d’ouverture mais
+    ne masque pas le tiroir. Le zoom à `200 %`, le tactile réel et l’état API indisponible restent
+    également à recetter. Aucun secret, `.env`, commit, push ou déploiement n’a été effectué.
+- **2026-07-23 — T-30A : matrice d’autorisation vérifiée par tests backend ciblés**
+  - Après relecture de la Constitution, de l’ADN et des critères T-30A, quatre suites ciblées ont
+    exercé directement les routes et politiques d’autorisation : `accessControl`,
+    `sandboxRoutes`, `utilisateursRoutes` et `roleModel`.
+  - Les `31` tests réussissent. Ils couvrent les cinq rôles, le refus des données métier pour
+    `admin_agence` et `super_admin`, les périmètres consultant, master consultant et directeur
+    d’agence, ainsi que les limites d’administration des comptes.
+  - Une session authentifiée « Super administrateur » a été retrouvée sur la prévisualisation,
+    avec une navigation visuellement limitée à Auto-formation et Administration. L’outil de
+    navigateur n’autorise cependant pas l’appel inter-hôte vers l’API et n’expose volontairement
+    aucun cookie : aucun contournement ni lecture de secret n’a été tenté.
+  - Cette preuve automatise le contrat serveur local mais ne remplace pas la capture des codes HTTP
+    sur l’API déployée. Ce constat direct, la recette complète au clavier et la couverture
+    smartphone restent ouverts ; T-30A reste active et T-30 reste bloquée.
 - **2026-07-23 — T-30A : rejeu des cinq rôles confirmé dans la prévisualisation**
   - Sur le commit `0360537`, la recette humaine desktop du bac à sable confirme que le changement
     effectif de rôle est accepté pour Consultant, Master consultant, Directeur d’agence,
