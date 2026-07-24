@@ -1,10 +1,12 @@
 import { CAPTURE_TYPES, VALID_ATTACHMENT_TARGETS } from './catalogs.js';
 
 export const DRAFT_INITIAL_VERSION = 1;
+export const DRAFT_TITLE_MAX_LENGTH = 160;
 export const DRAFT_COMMENT_MAX_LENGTH = 2_000;
 export const DRAFT_LIST_LIMITS = Object.freeze({ default: 20, max: 50 });
 export const DRAFT_MUTABLE_FIELDS = Object.freeze([
   'type',
+  'titre',
   'commentaire',
   'rattachement_propose',
 ]);
@@ -54,6 +56,19 @@ function exceedsCharacterLimit(value, limit) {
   return true;
 }
 
+function validateTitle(value) {
+  if (value === null) return null;
+  if (typeof value !== 'string') {
+    throw new DraftCommandValidationError('Titre de capture invalide', 'titre');
+  }
+  const normalizedTitle = value.trim();
+  if (normalizedTitle.length === 0) return null;
+  if (exceedsCharacterLimit(normalizedTitle, DRAFT_TITLE_MAX_LENGTH)) {
+    throw new DraftCommandValidationError('Titre de capture invalide', 'titre');
+  }
+  return normalizedTitle;
+}
+
 function validateComment(value) {
   if (value === null) return null;
   if (typeof value !== 'string'
@@ -87,6 +102,7 @@ function validateAttachment(value) {
 function validatedMutableFields(command) {
   const result = {};
   if (Object.hasOwn(command, 'type')) result.type = validateType(command.type);
+  if (Object.hasOwn(command, 'titre')) result.titre = validateTitle(command.titre);
   if (Object.hasOwn(command, 'commentaire')) {
     result.commentaire = validateComment(command.commentaire);
   }
@@ -129,6 +145,19 @@ export function validateUpdateDraftCommand(command) {
     throw new DraftCommandValidationError('Aucune modification de brouillon', null);
   }
   return Object.freeze({ version_attendue: versionAttendue, ...mutableFields });
+}
+
+export function selectSafeDraftMutableFields(draft) {
+  assertCommand(draft);
+  return Object.freeze(validatedMutableFields(draft));
+}
+
+export function isDraftReadyToProcess(draft) {
+  if (!isPlainObject(draft) || !CAPTURE_TYPES.includes(draft.type)) return false;
+  const hasTitle = typeof draft.titre === 'string' && draft.titre.trim().length > 0;
+  const hasComment = typeof draft.commentaire === 'string'
+    && draft.commentaire.trim().length > 0;
+  return hasTitle || hasComment;
 }
 
 export function normalizeDraftListOptions({ cursor, limit = DRAFT_LIST_LIMITS.default } = {}) {

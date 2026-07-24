@@ -50,6 +50,8 @@ historique : elle est remplacée par une nouvelle entrée qui la référence. St
 | DEC-040 | Mandat devient la cinquième cible documentaire de Capture | acceptée | besoin métier constaté dans la fiche Offre, 2026-07-22 | PDF signé versionné, droits hérités du Mandat, activation soumise à T-34 et T-30 |
 | DEC-041 | La navigation est orientée par le rôle actif et le sélecteur de rôle est unique | acceptée | validation UX humaine, 2026-07-22 | vues administratives séparées des vues métier, sans modifier l'autorité serveur |
 | DEC-042 | L'Administrateur d'agence administre les comptes sans périmètre métier implicite | acceptée | arbitrage d'autorité T-30A, 2026-07-22 | refus serveur des ressources métier, même dans son agence ; Directeur inchangé |
+| DEC-043 | Le titre d'un brouillon est facultatif et limité à 160 caractères | acceptée | arbitrage T-34B, 2026-07-24 | reprise plus lisible sans bloquer une capture rapide |
+| DEC-044 | La complétude d'un brouillon est un indicateur d'interface calculé | acceptée | arbitrage T-34B, 2026-07-24 | aucun nouvel état métier ni champ persistant |
 
 Les identifiants `SRC-HIST-*` sont décrits dans
 [l’audit stratégique](../audit/AUDIT_STRATEGIQUE_PATRIMOINE_ORIANA.md).
@@ -466,6 +468,46 @@ frontend reste un confort d'orientation et n'est jamais la preuve du refus.
 **Statut.** Décision acceptée et transcrite dans le modèle central des rôles, les politiques
 documentaires et les tests d'accès. Sa clôture dans T-30A reste soumise à une recette par appels
 directs sur l'environnement inscrit.
+
+### DEC-043 — Titre facultatif et borné des brouillons
+
+**Contexte.** DEC-030 limitait le premier contrat aux trois métadonnées nécessaires à la capture.
+La reprise parmi de nombreux brouillons exige toutefois un repère humain court, sans rendre la
+création plus lourde ni transformer le titre en identifiant métier.
+
+**Décision.** Le contrat T-34B accepte un champ `titre` facultatif. Lorsqu'il est fourni, le backend
+le normalise par suppression des espaces périphériques et le limite à 160 caractères. Une valeur
+absente, `null` ou vide après normalisation signifie « sans titre ». Le titre est modifiable par
+l'auteur dans les mêmes conditions de concurrence et de visibilité que les autres métadonnées.
+Il ne participe ni à l'identité de la Capture, ni à une autorisation, ni à un classement
+automatique.
+
+**Sécurité.** Le titre est une donnée externe non fiable : il est validé côté serveur, neutralisé à
+l'affichage et inclus dans les réponses de conflit uniquement après contrôle complet des droits.
+
+**Statut.** Décision acceptée et politique pure implémentée dans le second lot T-34B. Elle étend
+DEC-030 sans autoriser à elle seule de migration, route, interface, déploiement ou activation.
+
+### DEC-044 — Complétude calculée, sans nouvel état métier
+
+**Contexte.** L'interface doit aider l'auteur à distinguer rapidement les brouillons qui peuvent
+être poursuivis de ceux qui nécessitent encore une information. Ajouter des états persistés
+« À compléter » ou « Prêt à traiter » créerait une seconde machine d'état concurrente de la Capture
+et pourrait être interprété à tort comme une validation ou une soumission.
+
+**Décision.** « À compléter » et « Prêt à traiter » sont exclusivement des libellés de présentation
+calculés depuis la représentation serveur actuellement autorisée du brouillon. Ils ne sont ni
+persistés, ni acceptés par l'API, ni utilisés comme filtres d'autorité. Dans les deux cas, l'état
+serveur demeure exactement `brouillon_prive` jusqu'à l'action explicite de soumission prévue par
+T-34E.
+
+**Règle initiale.** Un brouillon est présenté « Prêt à traiter » lorsque son `type` est valide et
+qu'il possède au moins un contenu descriptif non vide parmi `titre` et `commentaire`. Il est
+présenté « À compléter » dans les autres cas. Cette règle est une aide réversible ; elle ne
+déclenche aucun traitement, n'accorde aucun droit et ne remplace aucune validation humaine.
+
+**Statut.** Décision acceptée et règle pure implémentée dans le second lot T-34B. Toute évolution
+de la machine d'état métier reste une décision distincte et relève notamment de T-34E.
 
 ## Modèle pour une nouvelle décision
 
